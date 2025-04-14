@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FiveM Server Viewer</title>
+
+  <!-- Load Burbank Big Condensed -->
+  <style>
+    @font-face {
+      font-family: 'Burbank Big Condensed';
+      src: url('https://cdn.jsdelivr.net/gh/rafsanbijoy/burbank-font/BurbankBigCondensed-Bold.otf') format('opentype');
+      font-weight: bold;
+    }
+
+    * {
+      font-family: 'Burbank Big Condensed', sans-serif !important;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #0f0f0f;
+      color: #f4f4f4;
+      padding: 0;
+      margin: 0;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 4rem;
+      color: #00fff7;
+      margin-top: 40px;
+    }
+
+    .center-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 30px;
+    }
+
+    input, button {
+      font-size: 2rem;
+      padding: 14px 22px;
+      margin: 10px;
+      border: none;
+      border-radius: 8px;
+    }
+
+    input {
+      width: 350px;
+      background: #1a1a1a;
+      color: #fff;
+    }
+
+    button {
+      background-color: #00ffcc;
+      color: #000;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background-color: #00dab6;
+    }
+
+    .status {
+      font-size: 2rem;
+      color: #aaa;
+      margin-top: 25px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .countdown-wrapper {
+      position: relative;
+      width: 120px;
+      height: 120px;
+    }
+
+    .countdown-timer {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2rem;
+      color: #00fff7;
+      font-weight: bold;
+    }
+
+    svg circle {
+      fill: none;
+      stroke-width: 7;
+      transform: rotate(-90deg);
+      transform-origin: 50% 50%;
+    }
+
+    .bg-ring {
+      stroke: #444;
+    }
+
+    .progress-ring {
+      stroke: #00ffd5;
+      stroke-dasharray: 251.2;
+      stroke-dashoffset: 0;
+    }
+
+    .info, .players, .resources {
+      margin: 40px auto;
+      max-width: 900px;
+      background-color: #1a1a1a;
+      padding: 25px;
+      border-radius: 14px;
+      box-shadow: 0 0 20px rgba(0, 255, 213, 0.15);
+      text-align: left;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      font-size: 22px;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 14px;
+      border-bottom: 1px solid #333;
+    }
+
+    ul {
+      columns: 3;
+      padding-left: 25px;
+      font-size: 22px;
+    }
+
+    li {
+      margin-bottom: 5px;
+    }
+
+    img.banner {
+      max-width: 100%;
+      margin-top: 15px;
+      border-radius: 10px;
+      border: 1px solid #444;
+    }
+
+    a {
+      color: #00e6ff;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .resource-search {
+      margin-top: 20px;
+      width: 350px;
+      font-size: 2rem;
+      padding: 14px 22px;
+      background: #1a1a1a;
+      color: #fff;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h1>FiveM Server Info Viewer</h1>
+
+  <div class="center-box">
+    <input type="text" id="serverCode" placeholder="Enter Server Code (e.g. pmdkd8)" />
+    <button onclick="startLiveFetch()">Start Monitor</button>
+  </div>
+
+  <div class="status">
+    <div class="countdown-wrapper">
+      <svg width="120" height="120">
+        <circle class="bg-ring" cx="60" cy="60" r="40"/>
+        <circle class="progress-ring" cx="60" cy="60" r="40"/>
+      </svg>
+      <div class="countdown-timer" id="countdown">60</div>
+    </div>
+    <span id="statusText">Waiting to start...</span>
+  </div>
+
+  <div id="result"></div>
+
+  <script>
+    const radius = 40;
+    const fullCircle = 2 * Math.PI * radius;
+    const progressCircle = document.querySelector('.progress-ring');
+    const countdownDisplay = document.getElementById('countdown');
+    const statusText = document.getElementById('statusText');
+
+    progressCircle.setAttribute('stroke-dasharray', fullCircle);
+    progressCircle.setAttribute('stroke-dashoffset', 0);
+
+    let fetchInterval, countdownInterval;
+    let timeLeft = 60;
+
+    function startLiveFetch() {
+      const code = document.getElementById("serverCode").value.trim();
+      if (!code) return alert("Please enter a server code.");
+
+      clearInterval(fetchInterval);
+      clearInterval(countdownInterval);
+
+      fetchServer(code);
+      fetchInterval = setInterval(() => fetchServer(code), 60000);
+      countdownInterval = setInterval(updateCountdown, 1000);
+      timeLeft = 60;
+    }
+
+    function updateCountdown() {
+      timeLeft--;
+      if (timeLeft < 0) timeLeft = 60;
+      countdownDisplay.textContent = timeLeft;
+    }
+
+    async function fetchServer(code) {
+      const resultDiv = document.getElementById("result");
+      statusText.textContent = "🔄 Checking...";
+      try {
+        const res = await fetch(`https://servers-frontend.fivem.net/api/servers/single/${code}`);
+        if (!res.ok) throw new Error("Server not found or offline.");
+        const { Data: d } = await res.json();
+        const banner1 = decodeImgProxyUrl(d.vars["banner_connecting"]);
+        const banner2 = decodeImgProxyUrl(d.vars["banner_detail"]);
+
+        const info = `
+          <div class="info">
+            <h2>${d.hostname}</h2>
+            ${banner1 ? `<img src="${banner1}" class="banner">` : ""}
+            ${banner2 ? `<img src="${banner2}" class="banner">` : ""}
+            <p style="font-size: 2rem; font-weight: bold;">Game Type: ${d.gametype}</p>
+            <p style="font-size: 2rem; font-weight: bold;">Map: ${d.mapname}</p>
+            <p style="font-size: 2rem; font-weight: bold;">Players: ${d.clients} / ${d.sv_maxclients}</p>
+            <p style="font-size: 2rem; font-weight: bold;">IP: <code>${d.connectEndPoints?.[0] || "N/A"}</code></p>
+            <p style="font-size: 2rem; font-weight: bold;">Discord: <a href="${d.vars.discord}" target="_blank">${d.vars.discord}</a></p>
+            <p style="font-size: 2rem; font-weight: bold;">Owner: <a href="${d.ownerProfile}" target="_blank">${d.ownerName}</a></p>
+          </div>
+        `;
+
+        const players = (d.players || []).map(p =>
+          `<tr><td>${p.name}</td><td>${p.ping} ms</td></tr>`
+        ).join("");
+
+        const playerTable = `
+          <div class="players">
+            <h2>Players (${d.clients})</h2>
+            <table>
+              <thead><tr><th>Name</th><th>Ping</th></tr></thead>
+              <tbody>${players}</tbody>
+            </table>
+          </div>
+        `;
+
+        const resourceList = d.resources?.slice(0, 100) || [];
+        const resourceListElement = document.createElement('ul');
+        resourceList.forEach(r => {
+          const li = document.createElement('li');
+          li.textContent = r;
+          resourceListElement.appendChild(li);
+        });
+
+        const resources = `
+          <div class="resources">
+            <h2>Resources (${d.resources?.length})</h2>
+            <input class="resource-search" type="text" placeholder="Search Resources..." oninput="filterResources(event)" />
+            <div class="resource-list">${resourceListElement.outerHTML}</div>
+          </div>
+        `;
+
+        resultDiv.innerHTML = info + playerTable + resources;
+        statusText.textContent = `✅ Updated: ${new Date().toLocaleTimeString()}`;
+        timeLeft = 60;
+        updateCountdown();
+      } catch (err) {
+        resultDiv.innerHTML = `<p style="color:red;">❌ Error: ${err.message}</p>`;
+        statusText.textContent = "Error";
+      }
+    }
+
+    function decodeImgProxyUrl(proxyUrl) {
+      try {
+        const match = proxyUrl.match(/\/aHR0.+$/);
+        if (!match) return null;
+        const base64 = match[0].slice(1).split("?")[0];
+        const decoded = atob(base64);
+        return decoded;
+      } catch {
+        return null;
+      }
+    }
+
+    function filterResources(event) {
+      const query = event.target.value.toLowerCase();
+      const resourcesList = document.querySelectorAll('.resources ul li');
+      resourcesList.forEach(item => {
+        const text = item.textContent.toLowerCase();
+        if (text.includes(query)) {
+          item.style.display = '';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    }
+  </script>
+</body>
+</html>
