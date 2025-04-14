@@ -171,7 +171,7 @@
   <h1>FiveM Server Info Viewer</h1>
 
   <div class="center-box">
-    <input type="text" id="serverCode" placeholder="Enter Server Code (e.g. pmdkd8)" />
+    <input type="text" id="serverCode" placeholder="Enter Server Code or URL (e.g. cfx.re/join/pmdkd8)" />
     <button onclick="startLiveFetch()">Start Monitor</button>
   </div>
 
@@ -202,8 +202,14 @@
     let timeLeft = 60;
 
     function startLiveFetch() {
-      const code = document.getElementById("serverCode").value.trim();
-      if (!code) return alert("Please enter a server code.");
+      let code = document.getElementById("serverCode").value.trim();
+
+      // Extract server code from a URL if present (cfx.re/join/xxx)
+      if (code.includes('cfx.re/join/')) {
+        code = code.split('cfx.re/join/')[1];
+      }
+
+      if (!code) return alert("Please enter a valid server code.");
 
       clearInterval(fetchInterval);
       clearInterval(countdownInterval);
