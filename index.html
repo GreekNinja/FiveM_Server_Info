@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>FiveM Server Viewer</title>
+  <title>FiveM Server Viewer - Fast Travel</title>
 
-  <!-- Load Burbank Big Condensed -->
   <style>
     @font-face {
       font-family: 'Burbank Big Condensed';
@@ -13,66 +12,264 @@
       font-weight: bold;
     }
 
+    html {
+        scroll-behavior: smooth; /* Enable smooth scrolling */
+    }
+
     * {
       font-family: 'Burbank Big Condensed', sans-serif !important;
       box-sizing: border-box;
+      /* Custom Scrollbar for Webkit browsers */
+      &::-webkit-scrollbar {
+          width: 10px;
+      }
+      &::-webkit-scrollbar-track {
+          background: #331a5a;
+          border-radius: 10px;
+      }
+      &::-webkit-scrollbar-thumb {
+          background: #00ff77;
+          border-radius: 10px;
+          border: 2px solid #331a5a;
+      }
+       &::-webkit-scrollbar-thumb:hover {
+           background: #00cc55;
+       }
     }
 
     body {
-      background-color: #0f0f0f;
-      color: #f4f4f4;
-      padding: 0;
+      background: linear-gradient(135deg, #1a0833 0%, #4d1a80 50%, #1a0833 100%);
+      background-size: 400% 400%;
+      animation: gradientAnimation 20s ease infinite;
+      color: #ffffff;
+      padding: 15px;
       margin: 0;
       text-align: center;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      overflow-x: hidden;
     }
 
-    h1 {
-      font-size: 4rem;
-      color: #00fff7;
-      margin-top: 40px;
+    @keyframes gradientAnimation {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
     }
+
+     /* Subtle Sparkle Overlay */
+     body::before {
+         content: '';
+         position: fixed;
+         top: 0;
+         left: 0;
+         width: 100%;
+         height: 100%;
+         pointer-events: none;
+         z-index: -1;
+         background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZGVmcz4KICAgIDxyYWRpYWxHcmFkaWVudCBpZD0iZ3JhZGllbnQiIGN4PSI1MCUiIGN5PSI1MCUiIHI9IjUwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNmZmY1Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzhkYThjZiIgc3RvcC1vcGFjaXR5PSIwIi8+CiAgICA8L3JhZGlhbEdyYWRpZW50PgogIDwvZGVmcz4KICA8Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0NSIgZmlsbD0idXJsKCNncmFkaWVudCkiLz4KPC9zdmc+');
+         background-size: cover;
+         opacity: 0.1;
+         animation: sparkleFade 15s ease-in-out infinite alternate;
+     }
+
+     @keyframes sparkleFade {
+         0% { opacity: 0.1; transform: scale(1); }
+         50% { opacity: 0.05; transform: scale(1.05); }
+         100% { opacity: 0.1; transform: scale(1); }
+     }
+
+
+    /* Animation for sections appearing */
+    @keyframes fadeInScale {
+      from {
+        opacity: 0;
+        transform: scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    /* Animation for the loading indicator bar */
+     @keyframes loadingBar {
+         0% {
+             transform: translateX(-100%);
+         }
+         100% {
+             transform: translateX(100%);
+         }
+     }
+
+    /* Animation for the copy message */
+    @keyframes fadeSlideIn {
+        0% { opacity: 0; transform: translateY(20px); }
+        10% { opacity: 1; transform: translateY(0); }
+        90% { opacity: 1; transform: translateY(0); }
+        100% { opacity: 0; transform: translateY(20px); }
+    }
+
+
+    h1 {
+      font-size: 4.5rem;
+      color: #ffe600;
+      text-shadow: 4px 4px 0px #ff0077, 6px 6px 0px rgba(0,0,0,0.2);
+      margin-top: 30px;
+      margin-bottom: 30px;
+      letter-spacing: 2px;
+      animation: pulseColor 5s infinite alternate;
+    }
+
+     @keyframes pulseColor {
+         0% { color: #ffe600; text-shadow: 4px 4px 0px #ff0077, 6px 6px 0px rgba(0,0,0,0.2), 0 0 15px rgba(255, 230, 0, 0.5); }
+         50% { color: #00fff7; text-shadow: 4px 4px 0px #ff0077, 6px 6px 0px rgba(0,0,0,0.2), 0 0 15px rgba(0, 255, 247, 0.5); }
+         100% { color: #ffe600; text-shadow: 4px 4px 0px #ff0077, 6px 6px 0px rgba(0,0,0,0.2), 0 0 15px rgba(255, 230, 0, 0.5); }
+     }
+
 
     .center-box {
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-top: 30px;
+      margin-top: 15px;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6);
+      border: 2px solid #ffe600;
+      width: 95%;
+      max-width: 600px;
+      position: relative;
+      overflow: hidden;
     }
+
+     /* Loading indicator bar */
+    .center-box::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: linear-gradient(90deg, transparent, #00ff77, transparent);
+        animation: loadingBar 1.5s linear infinite;
+        display: none;
+        z-index: 10;
+    }
+
+    .center-box.loading::before {
+        display: block;
+    }
+
 
     input, button {
       font-size: 2rem;
-      padding: 14px 22px;
+      padding: 14px 25px;
       margin: 10px;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
+      box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.4);
+      transition: all 0.2s ease-in-out;
+      transform-origin: center;
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
     }
 
+     /* Shine effect on inputs and buttons */
+     input::after, button::after {
+         content: '';
+         position: absolute;
+         top: 0;
+         left: -100%;
+         width: 50%;
+         height: 100%;
+         background: rgba(255, 255, 255, 0.2);
+         transform: skewX(-20deg);
+         transition: left 0.5s ease-in-out;
+     }
+
+     input:hover::after, button:hover::after {
+         left: 150%;
+         transition: left 0.5s ease-in-out;
+     }
+      input:focus::after {
+         left: 150%;
+         transition: left 0.5s ease-in-out;
+      }
+
+
     input {
-      width: 350px;
-      background: #1a1a1a;
+      width: 90%;
+      max-width: 400px;
+      background: #3a1a5a;
       color: #fff;
+      border: 2px solid #ffe600;
+      outline: none;
+    }
+
+    input:focus {
+        border-color: #00fff7;
+        box-shadow: 3px 3px 0px rgba(0,0,0,0.4), 0 0 10px #00fff7, 0 0 20px rgba(0, 255, 247, 0.3);
     }
 
     button {
-      background-color: #00ffcc;
-      color: #000;
+      background-color: #00ff77;
+      color: #1a1a1a;
       cursor: pointer;
       font-weight: bold;
+      border: 2px solid #00cc55;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 14px 30px;
+      animation: pulseScale 2s infinite ease-in-out;
     }
 
+     @keyframes pulseScale {
+         0% { transform: scale(1); box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.4), 0 0 8px rgba(0, 255, 119, 0.3); }
+         50% { transform: scale(1.03); box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.4), 0 0 15px rgba(0, 255, 119, 0.6); }
+         100% { transform: scale(1); box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.4), 0 0 8px rgba(0, 255, 119, 0.3); }
+     }
+
+
     button:hover {
-      background-color: #00dab6;
+      background-color: #00cc55;
+      transform: translate(3px, 3px) scale(1);
+      box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.4);
+       animation: none;
     }
+
+     button:active {
+         transform: translate(1px, 1px) scale(0.98);
+         box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.4);
+     }
+
 
     .status {
       font-size: 2rem;
-      color: #aaa;
-      margin-top: 25px;
+      color: #ffffff;
+      margin-top: 30px;
       display: flex;
       justify-content: center;
       align-items: center;
       gap: 20px;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 20px 30px;
+      border-radius: 15px;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
+      border: 2px solid #00fff7;
+      flex-wrap: wrap;
+      animation: glowBorder 3s infinite alternate;
     }
+
+     @keyframes glowBorder {
+         0% { border-color: #00fff7; box-shadow: 0 5px 10px rgba(0, 255, 247, 0.4), 0 0 20px rgba(0, 255, 247, 0.2); }
+         100% { border-color: #ffe600; box-shadow: 0 5px 10px rgba(255, 230, 0, 0.4), 0 0 20px rgba(255, 230, 0, 0.2); }
+     }
+
 
     .countdown-wrapper {
       position: relative;
@@ -85,36 +282,73 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      font-size: 2rem;
-      color: #00fff7;
+      font-size: 2.5rem;
+      color: #ffe600;
       font-weight: bold;
+      text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.3);
+      z-index: 2;
     }
 
     svg circle {
       fill: none;
-      stroke-width: 7;
+      stroke-width: 8;
       transform: rotate(-90deg);
       transform-origin: 50% 50%;
+      filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.3));
+      z-index: 1;
     }
 
     .bg-ring {
-      stroke: #444;
+      stroke: #4a2a6d;
     }
 
     .progress-ring {
-      stroke: #00ffd5;
-      stroke-dasharray: 251.2;
-      stroke-dashoffset: 0;
+      stroke: #00ff77;
+      /* Radius 40, Stroke 8 -> Circumference = 2 * PI * 40 */
+      stroke-dasharray: calc(2 * 3.14159 * 40);
+      stroke-dashoffset: calc(2 * 3.14159 * 40);
+      transition: stroke-dashoffset 1s linear;
+       animation: pulseStroke 1.5s infinite alternate;
     }
 
+     @keyframes pulseStroke {
+         0% { stroke: #00ff77; filter: drop-shadow(0 0 5px rgba(0, 255, 119, 0.5)); }
+         100% { stroke: #00cc55; filter: drop-shadow(0 0 10px rgba(0, 204, 85, 0.7)); }
+     }
+
+
     .info, .players, .resources {
-      margin: 40px auto;
+      margin: 30px auto;
       max-width: 900px;
-      background-color: #1a1a1a;
+      width: 95%;
+      background: rgba(0, 0, 0, 0.5);
       padding: 25px;
-      border-radius: 14px;
-      box-shadow: 0 0 20px rgba(0, 255, 213, 0.15);
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
       text-align: left;
+      border: 2px solid #ff0077;
+      margin-bottom: 20px;
+      opacity: 0;
+      transform: scale(0.98);
+      animation: fadeInScale 0.5s ease-out forwards;
+      position: relative;
+      overflow: hidden;
+    }
+
+     /* Add delay to subsequent sections */
+     .players { animation-delay: 0.2s; }
+     .resources { animation-delay: 0.4s; }
+
+
+    h2 {
+      font-size: 3rem;
+      color: #00fff7;
+      text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.2);
+      margin-bottom: 20px;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
+       position: relative;
+       overflow: hidden;
     }
 
     table {
@@ -127,59 +361,399 @@
     th, td {
       text-align: left;
       padding: 14px;
-      border-bottom: 1px solid #333;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      color: #e0e0e0;
     }
+
+    th {
+        color: #ffffff;
+        font-weight: bold;
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    tr {
+        transition: background-color 0.2s ease;
+    }
+
+    tr:nth-child(even) {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+
+     tr:hover {
+         background-color: rgba(0, 255, 119, 0.2);
+     }
+
 
     ul {
       columns: 3;
       padding-left: 25px;
       font-size: 22px;
+      list-style: disc;
+      color: #e0e0e0;
+      column-gap: 30px;
     }
 
     li {
-      margin-bottom: 5px;
+      margin-bottom: 8px;
+      line-height: 1.3;
+       transition: color 0.2s ease, transform 0.1s ease;
     }
+
+     li:hover {
+         color: #00ff77;
+         transform: translateX(5px);
+     }
+
+     /* Style for clickable/copyable elements */
+     .copyable {
+         cursor: pointer;
+         position: relative;
+     }
+
+      .copyable:hover {
+          /* text-decoration: underline dashed #00ff77; */
+      }
+
 
     img.banner {
       max-width: 100%;
-      margin-top: 15px;
-      border-radius: 10px;
-      border: 1px solid #444;
+      height: auto;
+      margin-top: 20px;
+      border-radius: 12px;
+      border: 3px solid #ff0077;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
     }
 
     a {
-      color: #00e6ff;
+      color: #00ff77;
       text-decoration: none;
+      font-weight: bold;
+      transition: color 0.2s ease-in-out, text-decoration 0.2s ease-in-out;
     }
 
     a:hover {
       text-decoration: underline;
+      color: #00cc55;
     }
 
     .resource-search {
-      margin-top: 20px;
-      width: 350px;
+      margin-top: 15px;
+      width: 90%;
+      max-width: 400px;
       font-size: 2rem;
-      padding: 14px 22px;
-      background: #1a1a1a;
+      padding: 14px 25px;
+      background: #3a1a5a;
       color: #fff;
-      border-radius: 8px;
+      border-radius: 10px;
+      border: 2px solid #ffe600;
+      box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.4);
+      outline: none;
+      margin-bottom: 15px;
     }
+
+     .resource-search:focus {
+        border-color: #00fff7;
+        box-shadow: 3px 3px 0px rgba(0,0,0,0.4), 0 0 10px #00fff7;
+     }
+
+     .resources p {
+         font-size: 20px;
+         color: #aaa;
+         margin-top: 10px;
+     }
+
+     /* Copy Confirmation Message Style */
+     #copy-message {
+         position: fixed;
+         bottom: 20px;
+         left: 50%;
+         transform: translateX(-50%);
+         background-color: rgba(0, 0, 0, 0.7);
+         color: #00ff77;
+         padding: 10px 20px;
+         border-radius: 8px;
+         font-size: 1.5rem;
+         z-index: 1000;
+         opacity: 0;
+         pointer-events: none;
+         animation: fadeSlideIn 3s ease-in-out forwards;
+     }
+
+     /* Fast Travel Links Style */
+     #fast-travel {
+         position: fixed;
+         bottom: 20px;
+         right: 20px;
+         display: flex;
+         flex-direction: column;
+         gap: 10px;
+         z-index: 999;
+         /* Controlled by JS */
+         opacity: 0;
+         visibility: hidden;
+         transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+         background-color: rgba(0, 0, 0, 0.6);
+         padding: 10px;
+         border-radius: 8px;
+         border: 1px solid #00fff7;
+     }
+
+     #fast-travel.visible {
+         opacity: 1;
+         visibility: visible;
+     }
+
+     #fast-travel a {
+         color: #00ff77;
+         text-decoration: none;
+         font-weight: bold;
+         font-size: 1.2rem;
+         padding: 5px 10px;
+         border-radius: 5px;
+         transition: background-color 0.2s ease, color 0.2s ease;
+         text-shadow: none; /* Remove inherited text-shadow */
+     }
+
+     #fast-travel a:hover {
+         background-color: rgba(0, 255, 119, 0.2);
+         color: #00cc55;
+         text-decoration: none;
+     }
+
+
+     /* --- Responsive Design --- */
+
+     /* Tablets and smaller desktops */
+    @media (max-width: 992px) {
+        h1 {
+            font-size: 4rem;
+             text-shadow: 3px 3px 0px #ff0077, 5px 5px 0px rgba(0,0,0,0.2);
+             letter-spacing: 1px;
+        }
+        .center-box {
+            padding: 25px;
+            max-width: 500px;
+            border-radius: 15px;
+        }
+        input, button {
+            font-size: 1.8rem;
+            padding: 12px 20px;
+            margin: 8px;
+            border-radius: 10px;
+        }
+        input {
+            max-width: 350px;
+        }
+        button {
+             padding: 12px 25px;
+        }
+        .status {
+            font-size: 1.8rem;
+            gap: 15px;
+            padding: 15px 20px;
+            border-radius: 15px;
+        }
+        .countdown-wrapper {
+            width: 100px;
+            height: 100px;
+        }
+        .countdown-timer {
+            font-size: 2.2rem;
+        }
+        svg circle {
+             stroke-width: 7;
+        }
+        .progress-ring {
+            /* Recalculate dasharray for radius 35 and stroke 7 */
+            stroke-dasharray: calc(2 * 3.14159 * 35);
+            stroke-dashoffset: calc(2 * 3.14159 * 35);
+        }
+
+        .info, .players, .resources {
+            max-width: 800px;
+            padding: 20px;
+            margin: 25px auto;
+            border-radius: 15px;
+        }
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        table {
+            font-size: 20px;
+        }
+        th, td {
+            padding: 12px;
+        }
+        ul {
+            columns: 2;
+            font-size: 20px;
+            column-gap: 20px;
+        }
+        li {
+            margin-bottom: 6px;
+        }
+        img.banner {
+            margin-top: 15px;
+            border-radius: 10px;
+            border-width: 2px;
+        }
+         .resource-search {
+             font-size: 1.8rem;
+             padding: 12px 20px;
+             max-width: 350px;
+             margin-top: 10px;
+             margin-bottom: 10px;
+             border-radius: 10px;
+         }
+         .resources p {
+             font-size: 18px;
+         }
+         #copy-message {
+             font-size: 1.2rem;
+             padding: 8px 15px;
+         }
+          #fast-travel {
+              bottom: 15px;
+              right: 15px;
+              gap: 8px;
+              padding: 8px;
+          }
+           #fast-travel a {
+               font-size: 1rem;
+               padding: 4px 8px;
+           }
+    }
+
+    /* Phones */
+    @media (max-width: 576px) {
+        h1 {
+            font-size: 3rem;
+            text-shadow: 3px 3px 0px #ff0077, 4px 4px 0px rgba(0,0,0,0.2);
+            margin-top: 20px;
+            margin-bottom: 20px;
+            letter-spacing: 0px;
+        }
+         body {
+             padding: 10px;
+         }
+        .center-box {
+            padding: 20px;
+            width: 100%;
+            max-width: none;
+            border-radius: 10px;
+        }
+        input, button {
+            font-size: 1.6rem;
+            padding: 10px 15px;
+            margin: 6px;
+            border-radius: 8px;
+        }
+        input {
+            width: 100%;
+            max-width: none;
+        }
+         button {
+             width: 100%;
+             max-width: none;
+             padding: 10px 15px;
+         }
+        .status {
+            font-size: 1.6rem;
+            gap: 10px;
+            padding: 10px 15px;
+            flex-direction: column;
+            border-radius: 10px;
+        }
+        .countdown-wrapper {
+            width: 90px;
+            height: 90px;
+             margin-bottom: 5px;
+        }
+        .countdown-timer {
+            font-size: 2rem;
+        }
+        svg circle {
+             stroke-width: 6;
+        }
+         .progress-ring {
+            /* Recalculate dasharray for radius 30 and stroke 6 */
+            stroke-dasharray: calc(2 * 3.14159 * 30);
+            stroke-dashoffset: calc(2 * 3.14159 * 30);
+        }
+
+        .info, .players, .resources {
+            width: 100%;
+            max-width: none;
+            padding: 15px;
+            margin: 20px auto;
+            border-radius: 10px;
+        }
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        table {
+            font-size: 18px;
+        }
+        th, td {
+            padding: 10px;
+        }
+        ul {
+            columns: 1;
+            padding-left: 20px;
+            font-size: 18px;
+        }
+        li {
+            margin-bottom: 5px;
+        }
+        img.banner {
+            margin-top: 10px;
+            border-radius: 8px;
+            border-width: 1px;
+        }
+         .resource-search {
+             font-size: 1.6rem;
+             padding: 10px 15px;
+             width: 100%;
+             max-width: none;
+             margin-top: 8px;
+             margin-bottom: 8px;
+             border-radius: 8px;
+         }
+         .resources p {
+             font-size: 16px;
+         }
+         #copy-message {
+             font-size: 1rem;
+             padding: 6px 12px;
+         }
+          #fast-travel {
+              bottom: 10px;
+              right: 10px;
+              gap: 6px;
+              padding: 6px;
+          }
+           #fast-travel a {
+               font-size: 0.9rem;
+               padding: 3px 6px;
+           }
+    }
+
+
+     /* --- JavaScript --- */
   </style>
 </head>
 <body>
-  <h1>FiveM Server Info Viewer</h1>
-
-  <div class="center-box">
+  <h1 id="top">FiveM Server Info Viewer</h1> <div class="center-box">
     <input type="text" id="serverCode" placeholder="(e.g. cfx.re/join/pmdkd8)" />
     <button onclick="startLiveFetch()">Start Monitor</button>
   </div>
 
   <div class="status">
     <div class="countdown-wrapper">
-      <svg width="120" height="120">
-        <circle class="bg-ring" cx="60" cy="60" r="40"/>
-        <circle class="progress-ring" cx="60" cy="60" r="40"/>
+      <svg width="100%" height="100%" viewBox="0 0 100 100"> <circle class="bg-ring" cx="50" cy="50" r="40"/>
+        <circle class="progress-ring" cx="50" cy="50" r="40"/>
       </svg>
       <div class="countdown-timer" id="countdown">60</div>
     </div>
@@ -188,18 +762,109 @@
 
   <div id="result"></div>
 
+  <div id="copy-message"></div>
+
+  <div id="fast-travel">
+    <a href="#top">Top</a>
+    <a href="#resources">Resources</a>
+  </div>
+
+
   <script>
-    const radius = 40;
-    const fullCircle = 2 * Math.PI * radius;
+    // Radius for SVG calculations - match the 'r' value in the default SVG/CSS
+    const svgBaseRadius = 40;
+    // Player count threshold to show fast travel links
+    const playerThreshold = 30; /* Adjust this number as needed */
+
+
     const progressCircle = document.querySelector('.progress-ring');
     const countdownDisplay = document.getElementById('countdown');
     const statusText = document.getElementById('statusText');
+    const centerBox = document.querySelector('.center-box');
+    const copyMessageElement = document.getElementById('copy-message');
+    const fastTravelElement = document.getElementById('fast-travel');
 
-    progressCircle.setAttribute('stroke-dasharray', fullCircle);
-    progressCircle.setAttribute('stroke-dashoffset', 0);
+
+    // Set initial dasharray and offset based on the *actual* calculated circumference
+    // This function is called on load and resize to keep the ring scaling correctly
+    function updateCircleDashoffset() {
+        const circle = document.querySelector('.progress-ring');
+        if (!circle) return;
+
+        // Get the current effective radius based on the SVG's rendered size and viewBox
+        const svgElement = circle.closest('svg');
+        let currentRadius = svgBaseRadius; // Start with base SVG radius
+         if (svgElement) {
+             const viewBox = svgElement.getAttribute('viewBox');
+             if (viewBox) {
+                 const parts = viewBox.split(' ');
+                 const viewBoxWidth = parseFloat(parts[2]);
+                 const svgWidth = svgElement.clientWidth; // Get rendered width
+                 if (svgWidth > 0 && viewBoxWidth > 0) {
+                      // Calculate the ratio of rendered width to viewbox width
+                      const ratio = svgWidth / viewBoxWidth;
+                      // Scale the base SVG radius by this ratio
+                      currentRadius = svgBaseRadius * ratio;
+                 }
+             } else {
+                  // Fallback: If no viewBox, approximate radius from rendered size
+                  const svgWidth = svgElement.clientWidth || parseFloat(svgElement.getAttribute('width')) || 100;
+                  const strokeWidth = parseFloat(circle.style.strokeWidth) || parseFloat(circle.getAttribute('stroke-width')) || 8;
+                   // Radius is roughly half the width minus half the stroke width
+                  currentRadius = (svgWidth / 2) - (strokeWidth / 2);
+             }
+         }
+
+
+        const circumference = 2 * Math.PI * currentRadius;
+        circle.style.strokeDasharray = circumference;
+
+        // Apply the dashoffset based on the *current* time left and the newly calculated circumference
+         if (timeLeft > 0 && timeLeft <= 60 && !statusText.textContent.includes('Error') && !statusText.textContent.includes('Waiting')) {
+            const offset = (timeLeft / 60) * circumference;
+            circle.style.strokeDashoffset = offset;
+            circle.style.transition = 'stroke-dashoffset 1s linear'; // Ensure smooth transition during countdown
+         } else {
+             // Reset or leave as is based on state (e.g., full ring initially or on error)
+             circle.style.transition = 'stroke-dashoffset 0s'; // No animation for reset
+             circle.style.strokeDashoffset = circumference; // Visually empty ring
+         }
+    }
+
 
     let fetchInterval, countdownInterval;
     let timeLeft = 60;
+    let messageTimeout; // To manage the copy message display
+
+    async function copyToClipboard(text) {
+        if (!navigator.clipboard) {
+            alert('Clipboard access not available in your browser/environment.');
+            return;
+        }
+        try {
+            await navigator.clipboard.writeText(text);
+            console.log('Text copied to clipboard:', text);
+
+            // Show confirmation message
+            if(copyMessageElement) {
+                clearTimeout(messageTimeout); // Clear any previous timeout
+                copyMessageElement.textContent = `Copied: ${text.substring(0, 50)}${text.length > 50 ? '...' : ''}`; /* Show first 50 chars */
+
+                 // Apply animation classes to trigger the animation
+                 copyMessageElement.style.opacity = '1'; // Make it visible initially
+                 copyMessageElement.style.transform = 'translateX(-50%) translateY(0)'; // Position correctly
+                 copyMessageElement.style.animation = 'none'; // Reset animation
+                 void copyMessageElement.offsetWidth; // Trigger reflow
+                 copyMessageElement.style.animation = 'fadeSlideIn 3s ease-in-out forwards'; // Start animation
+
+            }
+
+        } catch (err) {
+            console.error('Failed to copy text: ', err);
+            alert('Failed to copy text.');
+        }
+    }
+
 
     function startLiveFetch() {
       let code = document.getElementById("serverCode").value.trim();
@@ -214,106 +879,296 @@
       clearInterval(fetchInterval);
       clearInterval(countdownInterval);
 
+      // Add loading class to center box
+      if(centerBox) centerBox.classList.add('loading');
+
+
       fetchServer(code);
-      fetchInterval = setInterval(() => fetchServer(code), 60000);
-      countdownInterval = setInterval(updateCountdown, 1000);
+      // Update every 60 seconds (60000 ms)
+      fetchInterval = setInterval(() => {
+          // Add loading class before fetch
+          if(centerBox) centerBox.classList.add('loading');
+          fetchServer(code);
+          // timeLeft is reset within fetchServer on success
+      }, 60000);
+
+      // Start countdown immediately
       timeLeft = 60;
+      updateCountdown(); // Initial call to display 60 and set ring
+      countdownInterval = setInterval(updateCountdown, 1000); // Update countdown every 1 second
     }
 
     function updateCountdown() {
-      timeLeft--;
-      if (timeLeft < 0) timeLeft = 60;
-      countdownDisplay.textContent = timeLeft;
+        const countdownElement = document.getElementById('countdown');
+        const progressRing = document.querySelector('.progress-ring');
+        if (!countdownElement || !progressRing) return; // Ensure elements exist
+
+        // Get current radius for calculation
+         let currentRadius = svgBaseRadius; // Start with base SVG radius
+         const svgElement = progressRing.closest('svg');
+         if (svgElement) {
+             const viewBox = svgElement.getAttribute('viewBox');
+             if (viewBox) {
+                 const parts = viewBox.split(' ');
+                 const viewBoxWidth = parseFloat(parts[2]);
+                 const svgWidth = svgElement.clientWidth; // Get rendered width
+                  if (svgWidth > 0 && viewBoxWidth > 0) {
+                      const ratio = svgWidth / viewBoxWidth;
+                      currentRadius = svgBaseRadius * ratio; // Scale base radius
+                  }
+             } else {
+                  const svgWidth = svgElement.clientWidth || parseFloat(svgElement.getAttribute('width')) || 100;
+                  const strokeWidth = parseFloat(progressRing.style.strokeWidth) || parseFloat(progressRing.getAttribute('stroke-width')) || 8;
+                  currentRadius = (svgWidth / 2) - (strokeWidth / 2);
+             }
+         }
+
+        const circumference = 2 * Math.PI * currentRadius;
+
+         // Update dasharray in case radius changed due to resize just before tick
+        progressRing.style.strokeDasharray = circumference;
+
+
+        timeLeft--;
+        if (timeLeft < 0) {
+             // Countdown finished, waiting for fetchInterval
+             countdownElement.textContent = '...';
+             progressRing.style.transition = 'stroke-dashoffset 0s'; // No animation when resetting
+             progressRing.style.strokeDashoffset = circumference; // Reset ring (visually empty)
+             // The transition will be reapplied before the next update if needed
+        } else {
+            countdownElement.textContent = timeLeft;
+            // Calculate dashoffset representing remaining time (0s is full ring)
+            const offset = (timeLeft / 60) * circumference;
+            progressRing.style.transition = 'stroke-dashoffset 1s linear'; // Smooth animation
+            progressRing.style.strokeDashoffset = offset;
+        }
     }
+
 
     async function fetchServer(code) {
       const resultDiv = document.getElementById("result");
-      statusText.textContent = "🔄 Checking...";
+      statusText.textContent = "🔄 Fetching data...";
+
+      // Clear previous content instantly before adding new
+       resultDiv.innerHTML = '';
+
+       // Hide fast travel links while fetching
+       if(fastTravelElement) fastTravelElement.classList.remove('visible');
+
+
       try {
         const res = await fetch(`https://servers-frontend.fivem.net/api/servers/single/${code}`);
-        if (!res.ok) throw new Error("Server not found or offline.");
+        if (!res.ok) {
+             if (res.status === 404) throw new Error("Server not found (404). Check the code.");
+             throw new Error(`HTTP error ${res.status}: ${res.statusText}`);
+        }
         const { Data: d } = await res.json();
-        const banner1 = decodeImgProxyUrl(d.vars["banner_connecting"]);
-        const banner2 = decodeImgProxyUrl(d.vars["banner_detail"]);
+
+        // Decode banners safely with better validation
+        const banner1 = d.vars && typeof d.vars["banner_connecting"] === 'string' ? decodeImgProxyUrl(d.vars["banner_connecting"]) : null;
+        const banner2 = d.vars && typeof d.vars["banner_detail"] === 'string' ? decodeImgProxyUrl(d.vars["banner_detail"]) : null;
+
 
         const info = `
           <div class="info">
-            <h2>${d.hostname}</h2>
-            ${banner1 ? `<img src="${banner1}" class="banner">` : ""}
-            ${banner2 ? `<img src="${banner2}" class="banner">` : ""}
-            <p style="font-size: 2rem; font-weight: bold;">Game Type: ${d.gametype}</p>
-            <p style="font-size: 2rem; font-weight: bold;">Map: ${d.mapname}</p>
-            <p style="font-size: 2rem; font-weight: bold;">Players: ${d.clients} / ${d.sv_maxclients}</p>
-            <p style="font-size: 2rem; font-weight: bold;">IP: <code>${d.connectEndPoints?.[0] || "N/A"}</code></p>
-            <p style="font-size: 2rem; font-weight: bold;">Discord: <a href="${d.vars.discord}" target="_blank">${d.vars.discord}</a></p>
-            <p style="font-size: 2rem; font-weight: bold;">Owner: <a href="${d.ownerProfile}" target="_blank">${d.ownerName}</a></p>
+            <h2>${d.hostname || 'Server Name N/A'}</h2>
+            ${banner1 ? `<img src="${banner1}" class="banner" alt="Connecting Banner">` : ""}
+            ${banner2 && banner1 !== banner2 ? `<img src="${banner2}" class="banner" alt="Detail Banner">` : ""}
+            <p style="font-size: 1.8rem; font-weight: bold;">Game Type: ${d.gametype || 'N/A'}</p>
+            <p style="font-size: 1.8rem; font-weight: bold;">Map: ${d.mapname || 'N/A'}</p>
+            <p style="font-size: 1.8rem; font-weight: bold;">Players: ${d.clients !== undefined ? d.clients : 0} / ${d.sv_maxclients !== undefined ? d.sv_maxclients : '?'}</p>
+            <p style="font-size: 1.8rem; font-weight: bold;">IP: <code>${d.connectEndPoints?.[0] || "N/A"}</code></p>
+            <p style="font-size: 1.8rem; font-weight: bold;">Discord: ${d.vars?.discord && typeof d.vars.discord === 'string' && d.vars.discord.startsWith('http') ? `<a href="${d.vars.discord}" target="_blank">${d.vars.discord}</a>` : 'N/A'}</p>
+            <p style="font-size: 1.8rem; font-weight: bold;">Owner: ${d.ownerProfile && d.ownerName && typeof d.ownerProfile === 'string' && d.ownerProfile.startsWith('http') ? `<a href="${d.ownerProfile}" target="_blank">${d.ownerName}</a>` : d.ownerName || 'N/A'}</p>
           </div>
         `;
 
         const players = (d.players || []).map(p =>
-          `<tr><td>${p.name}</td><td>${p.ping} ms</td></tr>`
+          `<tr><td class="copyable">${p.name || 'Unknown'}</td><td>${p.ping !== undefined ? p.ping + ' ms' : 'N/A'}</td></tr>`
         ).join("");
 
         const playerTable = `
           <div class="players">
-            <h2>Players (${d.clients})</h2>
-            <table>
-              <thead><tr><th>Name</th><th>Ping</th></tr></thead>
-              <tbody>${players}</tbody>
-            </table>
+            <h2>Players (${d.clients !== undefined ? d.clients : 0})</h2>
+            ${players.length > 0 ? `
+              <table>
+                <thead><tr><th>Name</th><th>Ping</th></tr></thead>
+                <tbody>${players}</tbody>
+              </table>
+            ` : '<p style="font-size: 1.8rem;">No player data available or server is empty.</p>'}
           </div>
         `;
 
-        const resourceList = d.resources?.slice(0, 100) || [];
-        const resourceListElement = document.createElement('ul');
-        resourceList.forEach(r => {
-          const li = document.createElement('li');
-          li.textContent = r;
-          resourceListElement.appendChild(li);
-        });
+        const resourceList = d.resources || [];
+        const resourceListHtml = resourceList.slice(0, 100).map(r => `<li class="copyable">${r}</li>`).join('');
 
-        const resources = `
-          <div class="resources">
-            <h2>Resources (${d.resources?.length})</h2>
-            <input class="resource-search" type="text" placeholder="Search Resources..." oninput="filterResources(event)" />
-            <div class="resource-list">${resourceListElement.outerHTML}</div>
+         const resources = `
+          <div class="resources" id="resources"> <h2>Resources (${resourceList.length !== undefined ? resourceList.length : 0})</h2>
+            ${resourceList.length > 0 ? `
+              <input class="resource-search" type="text" placeholder="Search Resources..." oninput="filterResources(event)" />
+              <div class="resource-list">
+                <ul id="resourceListItems">${resourceListHtml}</ul>
+                ${resourceList.length > 100 ? '<p>Showing first 100 resources. Use search to filter.</p>' : ''}
+              </div>
+            ` : '<p style="font-size: 1.8rem;">No resource data available.</p>'}
           </div>
         `;
+
 
         resultDiv.innerHTML = info + playerTable + resources;
         statusText.textContent = `✅ Updated: ${new Date().toLocaleTimeString()}`;
+
+        // Add click listeners for copying AFTER content is added
+        addCopyListeners();
+
+        // Show fast travel links if player count is high
+        if (d.clients !== undefined && d.clients > playerThreshold) {
+             if(fastTravelElement) fastTravelElement.classList.add('visible');
+        } else {
+             if(fastTravelElement) fastTravelElement.classList.remove('visible');
+        }
+
+
+        // Remove loading class
+        if(centerBox) centerBox.classList.remove('loading');
+
+
+        // Reset and restart countdown animation on successful fetch
         timeLeft = 60;
-        updateCountdown();
+        updateCountdown(); // Ensure countdown starts from 60 with animation
+        // Clear any existing interval and set a new one just in case
+        clearInterval(countdownInterval);
+        countdownInterval = setInterval(updateCountdown, 1000);
+
       } catch (err) {
-        resultDiv.innerHTML = `<p style="color:red;">❌ Error: ${err.message}</p>`;
+        resultDiv.innerHTML = `<p style="color:#ff6666; font-size: 1.8rem;">❌ Error: ${err.message}</p>`; /* Brighter red error color */
         statusText.textContent = "Error";
+
+         // Hide fast travel links on error
+        if(fastTravelElement) fastTravelElement.classList.remove('visible');
+
+         // Remove loading class on error
+        if(centerBox) centerBox.classList.remove('loading');
+
+
+         // Stop countdown and reset ring on error
+        clearInterval(countdownInterval);
+        const countdownElement = document.getElementById('countdown');
+        if(countdownElement) countdownElement.textContent = '--';
+
+        const progressRing = document.querySelector('.progress-ring');
+         if(progressRing) {
+            // Get current radius to calculate circumference for reset
+             let currentRadius = svgBaseRadius;
+             const svgElement = progressRing.closest('svg');
+             if (svgElement) {
+                 const viewBox = svgElement.getAttribute('viewBox');
+                 if (viewBox) {
+                      const parts = viewBox.split(' ');
+                      const viewBoxWidth = parseFloat(parts[2]);
+                      const svgWidth = svgElement.clientWidth;
+                       if (svgWidth > 0 && viewBoxWidth > 0) {
+                           const ratio = svgWidth / viewBoxWidth;
+                           currentRadius = svgBaseRadius * ratio;
+                       }
+                 } else {
+                      const svgWidth = svgElement.clientWidth || parseFloat(svgElement.getAttribute('width')) || 100;
+                      const strokeWidth = parseFloat(progressRing.style.strokeWidth) || parseFloat(progressRing.getAttribute('stroke-width')) || 8;
+                      currentRadius = (svgWidth / 2) - (strokeWidth / 2);
+                 }
+             }
+
+            const circumference = 2 * Math.PI * currentRadius;
+
+            progressRing.style.transition = 'stroke-dashoffset 0s';
+            progressRing.style.strokeDashoffset = circumference; // Reset ring on error (visually empty)
+             // Stop the pulse animation on error
+             progressRing.style.animation = 'none';
+         }
       }
     }
+
+    function addCopyListeners() {
+        // Add listeners to player names (first td in tbody rows)
+        document.querySelectorAll('.players table tbody tr td:first-child').forEach(td => {
+            td.classList.add('copyable'); /* Add copyable class */
+            // Remove any existing listener to prevent duplicates
+            td.onclick = null;
+            td.onclick = () => copyToClipboard(td.textContent);
+        });
+
+        // Add listeners to resource list items (li)
+        document.querySelectorAll('.resources ul li').forEach(li => {
+             li.classList.add('copyable'); /* Add copyable class */
+             // Remove any existing listener to prevent duplicates
+             li.onclick = null;
+             li.onclick = () => copyToClipboard(li.textContent);
+        });
+    }
+
 
     function decodeImgProxyUrl(proxyUrl) {
       try {
-        const match = proxyUrl.match(/\/aHR0.+$/);
+        if (!proxyUrl || typeof proxyUrl !== 'string') return null;
+        const match = proxyUrl.match(/https:\/\/servers-frontend\.fivem\.net\/image\/.*?\/aHR0.+$/);
         if (!match) return null;
-        const base64 = match[0].slice(1).split("?")[0];
+
+        const base64Part = match[0].split('/aHR0')[1].split("?")[0];
+        let base64 = base64Part;
+        while (base64.length % 4 !== 0) {
+          base64 += '=';
+        }
+
         const decoded = atob(base64);
-        return decoded;
-      } catch {
+
+        if (decoded.startsWith('http://') || decoded.startsWith('https://') || decoded.startsWith('data:image/')) {
+             return decoded;
+        }
+        console.warn("Decoded URL does not look like a valid image source:", decoded);
         return null;
+      } catch(e) {
+         console.error("Failed to decode image proxy URL:", e);
+         return null;
       }
     }
 
+    // This function filters the currently displayed list items.
     function filterResources(event) {
-      const query = event.target.value.toLowerCase();
-      const resourcesList = document.querySelectorAll('.resources ul li');
-      resourcesList.forEach(item => {
-        const text = item.textContent.toLowerCase();
-        if (text.includes(query)) {
-          item.style.display = '';
-        } else {
-          item.style.display = 'none';
+        const query = event.target.value.toLowerCase();
+        const resourceItemsContainer = document.getElementById('resourceListItems');
+
+        if (!resourceItemsContainer) return;
+
+        const items = resourceItemsContainer.getElementsByTagName('li');
+
+        for (let i = 0; i < items.length; i++) {
+            const item = items[i];
+            const text = item.textContent.toLowerCase();
+            if (text.includes(query)) {
+                item.style.display = '';
+            } else {
+                item.style.display = 'none';
+            }
         }
-      });
     }
+
+     // Initial call to set up the ring visually on page load
+     // and listen for resize events to adjust circle dasharray
+     function setupInitialCircleAndListeners() {
+         const progressRingInit = document.querySelector('.progress-ring');
+         if(progressRingInit) {
+            // Set initial dasharray and offset based on current size
+            updateCircleDashoffset();
+         }
+         // Also add resize listener for responsiveness
+         window.addEventListener('resize', updateCircleDashoffset);
+     }
+
+     // Call initial setup on page load
+     setupInitialCircleAndListeners();
+
+
   </script>
 </body>
 </html>
