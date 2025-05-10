@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>FiveM Server Viewer - Dark Background</title>
+  <title>FiveM Server Viewer</title>
 
   <style>
     @font-face {
@@ -12,7 +12,6 @@
       font-weight: bold;
     }
 
-    /* Smooth scrolling for anchor links */
     html {
         scroll-behavior: smooth;
     }
@@ -20,30 +19,28 @@
     * {
       font-family: 'Burbank Big Condensed', sans-serif !important;
       box-sizing: border-box;
-      /* Custom Scrollbar for Webkit browsers */
       &::-webkit-scrollbar {
           width: 10px;
       }
       &::-webkit-scrollbar-track {
-          background: #222; /* Darker scrollbar track */
+          background: #222;
           border-radius: 10px;
       }
       &::-webkit-scrollbar-thumb {
-          background: #00ff77; /* Bright green thumb */
+          background: #00ff77;
           border-radius: 10px;
-          border: 2px solid #222; /* Border to match track */
+          border: 2px solid #222;
       }
        &::-webkit-scrollbar-thumb:hover {
-           background: #00cc55; /* Darker green on hover */
+           background: #00cc55;
        }
     }
 
     body {
-      /* Changed background to dark gradient */
       background: linear-gradient(135deg, #121212 0%, #282828 50%, #121212 100%);
       background-size: 400% 400%;
-      animation: gradientAnimation 20s ease infinite; /* Background animation */
-      color: #ffffff; /* White text */
+      animation: gradientAnimation 20s ease infinite;
+      color: #ffffff;
       padding: 15px;
       margin: 0;
       text-align: center;
@@ -51,8 +48,8 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      position: relative; /* Needed for sparkle overlay */
-      overflow-x: hidden; /* Prevent horizontal scroll from background/effects */
+      position: relative;
+      overflow-x: hidden;
     }
 
     @keyframes gradientAnimation {
@@ -61,7 +58,6 @@
         100% { background-position: 0% 50%; }
     }
 
-     /* Subtle Sparkle Overlay using base64 SVG */
      body::before {
          content: '';
          position: fixed;
@@ -69,13 +65,12 @@
          left: 0;
          width: 100%;
          height: 100%;
-         pointer-events: none; /* Don't block clicks */
-         z-index: -1; /* Below content */
-         /* Example subtle radial sparkle SVG (can be replaced with a pattern or different effect) */
+         pointer-events: none;
+         z-index: -1;
          background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZGVmcz4KICAgIDxyYWRpYWxHcmFkaWVudCBpZD0iZ3JhZGllbnQiIGN4PSI1MCUiIGN5PSI1MCUiIHI9IjUwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNmZmY1Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzhkYThjZiIgc3RvcC1vcGFjaXR5PSIwIi8+CiAgICA8L3JhZGlhbEdyYWRpZW50PgogIDwvZGVmcz4KICA8Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0NSIgZmlsbD0idXJsKCNncmFkaWVudCkiLz4KPC9zdmc+');
          background-size: cover;
-         opacity: 0.1; /* Very subtle */
-         animation: sparkleFade 15s ease-in-out infinite alternate; /* Animation */
+         opacity: 0.1;
+         animation: sparkleFade 15s ease-in-out infinite alternate;
      }
 
      @keyframes sparkleFade {
@@ -85,11 +80,10 @@
      }
 
 
-    /* Animation for sections appearing */
     @keyframes fadeInScale {
       from {
         opacity: 0;
-        transform: scale(0.98); /* Start slightly smaller */
+        transform: scale(0.98);
       }
       to {
         opacity: 1;
@@ -97,8 +91,7 @@
       }
     }
 
-    /* Animation for the loading indicator bar */
-     @keyframes loadingBar {
+    @keyframes loadingBar {
          0% {
              transform: translateX(-100%);
          }
@@ -107,7 +100,6 @@
          }
      }
 
-    /* Animation for the copy message */
     @keyframes fadeSlideIn {
         0% { opacity: 0; transform: translateY(20px); }
         10% { opacity: 1; transform: translateY(0); }
@@ -123,7 +115,7 @@
       margin-top: 30px;
       margin-bottom: 30px;
       letter-spacing: 2px;
-      animation: pulseColor 5s infinite alternate; /* Color pulsing animation */
+      animation: pulseColor 5s infinite alternate;
     }
 
      @keyframes pulseColor {
@@ -145,26 +137,25 @@
       border: 2px solid #ffe600;
       width: 95%;
       max-width: 600px;
-      position: relative; /* Needed for loading bar */
-      overflow: hidden; /* Hide loading bar overflow */
+      position: relative;
+      overflow: hidden;
     }
 
-     /* Loading indicator bar */
     .center-box::before {
         content: '';
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
-        height: 5px; /* Height of the loading bar */
-        background: linear-gradient(90deg, transparent, #00ff77, transparent); /* Gradient bar */
-        animation: loadingBar 1.5s linear infinite; /* Animation */
-        display: none; /* Hidden by default */
-        z-index: 10; /* Above other content */
+        height: 5px;
+        background: linear-gradient(90deg, transparent, #00ff77, transparent);
+        animation: loadingBar 1.5s linear infinite;
+        display: none;
+        z-index: 10;
     }
 
     .center-box.loading::before {
-        display: block; /* Show when loading class is added */
+        display: block;
     }
 
 
@@ -176,30 +167,29 @@
       border-radius: 10px;
       box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.4);
       transition: all 0.2s ease-in-out;
-      transform-origin: center; /* For scale effect */
-      position: relative; /* For shine effect */
-      overflow: hidden; /* Hide shine overflow */
-      z-index: 1; /* Ensure shine is above background */
+      transform-origin: center;
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
     }
 
-     /* Shine effect on inputs and buttons */
      input::after, button::after {
          content: '';
          position: absolute;
          top: 0;
-         left: -100%; /* Start off-screen */
-         width: 50%; /* Width of the shine */
+         left: -100%;
+         width: 50%;
          height: 100%;
-         background: rgba(255, 255, 255, 0.2); /* White semi-transparent */
-         transform: skewX(-20deg); /* Angle the shine */
-         transition: left 0.5s ease-in-out; /* Animation transition */
+         background: rgba(255, 255, 255, 0.2);
+         transform: skewX(-20deg);
+         transition: left 0.5s ease-in-out;
      }
 
      input:hover::after, button:hover::after {
-         left: 150%; /* Move shine across */
-         transition: left 0.5s ease-in-out; /* Shorter transition on hover */
+         left: 150%;
+         transition: left 0.5s ease-in-out;
      }
-      input:focus::after { /* Also shine on input focus */
+      input:focus::after {
          left: 150%;
          transition: left 0.5s ease-in-out;
       }
@@ -208,27 +198,27 @@
     input {
       width: 90%;
       max-width: 400px;
-      background: #2a2a2a; /* Darker input background */
+      background: #2a2a2a;
       color: #fff;
-      border: 2px solid #ffe600; /* Yellow border */
-      outline: none; /* Remove default outline */
+      border: 2px solid #ffe600;
+      outline: none;
     }
 
     input:focus {
         border-color: #00fff7;
-        box-shadow: 3px 3px 0px rgba(0,0,0,0.4), 0 0 10px #00fff7, 0 0 20px rgba(0, 255, 247, 0.3); /* More glow on focus */
+        box-shadow: 3px 3px 0px rgba(0,0,0,0.4), 0 0 10px #00fff7, 0 0 20px rgba(0, 255, 247, 0.3);
     }
 
     button {
-      background-color: #00ff77; /* Bright green button */
-      color: #1a1a1a; /* Dark text */
+      background-color: #00ff77;
+      color: #1a1a1a;
       cursor: pointer;
       font-weight: bold;
-      border: 2px solid #00cc55; /* Darker green border */
-      text-transform: uppercase; /* Uppercase button text */
+      border: 2px solid #00cc55;
+      text-transform: uppercase;
       letter-spacing: 1px;
       padding: 14px 30px;
-      animation: pulseScale 2s infinite ease-in-out; /* Add animation to button */
+      animation: pulseScale 2s infinite ease-in-out;
     }
 
      @keyframes pulseScale {
@@ -240,13 +230,13 @@
 
     button:hover {
       background-color: #00cc55;
-      transform: translate(3px, 3px) scale(1); /* Combine translate and scale */
+      transform: translate(3px, 3px) scale(1);
       box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.4);
-       animation: none; /* Stop pulse animation on hover */
+       animation: none;
     }
 
      button:active {
-         transform: translate(1px, 1px) scale(0.98); /* Press effect with slight scale down */
+         transform: translate(1px, 1px) scale(0.98);
          box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.4);
      }
 
@@ -254,7 +244,7 @@
     .status {
       font-size: 2rem;
       color: #ffffff;
-      margin-top: 30px; /* More margin */
+      margin-top: 30px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -265,7 +255,7 @@
       box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
       border: 2px solid #00fff7;
       flex-wrap: wrap;
-      animation: glowBorder 3s infinite alternate; /* Add glowing border animation */
+      animation: glowBorder 3s infinite alternate;
     }
 
      @keyframes glowBorder {
@@ -289,7 +279,7 @@
       color: #ffe600;
       font-weight: bold;
       text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.3);
-      z-index: 2; /* Above ring */
+      z-index: 2;
     }
 
     svg circle {
@@ -298,20 +288,18 @@
       transform: rotate(-90deg);
       transform-origin: 50% 50%;
       filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.3));
-      z-index: 1; /* Below text */
+      z-index: 1;
     }
 
     .bg-ring {
-      stroke: #333; /* Darker ring background */
+      stroke: #333;
     }
 
     .progress-ring {
-      stroke: #00ff77; /* Bright green progress ring */
-      /* Radius 40, Stroke 8 -> Circumference = 2 * PI * 40. Dasharray based on SVG units. */
+      stroke: #00ff77;
       stroke-dasharray: calc(2 * 3.14159 * 40);
-      stroke-dashoffset: calc(2 * 3.14159 * 40); /* Needs dynamic update based on JS */
-      transition: stroke-dashoffset 1s linear; /* Smooth countdown animation */
-       /* Add subtle pulsing stroke effect */
+      stroke-dashoffset: calc(2 * 3.14159 * 40);
+      transition: stroke-dashoffset 1s linear;
        animation: pulseStroke 1.5s infinite alternate;
     }
 
@@ -320,33 +308,34 @@
          100% { stroke: #00cc55; filter: drop-shadow(0 0 10px rgba(0, 204, 85, 0.7)); }
      }
 
-    /* Styles for result sections */
     .info, .players, .resources {
       margin: 30px auto;
       max-width: 900px;
       width: 95%;
-      background: rgba(0, 0, 0, 0.6); /* Slightly darker box background */
+      background: rgba(0, 0, 0, 0.6);
       padding: 25px;
       border-radius: 15px;
       box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
       text-align: left;
       border: 2px solid #ff0077;
       margin-bottom: 20px;
-      opacity: 0; /* Start hidden for animation */
-      transform: scale(0.98); /* Start slightly smaller */
-      animation: fadeInScale 0.5s ease-out forwards; /* Apply animation */
-      position: relative; /* For potential inner effects */
-      overflow: hidden; /* Hide any overflow effects */
+      opacity: 0;
+      transform: scale(0.98);
+      animation: fadeInScale 0.5s ease-out forwards;
+      position: relative;
+      overflow: hidden;
+       transition: opacity 0.3s ease-in-out;
     }
 
-     /* Add delay to subsequent sections for staggered animation */
      .players { animation-delay: 0.2s; }
      .resources { animation-delay: 0.4s; }
 
-     /* Loading state for result sections */
-     .loading-content {
-         opacity: 0.5; /* Reduce opacity when loading */
-         pointer-events: none; /* Prevent interaction */
+     .loading-content .info,
+     .loading-content .players,
+     .loading-content .resources {
+         opacity: 0.5;
+         pointer-events: none;
+         animation: none;
      }
 
 
@@ -414,14 +403,12 @@
          transform: translateX(5px);
      }
 
-     /* Style for clickable/copyable elements */
      .copyable {
          cursor: pointer;
          position: relative;
      }
 
       .copyable:hover {
-          /* text-decoration: underline dashed #00ff77; */
       }
 
 
@@ -452,7 +439,7 @@
       max-width: 400px;
       font-size: 2rem;
       padding: 14px 25px;
-      background: #2a2a2a; /* Darker search input background */
+      background: #2a2a2a;
       color: #fff;
       border-radius: 10px;
       border: 2px solid #ffe600;
@@ -472,7 +459,6 @@
          margin-top: 10px;
      }
 
-     /* Copy Confirmation Message Style */
      #copy-message {
          position: fixed;
          bottom: 20px;
@@ -484,12 +470,11 @@
          border-radius: 8px;
          font-size: 1.5rem;
          z-index: 1000;
-         opacity: 0; /* Start hidden */
-         pointer-events: none; /* Don't block clicks */
-         animation: fadeSlideIn 3s ease-in-out forwards; /* Applied via JS class */
+         opacity: 0;
+         pointer-events: none;
+         animation: fadeSlideIn 3s ease-in-out forwards;
      }
 
-     /* Fast Travel Links Style */
      #fast-travel {
          position: fixed;
          bottom: 20px;
@@ -498,7 +483,6 @@
          flex-direction: column;
          gap: 10px;
          z-index: 999;
-         /* Controlled by JS */
          opacity: 0;
          visibility: hidden;
          transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
@@ -521,7 +505,7 @@
          padding: 5px 10px;
          border-radius: 5px;
          transition: background-color 0.2s ease, color 0.2s ease;
-         text-shadow: none; /* Remove inherited text-shadow */
+         text-shadow: none;
      }
 
      #fast-travel a:hover {
@@ -531,9 +515,6 @@
      }
 
 
-     /* --- Responsive Design --- */
-
-     /* Tablets and smaller desktops */
     @media (max-width: 992px) {
         h1 {
             font-size: 4rem;
@@ -574,7 +555,6 @@
              stroke-width: 7;
         }
         .progress-ring {
-            /* Recalculate dasharray for radius 35 and stroke 7 */
             stroke-dasharray: calc(2 * 3.14159 * 35);
             stroke-dashoffset: calc(2 * 3.14159 * 35);
         }
@@ -635,7 +615,6 @@
            }
     }
 
-    /* Phones */
     @media (max-width: 576px) {
         h1 {
             font-size: 3rem;
@@ -687,7 +666,6 @@
              stroke-width: 6;
         }
          .progress-ring {
-            /* Recalculate dasharray for radius 30 and stroke 6 */
             stroke-dasharray: calc(2 * 3.14159 * 30);
             stroke-dashoffset: calc(2 * 3.14159 * 30);
         }
@@ -749,20 +727,20 @@
                padding: 3px 6px;
            }
     }
-
-
-     /* --- JavaScript --- */
   </style>
 </head>
 <body>
-  <h1 id="top">FiveM Server Info Viewer</h1> <div class="center-box">
+  <h1 id="top">FiveM Server Info Viewer</h1>
+
+  <div class="center-box">
     <input type="text" id="serverCode" placeholder="(e.g. cfx.re/join/pmdkd8)" />
     <button onclick="startLiveFetch()">Start Monitor</button>
   </div>
 
   <div class="status">
     <div class="countdown-wrapper">
-      <svg width="100%" height="100%" viewBox="0 0 100 100"> <circle class="bg-ring" cx="50" cy="50" r="40"/>
+      <svg width="100%" height="100%" viewBox="0 0 100 100">
+        <circle class="bg-ring" cx="50" cy="50" r="40"/>
         <circle class="progress-ring" cx="50" cy="50" r="40"/>
       </svg>
       <div class="countdown-timer" id="countdown">60</div>
@@ -781,11 +759,9 @@
 
 
   <script>
-    // Radius for SVG calculations - match the 'r' value in the default SVG/CSS
     const svgBaseRadius = 40;
-    // Player count threshold to show fast travel links
-    const playerThreshold = 30; /* Adjust this number as needed */
-
+    const localStorageKey = 'fivemServerCode';
+    const playerThreshold = 30;
 
     const progressCircle = document.querySelector('.progress-ring');
     const countdownDisplay = document.getElementById('countdown');
@@ -793,85 +769,67 @@
     const centerBox = document.querySelector('.center-box');
     const copyMessageElement = document.getElementById('copy-message');
     const fastTravelElement = document.getElementById('fast-travel');
-    const resultDiv = document.getElementById("result"); /* Get result div reference */
+    const resultDiv = document.getElementById("result");
+    const serverCodeInput = document.getElementById("serverCode");
 
-
-    // Set initial dasharray and offset based on the *actual* calculated circumference
-    // This function is called on load and resize to keep the ring scaling correctly
     function updateCircleDashoffset() {
         const circle = document.querySelector('.progress-ring');
         if (!circle) return;
 
-        // Get the current effective radius based on the SVG's rendered size and viewBox
         const svgElement = circle.closest('svg');
-        let currentRadius = svgBaseRadius; // Start with base SVG radius
+        let currentRadius = svgBaseRadius;
          if (svgElement) {
              const viewBox = svgElement.getAttribute('viewBox');
              if (viewBox) {
                  const parts = viewBox.split(' ');
                  const viewBoxWidth = parseFloat(parts[2]);
-                 const svgWidth = svgElement.clientWidth; // Get rendered width
+                 const svgWidth = svgElement.clientWidth;
                  if (svgWidth > 0 && viewBoxWidth > 0) {
-                      // Calculate the ratio of rendered width to viewbox width
                       const ratio = svgWidth / viewBoxWidth;
-                      // Scale the base SVG radius by this ratio
                       currentRadius = svgBaseRadius * ratio;
                  }
              } else {
-                  // Fallback: If no viewBox, approximate radius from rendered size
                   const svgWidth = svgElement.clientWidth || parseFloat(svgElement.getAttribute('width')) || 100;
                   const strokeWidth = parseFloat(circle.style.strokeWidth) || parseFloat(circle.getAttribute('stroke-width')) || 8;
-                   // Radius is roughly half the width minus half the stroke width
                   currentRadius = (svgWidth / 2) - (strokeWidth / 2);
              }
          }
 
-
         const circumference = 2 * Math.PI * currentRadius;
         circle.style.strokeDasharray = circumference;
 
-        // Apply the dashoffset based on the *current* time left and the newly calculated circumference
          if (timeLeft > 0 && timeLeft <= 60 && !statusText.textContent.includes('Error') && !statusText.textContent.includes('Waiting')) {
             const offset = (timeLeft / 60) * circumference;
             circle.style.strokeDashoffset = offset;
-            circle.style.transition = 'stroke-dashoffset 1s linear'; // Ensure smooth transition during countdown
+            circle.style.transition = 'stroke-dashoffset 1s linear';
          } else {
-             // Reset or leave as is based on state (e.g., full ring initially or on error)
-             circle.style.transition = 'stroke-dashoffset 0s'; // No animation for reset
-             circle.style.strokeDashoffset = circumference; // Visually empty ring
+             circle.style.transition = 'stroke-dashoffset 0s';
+             circle.style.strokeDashoffset = circumference;
          }
     }
 
-
     let fetchInterval, countdownInterval;
     let timeLeft = 60;
-    let messageTimeout; // To manage the copy message display
+    let messageTimeout;
 
-    // Function to copy text to clipboard and show confirmation
     async function copyToClipboard(text) {
-        // Check if clipboard API is available
         if (!navigator.clipboard) {
             alert('Clipboard access not available in your browser/environment.');
             return;
         }
         try {
-            // Write text to clipboard
             await navigator.clipboard.writeText(text);
             console.log('Text copied to clipboard:', text);
 
-            // Show confirmation message
             if(copyMessageElement) {
-                clearTimeout(messageTimeout); // Clear any previous timeout
-                // Set message text, truncate if too long
+                clearTimeout(messageTimeout);
                 copyMessageElement.textContent = `Copied: ${text.substring(0, 50)}${text.length > 50 ? '...' : ''}`;
 
-                 // Apply animation classes to trigger the animation
-                 copyMessageElement.style.opacity = '1'; // Make it visible initially
-                 copyMessageElement.style.transform = 'translateX(-50%) translateY(0)'; // Position correctly
-                 copyMessageElement.style.animation = 'none'; // Reset animation
-                 void copyMessageElement.offsetWidth; // Trigger reflow to restart animation
-                 copyMessageElement.style.animation = 'fadeSlideIn 3s ease-in-out forwards'; // Start animation
-
+                 copyMessageElement.style.opacity = '1';
+                 copyMessageElement.style.transform = 'translateX(-50%) translateY(0)';
+                 copyMessageElement.style.animation = 'none';
+                 void copyMessageElement.offsetWidth;
+                 copyMessageElement.style.animation = 'fadeSlideIn 3s ease-in-out forwards';
             }
 
         } catch (err) {
@@ -880,68 +838,59 @@
         }
     }
 
-
-    // Function to start fetching server data periodically
     function startLiveFetch() {
-      let code = document.getElementById("serverCode").value.trim();
+      let code = serverCodeInput ? serverCodeInput.value.trim() : '';
 
-      // Extract server code from a URL if present (cfx.re/join/xxx)
       if (code.includes('cfx.re/join/')) {
         code = code.split('cfx.re/join/')[1];
       }
 
       if (!code) {
           alert("Please enter a valid server code.");
-          return; // Stop if no code
+          return;
       }
 
-      // Clear previous intervals
+      try {
+         localStorage.setItem(localStorageKey, code);
+         console.log("Server code saved to localStorage:", code);
+      } catch (e) {
+          console.error("Failed to save server code to localStorage:", e);
+      }
+
       clearInterval(fetchInterval);
       clearInterval(countdownInterval);
 
-      // Add loading class to center box (for loading bar)
       if(centerBox) centerBox.classList.add('loading');
-      // Add loading class to result div (for reduced opacity)
       if(resultDiv) resultDiv.classList.add('loading-content');
 
-
-      // Initial fetch
       fetchServer(code);
-      // Set interval for periodic updates (every 60 seconds)
       fetchInterval = setInterval(() => {
-          // Add loading class before each fetch
           if(centerBox) centerBox.classList.add('loading');
           if(resultDiv) resultDiv.classList.add('loading-content');
           fetchServer(code);
-          // timeLeft is reset within fetchServer on success
       }, 60000);
 
-      // Start countdown immediately
       timeLeft = 60;
-      updateCountdown(); // Initial call to display 60 and set ring
-      // Set interval for countdown timer (every 1 second)
+      updateCountdown();
       countdownInterval = setInterval(updateCountdown, 1000);
     }
 
-    // Function to update the countdown timer and circle animation
     function updateCountdown() {
         const countdownElement = document.getElementById('countdown');
         const progressRing = document.querySelector('.progress-ring');
-        // Ensure elements exist before trying to update
         if (!countdownElement || !progressRing) return;
 
-        // Get current radius for calculation
-         let currentRadius = svgBaseRadius; // Start with base SVG radius
+         let currentRadius = svgBaseRadius;
          const svgElement = progressRing.closest('svg');
          if (svgElement) {
              const viewBox = svgElement.getAttribute('viewBox');
              if (viewBox) {
                  const parts = viewBox.split(' ');
                  const viewBoxWidth = parseFloat(parts[2]);
-                 const svgWidth = svgElement.clientWidth; // Get rendered width
+                 const svgWidth = svgElement.clientWidth;
                   if (svgWidth > 0 && viewBoxWidth > 0) {
                       const ratio = svgWidth / viewBoxWidth;
-                      currentRadius = svgBaseRadius * ratio; // Scale base radius
+                      currentRadius = svgBaseRadius * ratio;
                   }
              } else {
                   const svgWidth = svgElement.clientWidth || parseFloat(svgElement.getAttribute('width')) || 100;
@@ -952,67 +901,50 @@
 
         const circumference = 2 * Math.PI * currentRadius;
 
-         // Update dasharray in case radius changed due to resize just before tick
         progressRing.style.strokeDasharray = circumference;
-
 
         timeLeft--;
         if (timeLeft < 0) {
-             // Countdown finished, waiting for the next fetchInterval trigger
-             countdownElement.textContent = '...'; // Indicate waiting
-             progressRing.style.transition = 'stroke-dashoffset 0s'; // No animation when resetting
-             progressRing.style.strokeDashoffset = circumference; // Reset ring (visually empty)
-             // Stop pulse animation when countdown finishes
+             countdownElement.textContent = '...';
+             progressRing.style.transition = 'stroke-dashoffset 0s';
+             progressRing.style.strokeDashoffset = circumference;
              progressRing.style.animation = 'none';
-             // The transition will be reapplied before the next update if needed
         } else {
             countdownElement.textContent = timeLeft;
-            // Calculate dashoffset representing remaining time (0s is full ring)
             const offset = (timeLeft / 60) * circumference;
-            progressRing.style.transition = 'stroke-dashoffset 1s linear'; // Smooth animation
+            progressRing.style.transition = 'stroke-dashoffset 1s linear';
             progressRing.style.strokeDashoffset = offset;
-             // Ensure pulse animation is running during countdown
             if (progressRing.style.animationName !== 'pulseStroke') {
                  progressRing.style.animation = 'pulseStroke 1.5s infinite alternate';
             }
         }
     }
 
-
-    // Function to fetch and display server data
     async function fetchServer(code) {
       const resultDiv = document.getElementById("result");
       statusText.textContent = "🔄 Fetching data...";
 
-      // Clear previous content instantly before adding new
       if (resultDiv) resultDiv.innerHTML = '';
 
-       // Hide fast travel links while fetching or if no data is shown
        if(fastTravelElement) fastTravelElement.classList.remove('visible');
 
-
       try {
-        // Fetch data from FiveM API
         const res = await fetch(`https://servers-frontend.fivem.net/api/servers/single/${code}`);
-        // Check if the request was successful
         if (!res.ok) {
              if (res.status === 404) throw new Error("Server not found (404). Check the code.");
              throw new Error(`HTTP error ${res.status}: ${res.statusText}`);
         }
-        // Parse JSON response
         const { Data: d } = await res.json();
 
-        // Decode banners safely with better validation
         const banner1 = (d.vars && typeof d.vars["banner_connecting"] === 'string') ? decodeImgProxyUrl(d.vars["banner_connecting"]) : null;
         const banner2 = (d.vars && typeof d.vars["banner_detail"] === 'string') ? decodeImgProxyUrl(d.vars["banner_detail"]) : null;
 
-
-        // Build HTML for Info section
         const info = `
           <div class="info">
             <h2>${d.hostname || 'Server Name N/A'}</h2>
             ${banner1 ? `<img src="${banner1}" class="banner" alt="Connecting Banner">` : ""}
-            ${banner2 && banner1 !== banner2 ? `<img src="${banner2}" class="banner" alt="Detail Banner">` : ""} <p style="font-size: 1.8rem; font-weight: bold;">Game Type: ${d.gametype || 'N/A'}</p>
+            ${banner2 && banner1 !== banner2 ? `<img src="${banner2}" class="banner" alt="Detail Banner">` : ""}
+            <p style="font-size: 1.8rem; font-weight: bold;">Game Type: ${d.gametype || 'N/A'}</p>
             <p style="font-size: 1.8rem; font-weight: bold;">Map: ${d.mapname || 'N/A'}</p>
             <p style="font-size: 1.8rem; font-weight: bold;">Players: ${d.clients !== undefined ? d.clients : 0} / ${d.sv_maxclients !== undefined ? d.sv_maxclients : '?'}</p>
             <p style="font-size: 1.8rem; font-weight: bold;">IP: <code>${d.connectEndPoints?.[0] || "N/A"}</code></p>
@@ -1021,9 +953,8 @@
           </div>
         `;
 
-        // Build HTML for Players section
         const players = (d.players || []).map(p =>
-          `<tr><td class="copyable">${p.name || 'Unknown'}</td><td>${p.ping !== undefined ? p.ping + ' ms' : 'N/A'}</td></tr>` /* Add copyable class */
+          `<tr><td class="copyable">${p.name || 'Unknown'}</td><td>${p.ping !== undefined ? p.ping + ' ms' : 'N/A'}</td></tr>`
         ).join("");
 
         const playerTable = `
@@ -1038,71 +969,56 @@
           </div>
         `;
 
-        // Build HTML for Resources section (displaying ALL resources)
         const resourceList = d.resources || [];
-        // No .slice(0, 100) here, display all resources as requested
         const resourceListHtml = resourceList.map(r => `<li class="copyable">${r}</li>`).join('');
 
          const resources = `
-          <div class="resources" id="resources"> <h2>Resources (${resourceList.length !== undefined ? resourceList.length : 0})</h2>
+          <div class="resources" id="resources">
+            <h2>Resources (${resourceList.length !== undefined ? resourceList.length : 0})</h2>
             ${resourceList.length > 0 ? `
               <input class="resource-search" type="text" placeholder="Search Resources..." oninput="filterResources(event)" />
               <div class="resource-list">
                 <ul id="resourceListItems">${resourceListHtml}</ul>
-                </div>
+              </div>
             ` : '<p style="font-size: 1.8rem;">No resource data available.</p>'}
           </div>
         `;
 
-        // Set the innerHTML of the result div with all sections
         if (resultDiv) resultDiv.innerHTML = info + playerTable + resources;
 
         statusText.textContent = `✅ Updated: ${new Date().toLocaleTimeString()}`;
 
-        // Add click listeners for copying AFTER content is added to the DOM
         addCopyListeners();
 
-        // Show fast travel links if player count is high
         if (d.clients !== undefined && d.clients > playerThreshold) {
              if(fastTravelElement) fastTravelElement.classList.add('visible');
         } else {
              if(fastTravelElement) fastTravelElement.classList.remove('visible');
         }
 
-
-        // Remove loading classes
         if(centerBox) centerBox.classList.remove('loading');
         if(resultDiv) resultDiv.classList.remove('loading-content');
 
-
-        // Reset and restart countdown animation on successful fetch
         timeLeft = 60;
-        updateCountdown(); // Ensure countdown starts from 60 with animation
-        // Clear any existing interval and set a new one just in case
+        updateCountdown();
         clearInterval(countdownInterval);
         countdownInterval = setInterval(updateCountdown, 1000);
 
       } catch (err) {
-        // Handle errors during fetch
-        if (resultDiv) resultDiv.innerHTML = `<p style="color:#ff6666; font-size: 1.8rem;">❌ Error: ${err.message}</p>`; /* Brighter red error color */
+        if (resultDiv) resultDiv.innerHTML = `<p style="color:#ff6666; font-size: 1.8rem;">❌ Error: ${err.message}</p>`;
         statusText.textContent = "Error";
 
-         // Hide fast travel links on error
         if(fastTravelElement) fastTravelElement.classList.remove('visible');
 
-         // Remove loading classes on error
         if(centerBox) centerBox.classList.remove('loading');
         if(resultDiv) resultDiv.classList.remove('loading-content');
 
-
-         // Stop countdown and reset ring on error
         clearInterval(countdownInterval);
         const countdownElement = document.getElementById('countdown');
         if(countdownElement) countdownElement.textContent = '--';
 
         const progressRing = document.querySelector('.progress-ring');
          if(progressRing) {
-            // Get current radius to calculate circumference for reset
              let currentRadius = svgBaseRadius;
              const svgElement = progressRing.closest('svg');
              if (svgElement) {
@@ -1125,54 +1041,40 @@
             const circumference = 2 * Math.PI * currentRadius;
 
             progressRing.style.transition = 'stroke-dashoffset 0s';
-            progressRing.style.strokeDashoffset = circumference; // Reset ring on error (visually empty)
-             // Stop the pulse animation on error
+            progressRing.style.strokeDashoffset = circumference;
              progressRing.style.animation = 'none';
          }
       }
     }
 
-    // Function to add click listeners for copying names
     function addCopyListeners() {
-        // Add listeners to player names (first td in tbody rows)
         document.querySelectorAll('.players table tbody tr td:first-child').forEach(td => {
-            td.classList.add('copyable'); /* Add copyable class */
-            // Remove any existing listener to prevent duplicates before adding
+            td.classList.add('copyable');
             td.onclick = null;
             td.onclick = () => copyToClipboard(td.textContent);
         });
 
-        // Add listeners to resource list items (li)
         document.querySelectorAll('.resources ul li').forEach(li => {
-             li.classList.add('copyable'); /* Add copyable class */
-             // Remove any existing listener to prevent duplicates before adding
+             li.classList.add('copyable');
              li.onclick = null;
              li.onclick = () => copyToClipboard(li.textContent);
         });
     }
 
-
-    // Function to decode imgproxy URLs to get the original image URL
     function decodeImgProxyUrl(proxyUrl) {
       try {
-        // Basic validation for the input URL
         if (!proxyUrl || typeof proxyUrl !== 'string') return null;
-        // Check if it looks like an imgproxy URL pointing to a base64 encoded URL
         const match = proxyUrl.match(/https:\/\/servers-frontend\.fivem\.net\/image\/.*?\/aHR0.+$/);
-        if (!match) return null; // Does not match the expected pattern
+        if (!match) return null;
 
-        // Extract the base64 encoded part
         const base64Part = match[0].split('/aHR0')[1].split("?")[0];
         let base64 = base64Part;
-        // Add padding if missing (required for atob)
         while (base64.length % 4 !== 0) {
           base64 += '=';
         }
 
-        // Decode the base64 string
         const decoded = atob(base64);
 
-        // Basic validation: Check if the decoded string looks like a URL (http or https) or data URL
         if (decoded.startsWith('http://') || decoded.startsWith('https://') || decoded.startsWith('data:image/')) {
              return decoded;
         }
@@ -1184,46 +1086,43 @@
       }
     }
 
-    // Function to filter the currently displayed resources based on search input
     function filterResources(event) {
         const query = event.target.value.toLowerCase();
         const resourceItemsContainer = document.getElementById('resourceListItems');
 
         if (!resourceItemsContainer) return;
 
-        // Get all list items within the resources section
         const items = resourceItemsContainer.getElementsByTagName('li');
 
-        // Loop through items and show/hide based on query
         for (let i = 0; i < items.length; i++) {
             const item = items[i];
             const text = item.textContent.toLowerCase();
             if (text.includes(query)) {
-                item.style.display = ''; // Show element
+                item.style.display = '';
             } else {
-                item.style.display = 'none'; // Hide element
+                item.style.display = 'none';
             }
         }
-        // Note: Since we are displaying ALL resources, this filter affects all loaded LI elements.
-        // For extremely large resource lists, filtering might become slow client-side.
-        // The copy listeners attached previously will still work on the visible items.
     }
 
-     // Initial call to set up the countdown ring visuals on page load
-     // and listen for resize events to adjust circle dasharray
-     function setupInitialCircleAndListeners() {
+     function loadSavedServerCodeAndFetch() {
+         const savedCode = localStorage.getItem(localStorageKey);
+         if (savedCode && serverCodeInput) {
+             serverCodeInput.value = savedCode;
+             console.log("Loaded server code from localStorage:", savedCode);
+             startLiveFetch();
+         } else {
+             console.log("No saved server code found in localStorage.");
+         }
+
          const progressRingInit = document.querySelector('.progress-ring');
          if(progressRingInit) {
-            // Set initial dasharray and offset based on current size
             updateCircleDashoffset();
          }
-         // Also add resize listener for responsiveness
          window.addEventListener('resize', updateCircleDashoffset);
      }
 
-     // Call initial setup on page load
-     setupInitialCircleAndListeners();
-
+     window.addEventListener('DOMContentLoaded', loadSavedServerCodeAndFetch);
 
   </script>
 </body>
