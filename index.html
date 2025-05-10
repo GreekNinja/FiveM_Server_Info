@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>FiveM Server Viewer</title>
+  <title>FiveM Server Viewer - Dark Background</title>
 
   <style>
     @font-face {
@@ -25,13 +25,13 @@
           width: 10px;
       }
       &::-webkit-scrollbar-track {
-          background: #331a5a; /* Dark purple track */
+          background: #222; /* Darker scrollbar track */
           border-radius: 10px;
       }
       &::-webkit-scrollbar-thumb {
           background: #00ff77; /* Bright green thumb */
           border-radius: 10px;
-          border: 2px solid #331a5a; /* Border to match track */
+          border: 2px solid #222; /* Border to match track */
       }
        &::-webkit-scrollbar-thumb:hover {
            background: #00cc55; /* Darker green on hover */
@@ -39,8 +39,9 @@
     }
 
     body {
-      background: linear-gradient(135deg, #1a0833 0%, #4d1a80 50%, #1a0833 100%); /* Gradient background */
-      background-size: 400% 400%; /* For animation */
+      /* Changed background to dark gradient */
+      background: linear-gradient(135deg, #121212 0%, #282828 50%, #121212 100%);
+      background-size: 400% 400%;
       animation: gradientAnimation 20s ease infinite; /* Background animation */
       color: #ffffff; /* White text */
       padding: 15px;
@@ -207,7 +208,7 @@
     input {
       width: 90%;
       max-width: 400px;
-      background: #3a1a5a; /* Darker purple input */
+      background: #2a2a2a; /* Darker input background */
       color: #fff;
       border: 2px solid #ffe600; /* Yellow border */
       outline: none; /* Remove default outline */
@@ -301,7 +302,7 @@
     }
 
     .bg-ring {
-      stroke: #4a2a6d; /* Dark purple background ring */
+      stroke: #333; /* Darker ring background */
     }
 
     .progress-ring {
@@ -324,7 +325,7 @@
       margin: 30px auto;
       max-width: 900px;
       width: 95%;
-      background: rgba(0, 0, 0, 0.5);
+      background: rgba(0, 0, 0, 0.6); /* Slightly darker box background */
       padding: 25px;
       border-radius: 15px;
       box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
@@ -451,7 +452,7 @@
       max-width: 400px;
       font-size: 2rem;
       padding: 14px 25px;
-      background: #3a1a5a;
+      background: #2a2a2a; /* Darker search input background */
       color: #fff;
       border-radius: 10px;
       border: 2px solid #ffe600;
@@ -929,18 +930,18 @@
         // Ensure elements exist before trying to update
         if (!countdownElement || !progressRing) return;
 
-        // Get current effective radius for calculation
-         let currentRadius = svgBaseRadius;
+        // Get current radius for calculation
+         let currentRadius = svgBaseRadius; // Start with base SVG radius
          const svgElement = progressRing.closest('svg');
          if (svgElement) {
              const viewBox = svgElement.getAttribute('viewBox');
              if (viewBox) {
                  const parts = viewBox.split(' ');
                  const viewBoxWidth = parseFloat(parts[2]);
-                 const svgWidth = svgElement.clientWidth;
+                 const svgWidth = svgElement.clientWidth; // Get rendered width
                   if (svgWidth > 0 && viewBoxWidth > 0) {
                       const ratio = svgWidth / viewBoxWidth;
-                      currentRadius = svgBaseRadius * ratio;
+                      currentRadius = svgBaseRadius * ratio; // Scale base radius
                   }
              } else {
                   const svgWidth = svgElement.clientWidth || parseFloat(svgElement.getAttribute('width')) || 100;
@@ -1039,7 +1040,7 @@
 
         // Build HTML for Resources section (displaying ALL resources)
         const resourceList = d.resources || [];
-        // No .slice(0, 100) here, display all resources
+        // No .slice(0, 100) here, display all resources as requested
         const resourceListHtml = resourceList.map(r => `<li class="copyable">${r}</li>`).join('');
 
          const resources = `
@@ -1176,7 +1177,7 @@
              return decoded;
         }
         console.warn("Decoded URL does not look like a valid image source:", decoded);
-        return null; // Not a valid URL or data URL
+        return null;
       } catch(e) {
          console.error("Failed to decode image proxy URL:", e);
          return null;
@@ -1203,7 +1204,7 @@
                 item.style.display = 'none'; // Hide element
             }
         }
-        // Note: Since we are now displaying ALL resources, this filter affects all loaded LI elements.
+        // Note: Since we are displaying ALL resources, this filter affects all loaded LI elements.
         // For extremely large resource lists, filtering might become slow client-side.
         // The copy listeners attached previously will still work on the visible items.
     }
