@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>FiveM Server Viewer - Fast Travel</title>
+  <title>FiveM Server Viewer</title>
 
   <style>
     @font-face {
@@ -12,8 +12,9 @@
       font-weight: bold;
     }
 
+    /* Smooth scrolling for anchor links */
     html {
-        scroll-behavior: smooth; /* Enable smooth scrolling */
+        scroll-behavior: smooth;
     }
 
     * {
@@ -24,24 +25,24 @@
           width: 10px;
       }
       &::-webkit-scrollbar-track {
-          background: #331a5a;
+          background: #331a5a; /* Dark purple track */
           border-radius: 10px;
       }
       &::-webkit-scrollbar-thumb {
-          background: #00ff77;
+          background: #00ff77; /* Bright green thumb */
           border-radius: 10px;
-          border: 2px solid #331a5a;
+          border: 2px solid #331a5a; /* Border to match track */
       }
        &::-webkit-scrollbar-thumb:hover {
-           background: #00cc55;
+           background: #00cc55; /* Darker green on hover */
        }
     }
 
     body {
-      background: linear-gradient(135deg, #1a0833 0%, #4d1a80 50%, #1a0833 100%);
-      background-size: 400% 400%;
-      animation: gradientAnimation 20s ease infinite;
-      color: #ffffff;
+      background: linear-gradient(135deg, #1a0833 0%, #4d1a80 50%, #1a0833 100%); /* Gradient background */
+      background-size: 400% 400%; /* For animation */
+      animation: gradientAnimation 20s ease infinite; /* Background animation */
+      color: #ffffff; /* White text */
       padding: 15px;
       margin: 0;
       text-align: center;
@@ -49,8 +50,8 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      position: relative;
-      overflow-x: hidden;
+      position: relative; /* Needed for sparkle overlay */
+      overflow-x: hidden; /* Prevent horizontal scroll from background/effects */
     }
 
     @keyframes gradientAnimation {
@@ -59,7 +60,7 @@
         100% { background-position: 0% 50%; }
     }
 
-     /* Subtle Sparkle Overlay */
+     /* Subtle Sparkle Overlay using base64 SVG */
      body::before {
          content: '';
          position: fixed;
@@ -67,12 +68,13 @@
          left: 0;
          width: 100%;
          height: 100%;
-         pointer-events: none;
-         z-index: -1;
+         pointer-events: none; /* Don't block clicks */
+         z-index: -1; /* Below content */
+         /* Example subtle radial sparkle SVG (can be replaced with a pattern or different effect) */
          background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZGVmcz4KICAgIDxyYWRpYWxHcmFkaWVudCBpZD0iZ3JhZGllbnQiIGN4PSI1MCUiIGN5PSI1MCUiIHI9IjUwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNmZmY1Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzhkYThjZiIgc3RvcC1vcGFjaXR5PSIwIi8+CiAgICA8L3JhZGlhbEdyYWRpZW50PgogIDwvZGVmcz4KICA8Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0NSIgZmlsbD0idXJsKCNncmFkaWVudCkiLz4KPC9zdmc+');
          background-size: cover;
-         opacity: 0.1;
-         animation: sparkleFade 15s ease-in-out infinite alternate;
+         opacity: 0.1; /* Very subtle */
+         animation: sparkleFade 15s ease-in-out infinite alternate; /* Animation */
      }
 
      @keyframes sparkleFade {
@@ -86,7 +88,7 @@
     @keyframes fadeInScale {
       from {
         opacity: 0;
-        transform: scale(0.98);
+        transform: scale(0.98); /* Start slightly smaller */
       }
       to {
         opacity: 1;
@@ -120,7 +122,7 @@
       margin-top: 30px;
       margin-bottom: 30px;
       letter-spacing: 2px;
-      animation: pulseColor 5s infinite alternate;
+      animation: pulseColor 5s infinite alternate; /* Color pulsing animation */
     }
 
      @keyframes pulseColor {
@@ -142,8 +144,8 @@
       border: 2px solid #ffe600;
       width: 95%;
       max-width: 600px;
-      position: relative;
-      overflow: hidden;
+      position: relative; /* Needed for loading bar */
+      overflow: hidden; /* Hide loading bar overflow */
     }
 
      /* Loading indicator bar */
@@ -153,15 +155,15 @@
         top: 0;
         left: 0;
         width: 100%;
-        height: 5px;
-        background: linear-gradient(90deg, transparent, #00ff77, transparent);
-        animation: loadingBar 1.5s linear infinite;
-        display: none;
-        z-index: 10;
+        height: 5px; /* Height of the loading bar */
+        background: linear-gradient(90deg, transparent, #00ff77, transparent); /* Gradient bar */
+        animation: loadingBar 1.5s linear infinite; /* Animation */
+        display: none; /* Hidden by default */
+        z-index: 10; /* Above other content */
     }
 
     .center-box.loading::before {
-        display: block;
+        display: block; /* Show when loading class is added */
     }
 
 
@@ -173,10 +175,10 @@
       border-radius: 10px;
       box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.4);
       transition: all 0.2s ease-in-out;
-      transform-origin: center;
-      position: relative;
-      overflow: hidden;
-      z-index: 1;
+      transform-origin: center; /* For scale effect */
+      position: relative; /* For shine effect */
+      overflow: hidden; /* Hide shine overflow */
+      z-index: 1; /* Ensure shine is above background */
     }
 
      /* Shine effect on inputs and buttons */
@@ -184,19 +186,19 @@
          content: '';
          position: absolute;
          top: 0;
-         left: -100%;
-         width: 50%;
+         left: -100%; /* Start off-screen */
+         width: 50%; /* Width of the shine */
          height: 100%;
-         background: rgba(255, 255, 255, 0.2);
-         transform: skewX(-20deg);
-         transition: left 0.5s ease-in-out;
+         background: rgba(255, 255, 255, 0.2); /* White semi-transparent */
+         transform: skewX(-20deg); /* Angle the shine */
+         transition: left 0.5s ease-in-out; /* Animation transition */
      }
 
      input:hover::after, button:hover::after {
-         left: 150%;
-         transition: left 0.5s ease-in-out;
+         left: 150%; /* Move shine across */
+         transition: left 0.5s ease-in-out; /* Shorter transition on hover */
      }
-      input:focus::after {
+      input:focus::after { /* Also shine on input focus */
          left: 150%;
          transition: left 0.5s ease-in-out;
       }
@@ -205,27 +207,27 @@
     input {
       width: 90%;
       max-width: 400px;
-      background: #3a1a5a;
+      background: #3a1a5a; /* Darker purple input */
       color: #fff;
-      border: 2px solid #ffe600;
-      outline: none;
+      border: 2px solid #ffe600; /* Yellow border */
+      outline: none; /* Remove default outline */
     }
 
     input:focus {
         border-color: #00fff7;
-        box-shadow: 3px 3px 0px rgba(0,0,0,0.4), 0 0 10px #00fff7, 0 0 20px rgba(0, 255, 247, 0.3);
+        box-shadow: 3px 3px 0px rgba(0,0,0,0.4), 0 0 10px #00fff7, 0 0 20px rgba(0, 255, 247, 0.3); /* More glow on focus */
     }
 
     button {
-      background-color: #00ff77;
-      color: #1a1a1a;
+      background-color: #00ff77; /* Bright green button */
+      color: #1a1a1a; /* Dark text */
       cursor: pointer;
       font-weight: bold;
-      border: 2px solid #00cc55;
-      text-transform: uppercase;
+      border: 2px solid #00cc55; /* Darker green border */
+      text-transform: uppercase; /* Uppercase button text */
       letter-spacing: 1px;
       padding: 14px 30px;
-      animation: pulseScale 2s infinite ease-in-out;
+      animation: pulseScale 2s infinite ease-in-out; /* Add animation to button */
     }
 
      @keyframes pulseScale {
@@ -237,13 +239,13 @@
 
     button:hover {
       background-color: #00cc55;
-      transform: translate(3px, 3px) scale(1);
+      transform: translate(3px, 3px) scale(1); /* Combine translate and scale */
       box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.4);
-       animation: none;
+       animation: none; /* Stop pulse animation on hover */
     }
 
      button:active {
-         transform: translate(1px, 1px) scale(0.98);
+         transform: translate(1px, 1px) scale(0.98); /* Press effect with slight scale down */
          box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.4);
      }
 
@@ -251,7 +253,7 @@
     .status {
       font-size: 2rem;
       color: #ffffff;
-      margin-top: 30px;
+      margin-top: 30px; /* More margin */
       display: flex;
       justify-content: center;
       align-items: center;
@@ -262,7 +264,7 @@
       box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
       border: 2px solid #00fff7;
       flex-wrap: wrap;
-      animation: glowBorder 3s infinite alternate;
+      animation: glowBorder 3s infinite alternate; /* Add glowing border animation */
     }
 
      @keyframes glowBorder {
@@ -286,7 +288,7 @@
       color: #ffe600;
       font-weight: bold;
       text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.3);
-      z-index: 2;
+      z-index: 2; /* Above ring */
     }
 
     svg circle {
@@ -295,19 +297,20 @@
       transform: rotate(-90deg);
       transform-origin: 50% 50%;
       filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.3));
-      z-index: 1;
+      z-index: 1; /* Below text */
     }
 
     .bg-ring {
-      stroke: #4a2a6d;
+      stroke: #4a2a6d; /* Dark purple background ring */
     }
 
     .progress-ring {
-      stroke: #00ff77;
-      /* Radius 40, Stroke 8 -> Circumference = 2 * PI * 40 */
+      stroke: #00ff77; /* Bright green progress ring */
+      /* Radius 40, Stroke 8 -> Circumference = 2 * PI * 40. Dasharray based on SVG units. */
       stroke-dasharray: calc(2 * 3.14159 * 40);
-      stroke-dashoffset: calc(2 * 3.14159 * 40);
-      transition: stroke-dashoffset 1s linear;
+      stroke-dashoffset: calc(2 * 3.14159 * 40); /* Needs dynamic update based on JS */
+      transition: stroke-dashoffset 1s linear; /* Smooth countdown animation */
+       /* Add subtle pulsing stroke effect */
        animation: pulseStroke 1.5s infinite alternate;
     }
 
@@ -316,7 +319,7 @@
          100% { stroke: #00cc55; filter: drop-shadow(0 0 10px rgba(0, 204, 85, 0.7)); }
      }
 
-
+    /* Styles for result sections */
     .info, .players, .resources {
       margin: 30px auto;
       max-width: 900px;
@@ -328,16 +331,22 @@
       text-align: left;
       border: 2px solid #ff0077;
       margin-bottom: 20px;
-      opacity: 0;
-      transform: scale(0.98);
-      animation: fadeInScale 0.5s ease-out forwards;
-      position: relative;
-      overflow: hidden;
+      opacity: 0; /* Start hidden for animation */
+      transform: scale(0.98); /* Start slightly smaller */
+      animation: fadeInScale 0.5s ease-out forwards; /* Apply animation */
+      position: relative; /* For potential inner effects */
+      overflow: hidden; /* Hide any overflow effects */
     }
 
-     /* Add delay to subsequent sections */
+     /* Add delay to subsequent sections for staggered animation */
      .players { animation-delay: 0.2s; }
      .resources { animation-delay: 0.4s; }
+
+     /* Loading state for result sections */
+     .loading-content {
+         opacity: 0.5; /* Reduce opacity when loading */
+         pointer-events: none; /* Prevent interaction */
+     }
 
 
     h2 {
@@ -474,9 +483,9 @@
          border-radius: 8px;
          font-size: 1.5rem;
          z-index: 1000;
-         opacity: 0;
-         pointer-events: none;
-         animation: fadeSlideIn 3s ease-in-out forwards;
+         opacity: 0; /* Start hidden */
+         pointer-events: none; /* Don't block clicks */
+         animation: fadeSlideIn 3s ease-in-out forwards; /* Applied via JS class */
      }
 
      /* Fast Travel Links Style */
@@ -783,6 +792,7 @@
     const centerBox = document.querySelector('.center-box');
     const copyMessageElement = document.getElementById('copy-message');
     const fastTravelElement = document.getElementById('fast-travel');
+    const resultDiv = document.getElementById("result"); /* Get result div reference */
 
 
     // Set initial dasharray and offset based on the *actual* calculated circumference
@@ -836,25 +846,29 @@
     let timeLeft = 60;
     let messageTimeout; // To manage the copy message display
 
+    // Function to copy text to clipboard and show confirmation
     async function copyToClipboard(text) {
+        // Check if clipboard API is available
         if (!navigator.clipboard) {
             alert('Clipboard access not available in your browser/environment.');
             return;
         }
         try {
+            // Write text to clipboard
             await navigator.clipboard.writeText(text);
             console.log('Text copied to clipboard:', text);
 
             // Show confirmation message
             if(copyMessageElement) {
                 clearTimeout(messageTimeout); // Clear any previous timeout
-                copyMessageElement.textContent = `Copied: ${text.substring(0, 50)}${text.length > 50 ? '...' : ''}`; /* Show first 50 chars */
+                // Set message text, truncate if too long
+                copyMessageElement.textContent = `Copied: ${text.substring(0, 50)}${text.length > 50 ? '...' : ''}`;
 
                  // Apply animation classes to trigger the animation
                  copyMessageElement.style.opacity = '1'; // Make it visible initially
                  copyMessageElement.style.transform = 'translateX(-50%) translateY(0)'; // Position correctly
                  copyMessageElement.style.animation = 'none'; // Reset animation
-                 void copyMessageElement.offsetWidth; // Trigger reflow
+                 void copyMessageElement.offsetWidth; // Trigger reflow to restart animation
                  copyMessageElement.style.animation = 'fadeSlideIn 3s ease-in-out forwards'; // Start animation
 
             }
@@ -866,6 +880,7 @@
     }
 
 
+    // Function to start fetching server data periodically
     function startLiveFetch() {
       let code = document.getElementById("serverCode").value.trim();
 
@@ -874,20 +889,28 @@
         code = code.split('cfx.re/join/')[1];
       }
 
-      if (!code) return alert("Please enter a valid server code.");
+      if (!code) {
+          alert("Please enter a valid server code.");
+          return; // Stop if no code
+      }
 
+      // Clear previous intervals
       clearInterval(fetchInterval);
       clearInterval(countdownInterval);
 
-      // Add loading class to center box
+      // Add loading class to center box (for loading bar)
       if(centerBox) centerBox.classList.add('loading');
+      // Add loading class to result div (for reduced opacity)
+      if(resultDiv) resultDiv.classList.add('loading-content');
 
 
+      // Initial fetch
       fetchServer(code);
-      // Update every 60 seconds (60000 ms)
+      // Set interval for periodic updates (every 60 seconds)
       fetchInterval = setInterval(() => {
-          // Add loading class before fetch
+          // Add loading class before each fetch
           if(centerBox) centerBox.classList.add('loading');
+          if(resultDiv) resultDiv.classList.add('loading-content');
           fetchServer(code);
           // timeLeft is reset within fetchServer on success
       }, 60000);
@@ -895,26 +918,29 @@
       // Start countdown immediately
       timeLeft = 60;
       updateCountdown(); // Initial call to display 60 and set ring
-      countdownInterval = setInterval(updateCountdown, 1000); // Update countdown every 1 second
+      // Set interval for countdown timer (every 1 second)
+      countdownInterval = setInterval(updateCountdown, 1000);
     }
 
+    // Function to update the countdown timer and circle animation
     function updateCountdown() {
         const countdownElement = document.getElementById('countdown');
         const progressRing = document.querySelector('.progress-ring');
-        if (!countdownElement || !progressRing) return; // Ensure elements exist
+        // Ensure elements exist before trying to update
+        if (!countdownElement || !progressRing) return;
 
-        // Get current radius for calculation
-         let currentRadius = svgBaseRadius; // Start with base SVG radius
+        // Get current effective radius for calculation
+         let currentRadius = svgBaseRadius;
          const svgElement = progressRing.closest('svg');
          if (svgElement) {
              const viewBox = svgElement.getAttribute('viewBox');
              if (viewBox) {
                  const parts = viewBox.split(' ');
                  const viewBoxWidth = parseFloat(parts[2]);
-                 const svgWidth = svgElement.clientWidth; // Get rendered width
+                 const svgWidth = svgElement.clientWidth;
                   if (svgWidth > 0 && viewBoxWidth > 0) {
                       const ratio = svgWidth / viewBoxWidth;
-                      currentRadius = svgBaseRadius * ratio; // Scale base radius
+                      currentRadius = svgBaseRadius * ratio;
                   }
              } else {
                   const svgWidth = svgElement.clientWidth || parseFloat(svgElement.getAttribute('width')) || 100;
@@ -931,10 +957,12 @@
 
         timeLeft--;
         if (timeLeft < 0) {
-             // Countdown finished, waiting for fetchInterval
-             countdownElement.textContent = '...';
+             // Countdown finished, waiting for the next fetchInterval trigger
+             countdownElement.textContent = '...'; // Indicate waiting
              progressRing.style.transition = 'stroke-dashoffset 0s'; // No animation when resetting
              progressRing.style.strokeDashoffset = circumference; // Reset ring (visually empty)
+             // Stop pulse animation when countdown finishes
+             progressRing.style.animation = 'none';
              // The transition will be reapplied before the next update if needed
         } else {
             countdownElement.textContent = timeLeft;
@@ -942,40 +970,48 @@
             const offset = (timeLeft / 60) * circumference;
             progressRing.style.transition = 'stroke-dashoffset 1s linear'; // Smooth animation
             progressRing.style.strokeDashoffset = offset;
+             // Ensure pulse animation is running during countdown
+            if (progressRing.style.animationName !== 'pulseStroke') {
+                 progressRing.style.animation = 'pulseStroke 1.5s infinite alternate';
+            }
         }
     }
 
 
+    // Function to fetch and display server data
     async function fetchServer(code) {
       const resultDiv = document.getElementById("result");
       statusText.textContent = "🔄 Fetching data...";
 
       // Clear previous content instantly before adding new
-       resultDiv.innerHTML = '';
+      if (resultDiv) resultDiv.innerHTML = '';
 
-       // Hide fast travel links while fetching
+       // Hide fast travel links while fetching or if no data is shown
        if(fastTravelElement) fastTravelElement.classList.remove('visible');
 
 
       try {
+        // Fetch data from FiveM API
         const res = await fetch(`https://servers-frontend.fivem.net/api/servers/single/${code}`);
+        // Check if the request was successful
         if (!res.ok) {
              if (res.status === 404) throw new Error("Server not found (404). Check the code.");
              throw new Error(`HTTP error ${res.status}: ${res.statusText}`);
         }
+        // Parse JSON response
         const { Data: d } = await res.json();
 
         // Decode banners safely with better validation
-        const banner1 = d.vars && typeof d.vars["banner_connecting"] === 'string' ? decodeImgProxyUrl(d.vars["banner_connecting"]) : null;
-        const banner2 = d.vars && typeof d.vars["banner_detail"] === 'string' ? decodeImgProxyUrl(d.vars["banner_detail"]) : null;
+        const banner1 = (d.vars && typeof d.vars["banner_connecting"] === 'string') ? decodeImgProxyUrl(d.vars["banner_connecting"]) : null;
+        const banner2 = (d.vars && typeof d.vars["banner_detail"] === 'string') ? decodeImgProxyUrl(d.vars["banner_detail"]) : null;
 
 
+        // Build HTML for Info section
         const info = `
           <div class="info">
             <h2>${d.hostname || 'Server Name N/A'}</h2>
             ${banner1 ? `<img src="${banner1}" class="banner" alt="Connecting Banner">` : ""}
-            ${banner2 && banner1 !== banner2 ? `<img src="${banner2}" class="banner" alt="Detail Banner">` : ""}
-            <p style="font-size: 1.8rem; font-weight: bold;">Game Type: ${d.gametype || 'N/A'}</p>
+            ${banner2 && banner1 !== banner2 ? `<img src="${banner2}" class="banner" alt="Detail Banner">` : ""} <p style="font-size: 1.8rem; font-weight: bold;">Game Type: ${d.gametype || 'N/A'}</p>
             <p style="font-size: 1.8rem; font-weight: bold;">Map: ${d.mapname || 'N/A'}</p>
             <p style="font-size: 1.8rem; font-weight: bold;">Players: ${d.clients !== undefined ? d.clients : 0} / ${d.sv_maxclients !== undefined ? d.sv_maxclients : '?'}</p>
             <p style="font-size: 1.8rem; font-weight: bold;">IP: <code>${d.connectEndPoints?.[0] || "N/A"}</code></p>
@@ -984,8 +1020,9 @@
           </div>
         `;
 
+        // Build HTML for Players section
         const players = (d.players || []).map(p =>
-          `<tr><td class="copyable">${p.name || 'Unknown'}</td><td>${p.ping !== undefined ? p.ping + ' ms' : 'N/A'}</td></tr>`
+          `<tr><td class="copyable">${p.name || 'Unknown'}</td><td>${p.ping !== undefined ? p.ping + ' ms' : 'N/A'}</td></tr>` /* Add copyable class */
         ).join("");
 
         const playerTable = `
@@ -1000,8 +1037,10 @@
           </div>
         `;
 
+        // Build HTML for Resources section (displaying ALL resources)
         const resourceList = d.resources || [];
-        const resourceListHtml = resourceList.slice(0, 100).map(r => `<li class="copyable">${r}</li>`).join('');
+        // No .slice(0, 100) here, display all resources
+        const resourceListHtml = resourceList.map(r => `<li class="copyable">${r}</li>`).join('');
 
          const resources = `
           <div class="resources" id="resources"> <h2>Resources (${resourceList.length !== undefined ? resourceList.length : 0})</h2>
@@ -1009,17 +1048,17 @@
               <input class="resource-search" type="text" placeholder="Search Resources..." oninput="filterResources(event)" />
               <div class="resource-list">
                 <ul id="resourceListItems">${resourceListHtml}</ul>
-                ${resourceList.length > 100 ? '<p>Showing first 100 resources. Use search to filter.</p>' : ''}
-              </div>
+                </div>
             ` : '<p style="font-size: 1.8rem;">No resource data available.</p>'}
           </div>
         `;
 
+        // Set the innerHTML of the result div with all sections
+        if (resultDiv) resultDiv.innerHTML = info + playerTable + resources;
 
-        resultDiv.innerHTML = info + playerTable + resources;
         statusText.textContent = `✅ Updated: ${new Date().toLocaleTimeString()}`;
 
-        // Add click listeners for copying AFTER content is added
+        // Add click listeners for copying AFTER content is added to the DOM
         addCopyListeners();
 
         // Show fast travel links if player count is high
@@ -1030,8 +1069,9 @@
         }
 
 
-        // Remove loading class
+        // Remove loading classes
         if(centerBox) centerBox.classList.remove('loading');
+        if(resultDiv) resultDiv.classList.remove('loading-content');
 
 
         // Reset and restart countdown animation on successful fetch
@@ -1042,14 +1082,16 @@
         countdownInterval = setInterval(updateCountdown, 1000);
 
       } catch (err) {
-        resultDiv.innerHTML = `<p style="color:#ff6666; font-size: 1.8rem;">❌ Error: ${err.message}</p>`; /* Brighter red error color */
+        // Handle errors during fetch
+        if (resultDiv) resultDiv.innerHTML = `<p style="color:#ff6666; font-size: 1.8rem;">❌ Error: ${err.message}</p>`; /* Brighter red error color */
         statusText.textContent = "Error";
 
          // Hide fast travel links on error
         if(fastTravelElement) fastTravelElement.classList.remove('visible');
 
-         // Remove loading class on error
+         // Remove loading classes on error
         if(centerBox) centerBox.classList.remove('loading');
+        if(resultDiv) resultDiv.classList.remove('loading-content');
 
 
          // Stop countdown and reset ring on error
@@ -1089,11 +1131,12 @@
       }
     }
 
+    // Function to add click listeners for copying names
     function addCopyListeners() {
         // Add listeners to player names (first td in tbody rows)
         document.querySelectorAll('.players table tbody tr td:first-child').forEach(td => {
             td.classList.add('copyable'); /* Add copyable class */
-            // Remove any existing listener to prevent duplicates
+            // Remove any existing listener to prevent duplicates before adding
             td.onclick = null;
             td.onclick = () => copyToClipboard(td.textContent);
         });
@@ -1101,59 +1144,71 @@
         // Add listeners to resource list items (li)
         document.querySelectorAll('.resources ul li').forEach(li => {
              li.classList.add('copyable'); /* Add copyable class */
-             // Remove any existing listener to prevent duplicates
+             // Remove any existing listener to prevent duplicates before adding
              li.onclick = null;
              li.onclick = () => copyToClipboard(li.textContent);
         });
     }
 
 
+    // Function to decode imgproxy URLs to get the original image URL
     function decodeImgProxyUrl(proxyUrl) {
       try {
+        // Basic validation for the input URL
         if (!proxyUrl || typeof proxyUrl !== 'string') return null;
+        // Check if it looks like an imgproxy URL pointing to a base64 encoded URL
         const match = proxyUrl.match(/https:\/\/servers-frontend\.fivem\.net\/image\/.*?\/aHR0.+$/);
-        if (!match) return null;
+        if (!match) return null; // Does not match the expected pattern
 
+        // Extract the base64 encoded part
         const base64Part = match[0].split('/aHR0')[1].split("?")[0];
         let base64 = base64Part;
+        // Add padding if missing (required for atob)
         while (base64.length % 4 !== 0) {
           base64 += '=';
         }
 
+        // Decode the base64 string
         const decoded = atob(base64);
 
+        // Basic validation: Check if the decoded string looks like a URL (http or https) or data URL
         if (decoded.startsWith('http://') || decoded.startsWith('https://') || decoded.startsWith('data:image/')) {
              return decoded;
         }
         console.warn("Decoded URL does not look like a valid image source:", decoded);
-        return null;
+        return null; // Not a valid URL or data URL
       } catch(e) {
          console.error("Failed to decode image proxy URL:", e);
          return null;
       }
     }
 
-    // This function filters the currently displayed list items.
+    // Function to filter the currently displayed resources based on search input
     function filterResources(event) {
         const query = event.target.value.toLowerCase();
         const resourceItemsContainer = document.getElementById('resourceListItems');
 
         if (!resourceItemsContainer) return;
 
+        // Get all list items within the resources section
         const items = resourceItemsContainer.getElementsByTagName('li');
 
+        // Loop through items and show/hide based on query
         for (let i = 0; i < items.length; i++) {
             const item = items[i];
             const text = item.textContent.toLowerCase();
             if (text.includes(query)) {
-                item.style.display = '';
+                item.style.display = ''; // Show element
             } else {
-                item.style.display = 'none';
+                item.style.display = 'none'; // Hide element
             }
         }
+        // Note: Since we are now displaying ALL resources, this filter affects all loaded LI elements.
+        // For extremely large resource lists, filtering might become slow client-side.
+        // The copy listeners attached previously will still work on the visible items.
     }
 
-     // Initial call to set up the ring visually on page load
+     // Initial call to set up the countdown ring visuals on page load
      // and listen for resize events to adjust circle dasharray
      function setupInitialCircleAndListeners() {
          const progressRingInit = document.querySelector('.progress-ring');
