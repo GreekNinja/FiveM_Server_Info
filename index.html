@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>FiveM Server Viewer</title>
+  <title>FiveM Server Viewer - Search Players</title>
 
   <style>
     @font-face {
@@ -12,6 +12,7 @@
       font-weight: bold;
     }
 
+    /* Smooth scrolling for anchor links */
     html {
         scroll-behavior: smooth;
     }
@@ -19,28 +20,30 @@
     * {
       font-family: 'Burbank Big Condensed', sans-serif !important;
       box-sizing: border-box;
+      /* Custom Scrollbar for Webkit browsers */
       &::-webkit-scrollbar {
           width: 10px;
       }
       &::-webkit-scrollbar-track {
-          background: #222;
+          background: #222; /* Darker scrollbar track */
           border-radius: 10px;
       }
       &::-webkit-scrollbar-thumb {
-          background: #00ff77;
+          background: #00ff77; /* Bright green thumb */
           border-radius: 10px;
-          border: 2px solid #222;
+          border: 2px solid #222; /* Border to match track */
       }
        &::-webkit-scrollbar-thumb:hover {
-           background: #00cc55;
+           background: #00cc55; /* Darker green on hover */
        }
     }
 
     body {
+      /* Changed background to dark gradient */
       background: linear-gradient(135deg, #121212 0%, #282828 50%, #121212 100%);
       background-size: 400% 400%;
-      animation: gradientAnimation 20s ease infinite;
-      color: #ffffff;
+      animation: gradientAnimation 20s ease infinite; /* Background animation */
+      color: #ffffff; /* White text */
       padding: 15px;
       margin: 0;
       text-align: center;
@@ -48,8 +51,8 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      position: relative;
-      overflow-x: hidden;
+      position: relative; /* Needed for sparkle overlay */
+      overflow-x: hidden; /* Prevent horizontal scroll from background/effects */
     }
 
     @keyframes gradientAnimation {
@@ -58,6 +61,7 @@
         100% { background-position: 0% 50%; }
     }
 
+     /* Subtle Sparkle Overlay using base64 SVG */
      body::before {
          content: '';
          position: fixed;
@@ -65,12 +69,13 @@
          left: 0;
          width: 100%;
          height: 100%;
-         pointer-events: none;
-         z-index: -1;
-         background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZGVmcz4KICAgIDxyYWRpYWxHcmFkaWVudCBpZD0iZ3JhZGllbnQiIGN4PSI1MCUiIGN5PSI1MCUiIHI9IjUwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNmZmY1Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzhkYThjZiIgc3RvcC1vcGFjaXR5PSIwIi8+CiAgICA8L3JhZGlhbEdyYWRpZW50PgogIDwvZGVmcz4KICA8Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0NSIgZmlsbD0idXJsKCNncmFkaWVudCkiLz4KPC9zdmc+');
+         pointer-events: none; /* Don't block clicks */
+         z-index: -1; /* Below content */
+         /* Example subtle radial sparkle SVG (can be replaced with a pattern or different effect) */
+         background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZGVmcz4KICAgIDxyYWRpYWxHcmFkaWVudCBpZD0iZ3JhZGllbnQiIGN4PSI1MCUiIGN5PSI1MCUiIHI9IjUwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNmZmY1Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzhkYThjZiIgc3RvcC1vcGFjaXR5PSIwIi8+CiAgICA8L3JhZGlhbEdyYWRpYWxHcmFkaWVudD4KICA8L2RlZnM+CiAgPGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNDUiIGZpbGw9InVybCgjZ3JhZGllbnQpIi8+Cjwvc3ZnPg==');
          background-size: cover;
-         opacity: 0.1;
-         animation: sparkleFade 15s ease-in-out infinite alternate;
+         opacity: 0.1; /* Very subtle */
+         animation: sparkleFade 15s ease-in-out infinite alternate; /* Animation */
      }
 
      @keyframes sparkleFade {
@@ -83,7 +88,7 @@
     @keyframes fadeInScale {
       from {
         opacity: 0;
-        transform: scale(0.98);
+        transform: scale(0.98); /* Start slightly smaller */
       }
       to {
         opacity: 1;
@@ -433,7 +438,8 @@
       color: #00cc55;
     }
 
-    .resource-search {
+    .resource-search,
+    .player-search { /* Added player-search class */
       margin-top: 15px;
       width: 90%;
       max-width: 400px;
@@ -448,7 +454,8 @@
       margin-bottom: 15px;
     }
 
-     .resource-search:focus {
+     .resource-search:focus,
+     .player-search:focus { /* Added player-search focus */
         border-color: #00fff7;
         box-shadow: 3px 3px 0px rgba(0,0,0,0.4), 0 0 10px #00fff7;
      }
@@ -459,6 +466,7 @@
          margin-top: 10px;
      }
 
+     /* Copy Confirmation Message Style */
      #copy-message {
          position: fixed;
          bottom: 20px;
@@ -475,6 +483,7 @@
          animation: fadeSlideIn 3s ease-in-out forwards;
      }
 
+     /* Fast Travel Links Style */
      #fast-travel {
          position: fixed;
          bottom: 20px;
@@ -588,7 +597,8 @@
             border-radius: 10px;
             border-width: 2px;
         }
-         .resource-search {
+         .resource-search,
+         .player-search { /* Added player-search */
              font-size: 1.8rem;
              padding: 12px 20px;
              max-width: 350px;
@@ -700,7 +710,8 @@
             border-radius: 8px;
             border-width: 1px;
         }
-         .resource-search {
+         .resource-search,
+         .player-search { /* Added player-search */
              font-size: 1.6rem;
              padding: 10px 15px;
              width: 100%;
@@ -961,6 +972,7 @@
           <div class="players">
             <h2>Players (${d.clients !== undefined ? d.clients : 0})</h2>
             ${players.length > 0 ? `
+              <input class="player-search" type="text" placeholder="Search Players..." oninput="filterPlayers(event)" />
               <table>
                 <thead><tr><th>Name</th><th>Ping</th></tr></thead>
                 <tbody>${players}</tbody>
@@ -1104,6 +1116,30 @@
             }
         }
     }
+
+    function filterPlayers(event) {
+        const query = event.target.value.toLowerCase();
+        const playerTableBody = document.querySelector('.players table tbody');
+
+        if (!playerTableBody) return;
+
+        const rows = playerTableBody.getElementsByTagName('tr');
+
+        for (let i = 0; i < rows.length; i++) {
+            const row = rows[i];
+            // Get the text content of the first <td> (the player name)
+            const playerNameCell = row.getElementsByTagName('td')[0];
+            if (playerNameCell) {
+                 const text = playerNameCell.textContent.toLowerCase();
+                 if (text.includes(query)) {
+                     row.style.display = ''; // Show row
+                 } else {
+                     row.style.display = 'none'; // Hide row
+                 }
+            }
+        }
+    }
+
 
      function loadSavedServerCodeAndFetch() {
          const savedCode = localStorage.getItem(localStorageKey);
