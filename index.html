@@ -8,7 +8,7 @@
   <style>
     @font-face {
       font-family: 'Burbank Big Condensed';
-      src: url('https://cdn.jsdelivr.net/gh/rafsanbijoy/burbank-font/BurbankBigCondensed-Bold.otf') format('opentype');
+      src: url('https://cdn.jsdelivr.net/gh/rafsanbijoy/burbank-font/BurbankBigCondensed-Bold.otf') format('opentopentype');
       font-weight: bold;
     }
 
@@ -69,7 +69,7 @@
          height: 100%;
          pointer-events: none;
          z-index: -1;
-         background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZGVmcz4KICAgIDxyYWRpYWxHcmFkaWVudCBpZD0iZ3JhZGllbnQiIGN4PSI1MCUiIGN5PSI1MCUiIHI9IjUwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNmZmY1Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzhkYThjZiIgc3RvcC1vcGFjaXR5PSIwIi8+CiAgICA8L3JhZGlhbEdyYWRpYWxHcmFkaWVudD4KICA8L2RlZnM+CiAgPGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNDUiIGZpbGw9InVybCgjZ3JhZGllbnQpIi8+Cjwvc3ZnPg==');
+         background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZGVmcz4KICAgIDxyYWRpYWxHcmFkaWVudCBpZD0iZ3JhZGllbnQiIGN4PSI1MCUiIGN5PSI1MCUiIHI9IjUwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNmZmY1Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzhkYThjZiIgc3RvcC1vcGFjaXR5PSIwIi8+CiAgICA8L3JhZGlhbEdyYWRpZW50PgogIDwvZGVmcz4KICA8Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0NSIgZmlsbD0idXJsKCNncmFkaWVudCkiLz4KPC9zdmc+');
          background-size: cover;
          opacity: 0.1;
          animation: sparkleFade 15s ease-in-out infinite alternate;
@@ -471,6 +471,60 @@
          margin-top: 10px;
      }
 
+     /* Pagination Controls Style */
+     .pagination-controls {
+         margin-top: 20px;
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         gap: 10px;
+         flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+     }
+
+     .pagination-controls button {
+         font-size: 1.5rem; /* Slightly smaller font for pagination */
+         padding: 8px 15px;
+         margin: 2px;
+         background-color: rgba(0, 0, 0, 0.4); /* Darker background */
+         color: #00ff77; /* Green text */
+         border: 1px solid #00cc55; /* Green border */
+         border-radius: 5px;
+         cursor: pointer;
+         transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+         box-shadow: none; /* Remove default button shadow */
+         animation: none; /* Remove default button animation */
+     }
+
+     .pagination-controls button:hover:not(:disabled) {
+         background-color: rgba(0, 255, 119, 0.2); /* Lighter green hover */
+         color: #00ff77;
+         border-color: #00ff77;
+         transform: none; /* Remove hover transform */
+         box-shadow: none;
+     }
+
+     .pagination-controls button:active:not(:disabled) {
+         background-color: rgba(0, 255, 119, 0.4);
+         transform: none;
+         box-shadow: none;
+     }
+
+     .pagination-controls button:disabled {
+         opacity: 0.5;
+         cursor: not-allowed;
+         background-color: rgba(0, 0, 0, 0.2);
+         border-color: rgba(255, 255, 255, 0.1);
+         color: rgba(255, 255, 255, 0.5);
+     }
+
+     .pagination-controls button.active-page {
+         background-color: #00ff77;
+         color: #1a1a1a;
+         border-color: #00ff77;
+         font-weight: bold;
+     }
+
+
      #copy-message {
          position: fixed;
          bottom: 20px;
@@ -612,6 +666,10 @@
          .resources p {
              font-size: 18px;
          }
+         .pagination-controls button {
+             font-size: 1.3rem;
+             padding: 6px 12px;
+         }
          #copy-message {
              font-size: 1.2rem;
              padding: 8px 15px;
@@ -726,6 +784,10 @@
          .resources p {
              font-size: 16px;
          }
+         .pagination-controls button {
+             font-size: 1.2rem;
+             padding: 5px 10px;
+         }
          #copy-message {
              font-size: 1rem;
              padding: 6px 12px;
@@ -779,6 +841,7 @@
     const playerThreshold = 30;
     const updateInterval = 30000; // Set update interval to 30 seconds (in milliseconds)
     const countdownDuration = updateInterval / 1000; // Countdown duration matches interval in seconds
+    const playersPerPage = 10; // Number of players per page
 
 
     const progressCircle = document.querySelector('.progress-ring');
@@ -791,11 +854,13 @@
     const serverCodeInput = document.getElementById("serverCode");
 
     let fetchInterval, countdownInterval;
-    let timeLeft = countdownDuration; // Initialize timeLeft with the new duration
+    let timeLeft = countdownDuration;
     let messageTimeout;
 
     // Variable to store the previously fetched data for comparison
     let previousData = null;
+    let currentPage = 1; // Current page for player pagination
+
 
     // Initial state: Hide sections until data is loaded (handled by JS now)
     document.querySelectorAll('.info, .players, .resources').forEach(section => {
@@ -803,7 +868,7 @@
         section.classList.remove('section-visible'); // Ensure it doesn't have visible class initially
     });
 
-    // Function to update the countdown timer and circle animation (Moved up)
+    // Function to update the countdown timer and circle animation
     function updateCountdown() {
         const countdownElement = document.getElementById('countdown');
         const progressRing = document.querySelector('.progress-ring');
@@ -820,7 +885,7 @@
                   if (svgWidth > 0 && viewBoxWidth > 0) {
                       const ratio = svgWidth / viewBoxWidth;
                       currentRadius = svgBaseRadius * ratio;
-                  }
+                 }
              } else {
                   const svgWidth = svgElement.clientWidth || parseFloat(svgElement.getAttribute('width')) || 100;
                   const strokeWidth = parseFloat(progressRing.style.strokeWidth) || parseFloat(progressRing.getAttribute('stroke-width')) || 8;
@@ -840,7 +905,6 @@
              progressRing.style.animation = 'none';
         } else {
             countdownElement.textContent = timeLeft;
-            // Calculate dashoffset based on the new countdownDuration
             const offset = (timeLeft / countdownDuration) * circumference;
             progressRing.style.transition = 'stroke-dashoffset 1s linear';
             progressRing.style.strokeDashoffset = offset;
@@ -900,14 +964,12 @@
       clearInterval(countdownInterval);
 
       if(centerBox) centerBox.classList.add('loading');
-      // Apply loading state to existing sections if they exist
       document.querySelectorAll('.info, .players, .resources').forEach(section => {
          section.classList.add('loading-content');
       });
 
 
       fetchServer(code);
-      // Use the new updateInterval
       fetchInterval = setInterval(() => {
           if(centerBox) centerBox.classList.add('loading');
            document.querySelectorAll('.info, .players, .resources').forEach(section => {
@@ -916,12 +978,124 @@
           fetchServer(code);
       }, updateInterval);
 
-      timeLeft = countdownDuration; // Reset timeLeft with the new duration
+      timeLeft = countdownDuration;
       updateCountdown();
       countdownInterval = setInterval(updateCountdown, 1000);
     }
 
-    // Function to generate initial HTML structure
+    // Function to generate player table rows HTML for a given set of players
+    function generatePlayerRows(players) {
+        return players.map(p =>
+          `<tr><td class="copyable">${p.name || 'Unknown'}</td><td>${p.ping !== undefined ? p.ping + ' ms' : 'N/A'}</td></tr>`
+        ).join("");
+    }
+
+     // Helper function to generate resource list items HTML
+    function generateResourceItems(resources) {
+        return resources.map(r => `<li class="copyable">${r}</li>`).join('');
+    }
+
+     // Function to display players for a specific page and update pagination controls
+    function displayPlayers(pageNumber) {
+        const playersTableBody = document.getElementById('players-table-body');
+        const paginationControlsDiv = document.getElementById('pagination-controls');
+        const playerSearchInput = document.querySelector('.players .player-search');
+        const playersTable = document.querySelector('.players table');
+        const noPlayersMessage = document.getElementById('no-players-message');
+         const playersSectionTitle = document.getElementById('players-section-title');
+
+
+        if (!previousData || !previousData.players) {
+             // Hide players section elements if no data or players array is empty
+            if(playersTable) playersTable.style.display = 'none';
+            if(playerSearchInput) playerSearchInput.style.display = 'none';
+            if(noPlayersMessage) noPlayersMessage.style.display = ''; // Show no players message
+             if(playersSectionTitle) playersSectionTitle.textContent = 'Players (0)'; // Update title
+            if(paginationControlsDiv) paginationControlsDiv.innerHTML = ''; // Clear pagination
+             return;
+        }
+
+        const players = previousData.players;
+        const totalPlayers = players.length;
+        const totalPages = Math.ceil(totalPlayers / playersPerPage);
+
+        // Ensure pageNumber is valid
+        if (pageNumber < 1) pageNumber = 1;
+        if (totalPages > 0 && pageNumber > totalPages) pageNumber = totalPages;
+        else if (totalPages === 0) pageNumber = 1;
+
+
+        currentPage = pageNumber; // Update current page state
+
+        const startIndex = (currentPage - 1) * playersPerPage;
+        const endIndex = startIndex + playersPerPage;
+        const playersForPage = players.slice(startIndex, endIndex);
+
+        // Generate HTML for the current page's players
+        if(playersTableBody) {
+            playersTableBody.innerHTML = generatePlayerRows(playersForPage);
+        }
+
+        // Generate and update pagination controls HTML
+        let paginationHtml = '';
+        if (totalPages > 1) {
+            paginationHtml += `<button onclick="prevPage()" ${currentPage === 1 ? 'disabled' : ''}>Previous</button>`;
+            for (let i = 1; i <= totalPages; i++) {
+                paginationHtml += `<button class="${i === currentPage ? 'active-page' : ''}" onclick="goToPage(${i})">${i}</button>`;
+            }
+            paginationHtml += `<button onclick="nextPage()" ${currentPage === totalPages ? 'disabled' : ''}>Next</button>`;
+        }
+         if(paginationControlsDiv) {
+            paginationControlsDiv.innerHTML = paginationHtml;
+             paginationControlsDiv.style.display = totalPages > 1 ? '' : 'none'; // Show controls only if more than 1 page
+         }
+
+
+        // Handle visibility of table, search input, and "no players" message
+         if (totalPlayers > 0) {
+             if(playersTable) playersTable.style.display = '';
+             const searchInput = document.querySelector('.players .player-search');
+             if(searchInput) searchInput.style.display = '';
+             if(noPlayersMessage) noPlayersMessage.style.display = 'none';
+              if(playersSectionTitle) playersSectionTitle.textContent = `Players (${totalPlayers})`; // Update title with total count
+         } else {
+              if(playersTable) playersTable.style.display = 'none';
+              const searchInput = document.querySelector('.players .player-search');
+              if(searchInput) searchInput.style.display = 'none';
+              if(noPlayersMessage) noPlayersMessage.style.display = '';
+               if(playersSectionTitle) playersSectionTitle.textContent = 'Players (0)';
+         }
+
+
+        // Re-apply copy listeners to the newly displayed rows
+        addCopyListeners();
+
+        console.log(`Displayed players for page ${currentPage} of ${totalPages}`);
+    }
+
+    // Pagination control functions
+    function goToPage(pageNumber) {
+        if (previousData && previousData.players) {
+            displayPlayers(pageNumber);
+        }
+    }
+
+    function nextPage() {
+         const totalPlayers = previousData?.players?.length || 0;
+         const totalPages = Math.ceil(totalPlayers / playersPerPage);
+        if (currentPage < totalPages) {
+            displayPlayers(currentPage + 1);
+        }
+    }
+
+    function prevPage() {
+        if (currentPage > 1) {
+            displayPlayers(currentPage - 1);
+        }
+    }
+
+
+    // Function to generate initial HTML structure (includes pagination controls div)
     function generateInitialHtml(d) {
         const banner1 = (d.vars && typeof d.vars["banner_connecting"] === 'string') ? decodeImgProxyUrl(d.vars["banner_connecting"]) : null;
         const banner2 = (d.vars && typeof d.vars["banner_detail"] === 'string') ? decodeImgProxyUrl(d.vars["banner_detail"]) : null;
@@ -941,39 +1115,27 @@
 
             <div class="players">
               <h2 id="players-section-title">Players (${d.clients !== undefined ? d.clients : 0})</h2>
-              ${(d.players || []).length > 0 ? `
-                <input class="player-search" type="text" placeholder="Search Players..." oninput="filterPlayers(event)" />
-                <table>
-                  <thead><tr><th>Name</th><th>Ping</th></tr></thead>
-                  <tbody id="players-table-body">${generatePlayerRows(d.players || [])}</tbody>
-                </table>
-                <p style="font-size: 1.8rem; display:none;" id="no-players-message">No player data available or server is empty.</p>
-              ` : `<p style="font-size: 1.8rem;" id="no-players-message">No player data available or server is empty.</p><input class="player-search" type="text" placeholder="Search Players..." oninput="filterPlayers(event)" style="display:none;" /><table style="display:none;"><thead><tr><th>Name</th><th>Ping</th></tr></thead><tbody id="players-table-body"></tbody></table>`}
+               <input class="player-search" type="text" placeholder="Search Players..." oninput="filterPlayers(event)" />
+               <table>
+                <thead><tr><th>Name</th><th>Ping</th></tr></thead>
+                <tbody id="players-table-body">
+                  </tbody>
+              </table>
+              <p style="font-size: 1.8rem; display:none;" id="no-players-message">No player data available or server is empty.</p>
+              <div class="pagination-controls" id="pagination-controls">
+                   </div>
             </div>
 
             <div class="resources" id="resources">
               <h2 id="resources-section-title">Resources (${(d.resources || []).length !== undefined ? (d.resources || []).length : 0})</h2>
-              ${(d.resources || []).length > 0 ? `
-                <input class="resource-search" type="text" placeholder="Search Resources..." oninput="filterResources(event)" />
-                <div class="resource-list" id="resource-list-container">
-                  <ul id="resourceListItems">${generateResourceItems(d.resources || [])}</ul>
-                </div>
-                 <p style="font-size: 1.8rem; display:none;" id="no-resources-message">No resource data available.</p>
-              ` : `<p style="font-size: 1.8rem;" id="no-resources-message">No resource data available.</p><input class="resource-search" type="text" placeholder="Search Resources..." oninput="filterResources(event)" style="display:none;" /><div class="resource-list" id="resource-list-container" style="display:none;"><ul id="resourceListItems"></ul></div>`}
+              <input class="resource-search" type="text" placeholder="Search Resources..." oninput="filterResources(event)" />
+              <div class="resource-list" id="resource-list-container">
+                <ul id="resourceListItems">
+                     </ul>
+              </div>
+               <p style="font-size: 1.8rem; display:none;" id="no-resources-message">No resource data available.</p>
             </div>
          `;
-    }
-
-    // Helper function to generate player table rows HTML
-    function generatePlayerRows(players) {
-        return players.map(p =>
-          `<tr><td class="copyable">${p.name || 'Unknown'}</td><td>${p.ping !== undefined ? p.ping + ' ms' : 'N/A'}</td></tr>`
-        ).join("");
-    }
-
-     // Helper function to generate resource list items HTML
-    function generateResourceItems(resources) {
-        return resources.map(r => `<li class="copyable">${r}</li>`).join('');
     }
 
 
@@ -981,10 +1143,8 @@
     async function fetchServer(code) {
       statusText.textContent = "🔄 Fetching data...";
 
-       // Save current scroll position before any potential DOM update
        const scrollYBeforeUpdate = window.scrollY;
 
-       // Hide fast travel links while fetching or if no data is shown
        if(fastTravelElement) fastTravelElement.classList.remove('visible');
 
 
@@ -996,51 +1156,48 @@
         }
         const { Data: d } = await res.json();
 
-        // --- Perform Granular Updates ---
-        let uiUpdated = false; // Flag to indicate if any part of the UI was updated
+        let uiUpdated = false;
+
+        console.log("Resources received from API:", d.resources ? d.resources.length : 0);
+
 
         if (previousData === null) {
-            // First fetch: Generate all initial HTML and insert
             console.log("First fetch: Generating initial UI.");
             if (resultDiv) resultDiv.innerHTML = generateInitialHtml(d);
-            uiUpdated = true; // UI was definitely updated
+            uiUpdated = true;
 
-            // Show sections with animation after initial generation
             document.querySelectorAll('.info, .players, .resources').forEach((section, index) => {
                 section.classList.remove('section-hidden');
                 section.classList.add('section-visible');
                  section.style.animationDelay = `${index * 0.2}s`;
             });
 
+            previousData = d; // Temporarily set previousData for displayPlayers/Resources
+            displayPlayers(1);
+             const resourceListItems = document.getElementById('resourceListItems');
+             if (resourceListItems) {
+                  resourceListItems.innerHTML = generateResourceItems(d.resources || []);
+             }
         } else {
             // Subsequent fetches: Update only changed elements
 
-            // Info Section Updates
             const hostnameElement = document.getElementById('hostname-display');
-            if (hostnameElement && hostnameElement.textContent !== (d.hostname || 'Server Name N/A')) {
-                hostnameElement.textContent = d.hostname || 'Server Name N/A';
-                 uiUpdated = true;
-            }
+            if (hostnameElement && hostnameElement.textContent !== (d.hostname || 'Server Name N/A')) { hostnameElement.textContent = d.hostname || 'Server Name N/A'; uiUpdated = true;}
              const gametypeElement = document.getElementById('gametype-display');
-             if(gametypeElement && gametypeElement.textContent !== (d.gametype || 'N/A')) {
-                 gametypeElement.textContent = d.gametype || 'N/A';
-                 uiUpdated = true;
-             }
+             if(gametypeElement && gametypeElement.textContent !== (d.gametype || 'N/A')) { gametypeElement.textContent = d.gametype || 'N/A'; uiUpdated = true;}
               const mapnameElement = document.getElementById('mapname-display');
-              if(mapnameElement && mapnameElement.textContent !== (d.mapname || 'N/A')) {
-                 mapnameElement.textContent = d.mapname || 'N/A';
-                 uiUpdated = true;
-             }
+              if(mapnameElement && mapnameElement.textContent !== (d.mapname || 'N/A')) { mapnameElement.textContent = d.mapname || 'N/A'; uiUpdated = true;}
              const playersCountElement = document.getElementById('players-count');
              const maxClientsElement = document.getElementById('maxclients-count');
              if (playersCountElement && maxClientsElement) {
                  const newPlayersText = d.clients !== undefined ? d.clients.toString() : '0';
                  const newMaxClientsText = d.sv_maxclients !== undefined ? d.sv_maxclients.toString() : '?';
-
                  if (playersCountElement.textContent !== newPlayersText) {
                      playersCountElement.textContent = newPlayersText;
                       const playersSectionTitle = document.getElementById('players-section-title');
-                     if(playersSectionTitle) playersSectionTitle.textContent = `Players (${newPlayersText})`;
+                     if(playersSectionTitle && !document.querySelector('.players .player-search').value.trim()) { // Only update title if NOT searching
+                          playersSectionTitle.textContent = `Players (${newPlayersText})`;
+                     }
                      uiUpdated = true;
                  }
                  if (maxClientsElement.textContent !== newMaxClientsText) {
@@ -1051,22 +1208,19 @@
 
              const ipAddressElement = document.getElementById('ip-address');
              const newIpText = d.connectEndPoints?.[0] || "N/A";
-             if(ipAddressElement && ipAddressElement.textContent !== newIpText) {
-                 ipAddressElement.textContent = newIpText;
-                  uiUpdated = true;
-             }
+             if(ipAddressElement && ipAddressElement.textContent !== newIpText) { ipAddressElement.textContent = newIpText; uiUpdated = true;}
 
-             const discordLinkElement = document.getElementById('discord-link');
+             const discordLinkElementContainer = document.getElementById('discord-link');
              const newDiscordHtml = d.vars?.discord && typeof d.vars.discord === 'string' && d.vars.discord.startsWith('http') ? `<a href="${d.vars.discord}" target="_blank">${d.vars.discord}</a>` : 'N/A';
-             if (discordLinkElement && discordLinkElement.innerHTML.trim() !== newDiscordHtml.trim()) {
-                 discordLinkElement.innerHTML = newDiscordHtml;
+             if (discordLinkElementContainer && discordLinkElementContainer.innerHTML.trim() !== newDiscordHtml.trim()) {
+                 discordLinkElementContainer.innerHTML = newDiscordHtml;
                  uiUpdated = true;
              }
 
-             const ownerInfoElement = document.getElementById('owner-info');
+             const ownerInfoElementContainer = document.getElementById('owner-info');
              const newOwnerHtml = d.ownerProfile && d.ownerName && typeof d.ownerProfile === 'string' && d.ownerProfile.startsWith('http') ? `<a href="${d.ownerProfile}" target="_blank">${d.ownerName}</a>` : d.ownerName || 'N/A';
-             if (ownerInfoElement && ownerInfoElement.innerHTML.trim() !== newOwnerHtml.trim()) {
-                 ownerInfoElement.innerHTML = newOwnerHtml;
+             if (ownerInfoElementContainer && ownerInfoElementContainer.innerHTML.trim() !== newOwnerHtml.trim()) {
+                 ownerInfoElementContainer.innerHTML = newOwnerHtml;
                  uiUpdated = true;
              }
 
@@ -1075,7 +1229,6 @@
              const newBanner1Src = (d.vars && typeof d.vars["banner_connecting"] === 'string') ? decodeImgProxyUrl(d.vars["banner_connecting"]) : null;
              const newBanner2Src = (d.vars && typeof d.vars["banner_detail"] === 'string') ? decodeImgProxyUrl(d.vars["banner_detail"]) : null;
 
-             // Update Connecting Banner
              if (bannerConnectingImg) {
                  const banner1SrcChanged = bannerConnectingImg.src !== (newBanner1Src || '');
                  const banner1DisplayChanged = (bannerConnectingImg.style.display === 'none' && newBanner1Src) || (bannerConnectingImg.style.display !== 'none' && !newBanner1Src);
@@ -1086,8 +1239,7 @@
                      uiUpdated = true;
                  }
              }
-              // Update Detail Banner
-             if (bannerDetailImg) {
+              if (bannerDetailImg) {
                  const shouldDisplayBanner2 = newBanner2Src && newBanner1Src !== newBanner2Src;
                  const banner2SrcChanged = bannerDetailImg.src !== (newBanner2Src || '');
                  const banner2DisplayChanged = (bannerDetailImg.style.display === 'none' && shouldDisplayBanner2) || (bannerDetailImg.style.display !== 'none' && !shouldDisplayBanner2);
@@ -1100,80 +1252,92 @@
              }
 
 
-            // Players Table Update (replace tbody if player list HTML changes)
-            const playersTableBody = document.getElementById('players-table-body');
-            const noPlayersMessage = document.getElementById('no-players-message');
-            const playerSearchInput = document.querySelector('.players .player-search');
-            const playersTable = document.querySelector('.players table');
+            // Players Table Update (Check if player list content has changed)
+            const currentPlayersJson = JSON.stringify(previousData.players || []);
+            const newPlayersJson = JSON.stringify(d.players || []);
 
-            const currentPlayersHtml = previousData?.players ? generatePlayerRows(previousData.players) : '';
-            const newPlayersHtml = generatePlayerRows(d.players || []);
+            if (currentPlayersJson !== newPlayersJson) {
+                console.log("Players list content changed.");
+                 // Update previousData.players immediately when the list changes
+                previousData.players = d.players || [];
 
-            if (currentPlayersHtml !== newPlayersHtml) {
-                console.log("Players list structure or content changed, updating table body.");
-                if (playersTableBody) {
-                    playersTableBody.innerHTML = newPlayersHtml;
+                // Recalculate total pages based on new data
+                const newTotalPages = Math.ceil((d.players || []).length / playersPerPage);
+
+                // Adjust currentPage if it's now out of bounds
+                if (currentPage > newTotalPages) {
+                    currentPage = newTotalPages > 0 ? newTotalPages : 1;
+                } else if (currentPage === 0 && newTotalPages > 0) {
+                    currentPage = 1;
                 }
-                // Handle visibility of table, search, and "no players" message
-                 if ((d.players || []).length > 0) {
-                     if(playersTable) playersTable.style.display = '';
-                     if(playerSearchInput) playerSearchInput.style.display = '';
-                     if(noPlayersMessage) noPlayersMessage.style.display = 'none';
-                 } else {
-                      if(playersTable) playersTable.style.display = 'none';
-                      if(playerSearchInput) playerSearchInput.style.display = 'none';
-                      if(noPlayersMessage) noPlayersMessage.style.display = '';
+                 if ((previousData.players?.length || 0) === 0 && (d.players?.length || 0) > 0) {
+                      currentPage = 1;
                  }
-                uiUpdated = true;
+
+                // Call displayPlayers to re-render the table body and pagination controls
+                // based on the new players data and potentially adjusted current page.
+                displayPlayers(currentPage); // displayPlayers will handle UI update for players section
+                uiUpdated = true; // Mark UI as updated
+            } else {
+                 console.log("Players list content unchanged.");
+                 // Even if the list content didn't change, we should still call displayPlayers
+                 // to ensure pagination controls are up-to-date (e.g., if max players changed)
+                 // and to re-apply filters if any.
+                 displayPlayers(currentPage); // This call will update pagination controls if needed and re-apply filter
             }
 
 
-            // Resources List Update (replace ul if resource list HTML changes)
+            // Resources List Update (Check if resource list content has changed)
+            const currentResourcesJson = JSON.stringify(previousData.resources || []);
+            const newResourcesJson = JSON.stringify(d.resources || []);
             const resourceListItems = document.getElementById('resourceListItems');
             const noResourcesMessage = document.getElementById('no-resources-message');
             const resourceSearchInput = document.querySelector('.resources .resource-search');
             const resourceListContainer = document.getElementById('resource-list-container');
 
-            const currentResourcesHtml = previousData?.resources ? generateResourceItems(previousData.resources) : '';
-            const newResourcesHtml = generateResourceItems(d.resources || []);
 
-            if (currentResourcesHtml !== newResourcesHtml) {
+            if (currentResourcesJson !== newResourcesJson) {
                  console.log("Resources list structure or content changed, updating ul.");
+                 previousData.resources = d.resources || [];
+
                 if (resourceListItems) {
-                    resourceListItems.innerHTML = newResourcesHtml;
+                    resourceListItems.innerHTML = generateResourceItems(d.resources || []);
                 }
-                 // Handle visibility of list, search, and "no resources" message
                 if ((d.resources || []).length > 0) {
                     if(resourceListContainer) resourceListContainer.style.display = '';
                     if(resourceSearchInput) resourceSearchInput.style.display = '';
                     if(noResourcesMessage) noResourcesMessage.style.display = 'none';
+                     const resourcesSectionTitle = document.getElementById('resources-section-title');
+                     if(resourcesSectionTitle) resourcesSectionTitle.textContent = `Resources (${(d.resources || []).length})`;
                 } else {
                     if(resourceListContainer) resourceListContainer.style.display = 'none';
                     if(resourceSearchInput) resourceSearchInput.style.display = 'none';
                     if(noResourcesMessage) noResourcesMessage.style.display = '';
+                     const resourcesSectionTitle = document.getElementById('resources-section-title');
+                      if(resourcesSectionTitle) resourcesSectionTitle.textContent = `Resources (0)`;
                 }
 
                 uiUpdated = true;
+            } else {
+                console.log("Resources list content unchanged.");
+                 const resourceSearchInput = document.querySelector('.resources .resource-search');
+                 if (resourceSearchInput && resourceSearchInput.value.trim()) {
+                      filterResources({ target: resourceSearchInput });
+                 }
             }
 
-            // If any part of the UI was updated, re-add copy listeners
-             if(uiUpdated) {
-                 addCopyListeners();
-             }
+
+            // Copy listeners are re-added in the finally block below to ensure they are always active
         }
         // -----------------------------------
 
 
         statusText.textContent = `✅ Updated: ${new Date().toLocaleTimeString()}${uiUpdated ? ' (UI Updated)' : ' (No UI Change)'}`;
 
-        // Restore scroll position AFTER updates
         window.scrollTo(0, scrollYBeforeUpdate);
 
-
-        // Update previousData for the next fetch
         previousData = d;
 
-        // Show fast travel links if player count is high (check against current data)
         if (d.clients !== undefined && d.clients > playerThreshold) {
              if(fastTravelElement) fastTravelElement.classList.add('visible');
         } else {
@@ -1181,36 +1345,30 @@
         }
 
 
-        // Reset and restart countdown animation on successful fetch
-        timeLeft = countdownDuration; // Reset timeLeft with the new duration
+        timeLeft = countdownDuration;
         updateCountdown();
         clearInterval(countdownInterval);
         countdownInterval = setInterval(updateCountdown, 1000);
 
       } catch (err) {
-        // Handle errors during fetch
+        console.error("Fetch error:", err);
         if (resultDiv) {
-             // Clear previous content only on error or first load
-             if (previousData !== null) { // If there was previous successful data, clear it on error
+             if (previousData !== null) {
                   resultDiv.innerHTML = '';
              }
              resultDiv.innerHTML += `<p style="color:#ff6666; font-size: 1.8rem;">❌ Error: ${err.message}</p>`;
-             // Hide previously visible sections on error
               document.querySelectorAll('.info, .players, .resources').forEach(section => {
                  section.classList.remove('section-visible');
                  section.classList.add('section-hidden');
-                 section.style.animationDelay = '0s'; // Remove staggered delay on hide
+                 section.style.animationDelay = '0s';
               });
         }
         statusText.textContent = "Error";
 
-         // Hide fast travel links on error
-        if(fastTravelElement) fastTravelElement.classList.remove('visible');
+         if(fastTravelElement) fastTravelElement.classList.remove('visible');
 
-         // Reset previousData on error so the next successful fetch re-renders everything
         previousData = null;
 
-         // Stop countdown and reset ring on error
         clearInterval(countdownInterval);
         const countdownElement = document.getElementById('countdown');
         if(countdownElement) countdownElement.textContent = '--';
@@ -1244,58 +1402,52 @@
          }
 
       } finally {
-         // Remove loading classes here to ensure they are removed even on error or success
          if(centerBox) centerBox.classList.remove('loading');
           document.querySelectorAll('.info, .players, .resources').forEach(section => {
              section.classList.remove('loading-content');
           });
 
-         // Re-add copy listeners after any potential DOM manipulation (including filters)
+         // Always re-add copy listeners to ensure they work after any DOM manipulation
          addCopyListeners();
       }
     }
 
     function addCopyListeners() {
-        // Add listeners to player names (first td in tbody rows)
         document.querySelectorAll('#players-table-body tr td:first-child').forEach(td => {
             td.classList.add('copyable');
-            td.onclick = null; // Remove existing listener
-            td.onclick = () => copyToClipboard(td.textContent); // Add new listener
+            td.onclick = null;
+            td.onclick = () => copyToClipboard(td.textContent);
         });
 
-        // Add listeners to resource list items (li)
         document.querySelectorAll('#resourceListItems li').forEach(li => {
              li.classList.add('copyable');
-             li.onclick = null; // Remove existing listener
-             li.onclick = () => copyToClipboard(li.textContent); // Add new listener
+             li.onclick = null;
+             li.onclick = () => copyToClipboard(li.textContent);
         });
-         // Add listener to IP address
          const ipCodeElement = document.getElementById('ip-address');
          if (ipCodeElement) {
              ipCodeElement.classList.add('copyable');
-             ipCodeElement.onclick = null; // Remove existing listener
-             ipCodeElement.onclick = () => copyToClipboard(ipCodeElement.textContent); // Add new listener
+             ipCodeElement.onclick = null;
+             ipCodeElement.onclick = () => copyToClipboard(ipCodeElement.textContent);
          }
-         // Add listeners to Discord and Owner links if they are links
          const discordLinkElement = document.querySelector('#discord-link a');
          if (discordLinkElement) {
-             discordLinkElement.classList.add('copyable'); // Treat the link text as copyable too
-             discordLinkElement.onclick = null; // Remove existing listener
+             discordLinkElement.classList.add('copyable');
+             discordLinkElement.onclick = null;
              discordLinkElement.onclick = (e) => {
-                 e.stopPropagation(); // Prevent triggering parent copy if any
-                 copyToClipboard(discordLinkElement.href); // Copy the URL
+                 e.stopPropagation();
+                 copyToClipboard(discordLinkElement.href);
              };
          }
          const ownerLinkElement = document.querySelector('#owner-info a');
          if (ownerLinkElement) {
-             ownerLinkElement.classList.add('copyable'); // Treat the link text as copyable too
-             ownerLinkElement.onclick = null; // Remove existing listener
+             ownerLinkElement.classList.add('copyable');
+             ownerLinkElement.onclick = null;
              ownerLinkElement.onclick = (e) => {
-                 e.stopPropagation(); // Prevent triggering parent copy if any
-                 copyToClipboard(ownerLinkElement.href); // Copy the URL
+                 e.stopPropagation();
+                 copyToClipboard(ownerLinkElement.href);
              };
          }
-
     }
 
     function decodeImgProxyUrl(proxyUrl) {
@@ -1324,44 +1476,114 @@
     }
 
     function filterResources(event) {
-        const query = event.target.value.toLowerCase();
+        const query = event.target.value.toLowerCase().trim();
         const resourceItemsContainer = document.getElementById('resourceListItems');
+         const noResourcesMessage = document.getElementById('no-resources-message');
+         const resourcesSectionTitle = document.getElementById('resources-section-title');
+         const resourceListContainer = document.getElementById('resource-list-container');
 
-        if (!resourceItemsContainer) return;
 
-        const items = resourceItemsContainer.getElementsByTagName('li');
-
-        for (let i = 0; i < items.length; i++) {
-            const item = items[i];
-            const text = item.textContent.toLowerCase();
-            if (text.includes(query)) {
-                item.style.display = '';
-            } else {
-                item.style.display = 'none';
-            }
+        if (!resourceItemsContainer || !noResourcesMessage || !resourcesSectionTitle || !resourceListContainer || !previousData || !previousData.resources) {
+             console.warn("Resource elements or data not found for filtering.");
+             return;
         }
+
+        const allResources = previousData.resources;
+        let filteredResources = [];
+
+        if (query !== "") {
+             filteredResources = allResources.filter(resource =>
+                 resource.toLowerCase().includes(query)
+             );
+        } else {
+             // If query is empty, show all resources again (should be handled by fetch/update logic anyway)
+             filteredResources = allResources;
+        }
+
+
+        // Update the list items
+        resourceItemsContainer.innerHTML = generateResourceItems(filteredResources);
+
+        // Update the title and message based on filtered count
+        resourcesSectionTitle.textContent = `Resources (${filteredResources.length}${query !== "" ? ' found' : ''})`;
+
+        if (filteredResources.length > 0) {
+            noResourcesMessage.style.display = 'none';
+            resourceListContainer.style.display = ''; // Show the list container
+        } else {
+            if (query !== "") {
+                 noResourcesMessage.textContent = `No resources found matching "${query}"`;
+            } else {
+                 noResourcesMessage.textContent = `No resource data available.`;
+            }
+            noResourcesMessage.style.display = '';
+            resourceListContainer.style.display = 'none'; // Hide the list container
+        }
+
+        // Re-add copy listeners
+        addCopyListeners();
     }
 
     function filterPlayers(event) {
-        const query = event.target.value.toLowerCase();
+        const query = event.target.value.toLowerCase().trim();
         const playerTableBody = document.getElementById('players-table-body');
+        const paginationControlsDiv = document.getElementById('pagination-controls');
+        const playersSectionTitle = document.getElementById('players-section-title');
+        const noPlayersMessage = document.getElementById('no-players-message');
+        const playersTable = document.querySelector('.players table');
 
-        if (!playerTableBody) return;
 
-        const rows = playerTableBody.getElementsByTagName('tr');
+        // Need access to ALL players, which are stored in previousData
+        const allPlayers = previousData?.players || [];
 
-        for (let i = 0; i < rows.length; i++) {
-            const row = rows[i];
-            const playerNameCell = row.getElementsByTagName('td')[0];
-            if (playerNameCell) {
-                 const text = playerNameCell.textContent.toLowerCase();
-                 if (text.includes(query)) {
-                     row.style.display = '';
-                 } else {
-                     row.style.display = 'none';
-                 }
-            }
+        if (!playerTableBody || !paginationControlsDiv || !playersSectionTitle || !noPlayersMessage || !playersTable) {
+            console.warn("Player elements not found for filtering.");
+            return;
         }
+
+        if (query === "") {
+            // If search query is empty, restore the current page view
+            console.log("Search query cleared, restoring pagination.");
+             // Call displayPlayers to render the correct page and controls based on current data
+            displayPlayers(currentPage);
+            // addCopyListeners() is called inside displayPlayers
+             // Title will also be updated inside displayPlayers
+            return;
+        }
+
+        // If search query is NOT empty:
+        console.log(`Filtering players with query: "${query}"`);
+        const filteredPlayers = allPlayers.filter(player =>
+            player.name && player.name.toLowerCase().includes(query)
+        );
+
+        // Generate HTML for ONLY the filtered players
+        const filteredPlayersHtml = generatePlayerRows(filteredPlayers);
+
+        // Update the table body with filtered results
+        playerTableBody.innerHTML = filteredPlayersHtml;
+
+        // Hide pagination controls when search is active
+        paginationControlsDiv.innerHTML = ''; // Clear controls
+        paginationControlsDiv.style.display = 'none'; // Hide the div
+
+         // Update the player count in the title to show filtered count
+         playersSectionTitle.textContent = `Players (${filteredPlayers.length} found)`;
+
+         // Show/hide table and "no results" message based on filtered count
+         if (filteredPlayers.length > 0) {
+             playersTable.style.display = '';
+             noPlayersMessage.style.display = 'none';
+         } else {
+             playersTable.style.display = 'none';
+              // Show a specific message for "No matching players" if search is active
+             noPlayersMessage.textContent = `No players found matching "${query}"`;
+             noPlayersMessage.style.display = '';
+         }
+
+
+        // Re-attach copy listeners to the filtered rows
+        addCopyListeners();
     }
 
      function loadSavedServerCodeAndFetch() {
@@ -1379,7 +1601,37 @@
             updateCircleDashoffset();
          }
          window.addEventListener('resize', updateCircleDashoffset);
+
+         document.addEventListener('keydown', handleKeyPress);
      }
+
+     function handleKeyPress(event) {
+        const playerSearchInput = document.querySelector('.players .player-search');
+        // Do not handle arrow keys if search is active or if user is typing
+        if (playerSearchInput && playerSearchInput.value.trim() !== '') {
+             return;
+        }
+         if (event.target.tagName === 'INPUT') {
+             return;
+         }
+
+        const playersSection = document.querySelector('.players');
+        const totalPlayers = previousData?.players?.length || 0;
+        const totalPages = Math.ceil(totalPlayers / playersPerPage);
+
+        if (!playersSection || playersSection.classList.contains('section-hidden') || totalPlayers <= playersPerPage) {
+            return;
+        }
+
+        if (event.key === 'ArrowLeft') {
+            prevPage();
+             event.preventDefault();
+        } else if (event.key === 'ArrowRight') {
+            nextPage();
+             event.preventDefault();
+        }
+     }
+
 
      window.addEventListener('DOMContentLoaded', loadSavedServerCodeAndFetch);
 
