@@ -8,7 +8,7 @@
   <style>
     @font-face {
       font-family: 'Burbank Big Condensed';
-      src: url('https://cdn.jsdelivr.net/gh/rafsanbijoy/burbank-font/BurbankBigCondensed-Bold.otf') format('opentopentype');
+      src: url('https://cdn.jsdelivr.net/gh/rafsanbijoy/burbank-font/BurbankBigCondensed-Bold.otf') format('opentype');
       font-weight: bold;
     }
 
@@ -406,6 +406,9 @@
       margin-bottom: 8px;
       line-height: 1.3;
        transition: color 0.2s ease, transform 0.1s ease;
+       /* Added CSS to prevent overlap in columns */
+       break-inside: avoid-column; /* Prevent list item from breaking across columns */
+       word-break: break-word; /* Break long words if necessary */
     }
 
      li:hover {
@@ -885,7 +888,7 @@
                   if (svgWidth > 0 && viewBoxWidth > 0) {
                       const ratio = svgWidth / viewBoxWidth;
                       currentRadius = svgBaseRadius * ratio;
-                 }
+                  }
              } else {
                   const svgWidth = svgElement.clientWidth || parseFloat(svgElement.getAttribute('width')) || 100;
                   const strokeWidth = parseFloat(progressRing.style.strokeWidth) || parseFloat(progressRing.getAttribute('stroke-width')) || 8;
@@ -1012,6 +1015,7 @@
             if(noPlayersMessage) noPlayersMessage.style.display = ''; // Show no players message
              if(playersSectionTitle) playersSectionTitle.textContent = 'Players (0)'; // Update title
             if(paginationControlsDiv) paginationControlsDiv.innerHTML = ''; // Clear pagination
+             if(paginationControlsDiv) paginationControlsDiv.style.display = 'none';
              return;
         }
 
@@ -1172,12 +1176,18 @@
                  section.style.animationDelay = `${index * 0.2}s`;
             });
 
-            previousData = d; // Temporarily set previousData for displayPlayers/Resources
+            previousData = d;
             displayPlayers(1);
              const resourceListItems = document.getElementById('resourceListItems');
              if (resourceListItems) {
                   resourceListItems.innerHTML = generateResourceItems(d.resources || []);
              }
+              // Apply resource filter on first load if input has text (unlikely but safe)
+             const resourceSearchInput = document.querySelector('.resources .resource-search');
+              if (resourceSearchInput && resourceSearchInput.value.trim()) {
+                   filterResources({ target: resourceSearchInput });
+              }
+
         } else {
             // Subsequent fetches: Update only changed elements
 
@@ -1195,7 +1205,7 @@
                  if (playersCountElement.textContent !== newPlayersText) {
                      playersCountElement.textContent = newPlayersText;
                       const playersSectionTitle = document.getElementById('players-section-title');
-                     if(playersSectionTitle && !document.querySelector('.players .player-search').value.trim()) { // Only update title if NOT searching
+                     if(playersSectionTitle && !document.querySelector('.players .player-search').value.trim()) {
                           playersSectionTitle.textContent = `Players (${newPlayersText})`;
                      }
                      uiUpdated = true;
@@ -1252,19 +1262,16 @@
              }
 
 
-            // Players Table Update (Check if player list content has changed)
+            // Players Update
             const currentPlayersJson = JSON.stringify(previousData.players || []);
             const newPlayersJson = JSON.stringify(d.players || []);
 
             if (currentPlayersJson !== newPlayersJson) {
                 console.log("Players list content changed.");
-                 // Update previousData.players immediately when the list changes
                 previousData.players = d.players || [];
 
-                // Recalculate total pages based on new data
                 const newTotalPages = Math.ceil((d.players || []).length / playersPerPage);
 
-                // Adjust currentPage if it's now out of bounds
                 if (currentPage > newTotalPages) {
                     currentPage = newTotalPages > 0 ? newTotalPages : 1;
                 } else if (currentPage === 0 && newTotalPages > 0) {
@@ -1274,20 +1281,42 @@
                       currentPage = 1;
                  }
 
-                // Call displayPlayers to re-render the table body and pagination controls
-                // based on the new players data and potentially adjusted current page.
-                displayPlayers(currentPage); // displayPlayers will handle UI update for players section
-                uiUpdated = true; // Mark UI as updated
+                displayPlayers(currentPage);
+                uiUpdated = true;
             } else {
                  console.log("Players list content unchanged.");
-                 // Even if the list content didn't change, we should still call displayPlayers
-                 // to ensure pagination controls are up-to-date (e.g., if max players changed)
-                 // and to re-apply filters if any.
-                 displayPlayers(currentPage); // This call will update pagination controls if needed and re-apply filter
+                 // If players didn't change, but search is active, re-apply filter to current DOM
+                 const playerSearchInput = document.querySelector('.players .player-search');
+                 if (playerSearchInput && playerSearchInput.value.trim()) {
+                     filterPlayers({ target: playerSearchInput });
+                      uiUpdated = true; // Mark as updated because filter changed the display
+                 } else {
+                     // If players didn't change and no search, ensure pagination is correct
+                     // (handles cases like max clients changing)
+                     const totalPlayers = previousData?.players?.length || 0;
+                     const newTotalPages = Math.ceil(totalPlayers / playersPerPage);
+                     const paginationControlsDiv = document.getElementById('pagination-controls');
+
+                     if (paginationControlsDiv) {
+                          let paginationHtml = '';
+                          if (newTotalPages > 1) {
+                              paginationHtml += `<button onclick="prevPage()" ${currentPage === 1 ? 'disabled' : ''}>Previous</button>`;
+                              for (let i = 1; i <= newTotalPages; i++) {
+                                  paginationHtml += `<button class="${i === currentPage ? 'active-page' : ''}" onclick="goToPage(${i})">${i}</button>`;
+                              }
+                              paginationHtml += `<button onclick="nextPage()" ${currentPage === newTotalPages ? 'disabled' : ''}>Next</button>`;
+                          }
+                           if (paginationControlsDiv.innerHTML.trim() !== paginationHtml.trim() || paginationControlsDiv.style.display === 'none') {
+                               paginationControlsDiv.innerHTML = paginationHtml;
+                                paginationControlsDiv.style.display = newTotalPages > 1 ? '' : 'none';
+                                uiUpdated = true;
+                           }
+                     }
+                 }
             }
 
 
-            // Resources List Update (Check if resource list content has changed)
+            // Resources Update
             const currentResourcesJson = JSON.stringify(previousData.resources || []);
             const newResourcesJson = JSON.stringify(d.resources || []);
             const resourceListItems = document.getElementById('resourceListItems');
@@ -1303,7 +1332,7 @@
                 if (resourceListItems) {
                     resourceListItems.innerHTML = generateResourceItems(d.resources || []);
                 }
-                if ((d.resources || []).length > 0) {
+                 if ((d.resources || []).length > 0) {
                     if(resourceListContainer) resourceListContainer.style.display = '';
                     if(resourceSearchInput) resourceSearchInput.style.display = '';
                     if(noResourcesMessage) noResourcesMessage.style.display = 'none';
@@ -1323,11 +1352,11 @@
                  const resourceSearchInput = document.querySelector('.resources .resource-search');
                  if (resourceSearchInput && resourceSearchInput.value.trim()) {
                       filterResources({ target: resourceSearchInput });
+                       uiUpdated = true;
                  }
             }
 
 
-            // Copy listeners are re-added in the finally block below to ensure they are always active
         }
         // -----------------------------------
 
@@ -1407,7 +1436,6 @@
              section.classList.remove('loading-content');
           });
 
-         // Always re-add copy listeners to ensure they work after any DOM manipulation
          addCopyListeners();
       }
     }
@@ -1496,20 +1524,16 @@
                  resource.toLowerCase().includes(query)
              );
         } else {
-             // If query is empty, show all resources again (should be handled by fetch/update logic anyway)
              filteredResources = allResources;
         }
 
-
-        // Update the list items
         resourceItemsContainer.innerHTML = generateResourceItems(filteredResources);
 
-        // Update the title and message based on filtered count
         resourcesSectionTitle.textContent = `Resources (${filteredResources.length}${query !== "" ? ' found' : ''})`;
 
         if (filteredResources.length > 0) {
             noResourcesMessage.style.display = 'none';
-            resourceListContainer.style.display = ''; // Show the list container
+            resourceListContainer.style.display = '';
         } else {
             if (query !== "") {
                  noResourcesMessage.textContent = `No resources found matching "${query}"`;
@@ -1517,10 +1541,9 @@
                  noResourcesMessage.textContent = `No resource data available.`;
             }
             noResourcesMessage.style.display = '';
-            resourceListContainer.style.display = 'none'; // Hide the list container
+            resourceListContainer.style.display = 'none';
         }
 
-        // Re-add copy listeners
         addCopyListeners();
     }
 
@@ -1533,7 +1556,6 @@
         const playersTable = document.querySelector('.players table');
 
 
-        // Need access to ALL players, which are stored in previousData
         const allPlayers = previousData?.players || [];
 
         if (!playerTableBody || !paginationControlsDiv || !playersSectionTitle || !noPlayersMessage || !playersTable) {
@@ -1542,47 +1564,38 @@
         }
 
         if (query === "") {
-            // If search query is empty, restore the current page view
             console.log("Search query cleared, restoring pagination.");
-             // Call displayPlayers to render the correct page and controls based on current data
-            displayPlayers(currentPage);
-            // addCopyListeners() is called inside displayPlayers
-             // Title will also be updated inside displayPlayers
+            displayPlayers(currentPage); // Restore paginated view
+             // Title updated inside displayPlayers
+             // Pagination controls visibility handled inside displayPlayers
             return;
         }
 
-        // If search query is NOT empty:
         console.log(`Filtering players with query: "${query}"`);
         const filteredPlayers = allPlayers.filter(player =>
             player.name && player.name.toLowerCase().includes(query)
         );
 
-        // Generate HTML for ONLY the filtered players
         const filteredPlayersHtml = generatePlayerRows(filteredPlayers);
 
-        // Update the table body with filtered results
         playerTableBody.innerHTML = filteredPlayersHtml;
 
         // Hide pagination controls when search is active
-        paginationControlsDiv.innerHTML = ''; // Clear controls
-        paginationControlsDiv.style.display = 'none'; // Hide the div
+        paginationControlsDiv.innerHTML = '';
+        paginationControlsDiv.style.display = 'none';
 
-         // Update the player count in the title to show filtered count
          playersSectionTitle.textContent = `Players (${filteredPlayers.length} found)`;
 
-         // Show/hide table and "no results" message based on filtered count
          if (filteredPlayers.length > 0) {
              playersTable.style.display = '';
              noPlayersMessage.style.display = 'none';
          } else {
              playersTable.style.display = 'none';
-              // Show a specific message for "No matching players" if search is active
              noPlayersMessage.textContent = `No players found matching "${query}"`;
              noPlayersMessage.style.display = '';
          }
 
 
-        // Re-attach copy listeners to the filtered rows
         addCopyListeners();
     }
 
@@ -1607,7 +1620,6 @@
 
      function handleKeyPress(event) {
         const playerSearchInput = document.querySelector('.players .player-search');
-        // Do not handle arrow keys if search is active or if user is typing
         if (playerSearchInput && playerSearchInput.value.trim() !== '') {
              return;
         }
