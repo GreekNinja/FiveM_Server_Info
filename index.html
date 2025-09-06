@@ -1,1797 +1,444 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>FiveM Server Viewer</title>
-
-  <style>
-    @font-face {
-      font-family: 'Burbank Big Condensed';
-      src: url('https://cdn.jsdelivr.net/gh/rafsanbijoy/burbank-font/BurbankBigCondensed-Bold.otf') format('opentype');
-      font-weight: bold;
-    }
-
-    /* Smooth scrolling for anchor links */
-    html {
-        scroll-behavior: smooth;
-    }
-
-    * {
-      font-family: 'Burbank Big Condensed', sans-serif !important;
-      box-sizing: border-box;
-      /* Custom Scrollbar for Webkit browsers */
-      &::-webkit-scrollbar {
-          width: 10px;
-      }
-      &::-webkit-scrollbar-track {
-          background: #222;
-          border-radius: 10px;
-      }
-      &::-webkit-scrollbar-thumb {
-          background: #00ff77;
-          border-radius: 10px;
-          border: 2px solid #222;
-      }
-       &::-webkit-scrollbar-thumb:hover {
-           background: #00cc55;
-       }
-    }
-
-    body {
-      background: linear-gradient(135deg, #121212 0%, #282828 50%, #121212 100%);
-      background-size: 400% 400%;
-      animation: gradientAnimation 20s ease infinite;
-      color: #ffffff;
-      padding: 15px;
-      margin: 0;
-      text-align: center;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      position: relative;
-      overflow-x: hidden;
-    }
-
-    @keyframes gradientAnimation {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-    }
-
-     body::before {
-         content: '';
-         position: fixed;
-         top: 0;
-         left: 0;
-         width: 100%;
-         height: 100%;
-         pointer-events: none;
-         z-index: -1;
-         background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZGVmcz4KICAgIDxyYWRpYWxHcmFkaWVudCBpZD0iZ3JhZGllbnQiIGN4PSI1MCUiIGN5PSI1MCUiIHI9IjUwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNmZmY1Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzhkYThjZiIgc3RvcC1vcGFjaXR5PSIwIi8+CiAgICA8L3JhZGlhbEdyYWRpZW50PgogIDwvZGVmcz4KICA8Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0NSIgZmlsbD0idXJsKCNncmFkaWVudCkiLz4KPC9zdmc+');
-         background-size: cover;
-         opacity: 0.1;
-         animation: sparkleFade 15s ease-in-out infinite alternate;
-     }
-
-     @keyframes sparkleFade {
-         0% { opacity: 0.1; transform: scale(1); }
-         50% { opacity: 0.05; transform: scale(1.05); }
-         100% { opacity: 0.1; transform: scale(1); }
-     }
-
-
-    @keyframes fadeInScale {
-      from {
-        opacity: 0;
-        transform: scale(0.98);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    @keyframes loadingBar {
-         0% {
-             transform: translateX(-100%);
-         }
-         100% {
-             transform: translateX(100%);
-         }
-     }
-
-    @keyframes fadeSlideIn {
-        0% { opacity: 0; transform: translateY(20px); }
-        10% { opacity: 1; transform: translateY(0); }
-        90% { opacity: 1; transform: translateY(0); }
-        100% { opacity: 0; transform: translateY(20px); }
-    }
-
-
-    h1 {
-      font-size: 4.5rem;
-      color: #ffe600;
-      text-shadow: 4px 4px 0px #ff0077, 6px 6px 0px rgba(0,0,0,0.2);
-      margin-top: 30px;
-      margin-bottom: 30px;
-      letter-spacing: 2px;
-      animation: pulseColor 5s infinite alternate;
-    }
-
-     @keyframes pulseColor {
-         0% { color: #ffe600; text-shadow: 4px 4px 0px #ff0077, 6px 6px 0px rgba(0,0,0,0.2), 0 0 15px rgba(255, 230, 0, 0.5); }
-         50% { color: #00fff7; text-shadow: 4px 4px 0px #ff0077, 6px 6px 0px rgba(0,0,0,0.2), 0 0 15px rgba(0, 255, 247, 0.5); }
-         100% { color: #ffe600; text-shadow: 4px 4px 0px #ff0077, 6px 6px 0px rgba(0,0,0,0.2), 0 0 15px rgba(255, 230, 0, 0.5); }
-     }
-
-
-    .center-box {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-top: 15px;
-      background: rgba(0, 0, 0, 0.5);
-      padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6);
-      border: 2px solid #ffe600;
-      width: 95%;
-      max-width: 600px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .center-box::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 5px;
-        background: linear-gradient(90deg, transparent, #00ff77, transparent);
-        animation: loadingBar 1.5s linear infinite;
-        display: none;
-        z-index: 10;
-    }
-
-    .center-box.loading::before {
-        display: block;
-    }
-
-
-    input, button {
-      font-size: 2rem;
-      padding: 14px 25px;
-      margin: 10px;
-      border: none;
-      border-radius: 10px;
-      box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.4);
-      transition: all 0.2s ease-in-out;
-      transform-origin: center;
-      position: relative;
-      overflow: hidden;
-      z-index: 1;
-    }
-
-     input::after, button::after {
-         content: '';
-         position: absolute;
-         top: 0;
-         left: -100%;
-         width: 50%;
-         height: 100%;
-         background: rgba(255, 255, 255, 0.2);
-         transform: skewX(-20deg);
-         transition: left 0.5s ease-in-out;
-     }
-
-     input:hover::after, button:hover::after {
-         left: 150%;
-         transition: left 0.5s ease-in-out;
-     }
-      input:focus::after {
-         left: 150%;
-         transition: left 0.5s ease-in-out;
-      }
-
-
-    input {
-      width: 90%;
-      max-width: 400px;
-      background: #2a2a2a;
-      color: #fff;
-      border: 2px solid #ffe600;
-      outline: none;
-    }
-
-    input:focus {
-        border-color: #00fff7;
-        box-shadow: 3px 3px 0px rgba(0,0,0,0.4), 0 0 10px #00fff7, 0 0 20px rgba(0, 255, 247, 0.3);
-    }
-
-    button {
-      background-color: #00ff77;
-      color: #1a1a1a;
-      cursor: pointer;
-      font-weight: bold;
-      border: 2px solid #00cc55;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      padding: 14px 30px;
-      animation: pulseScale 2s infinite ease-in-out;
-    }
-
-     @keyframes pulseScale {
-         0% { transform: scale(1); box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.4), 0 0 8px rgba(0, 255, 119, 0.3); }
-         50% { transform: scale(1.03); box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.4), 0 0 15px rgba(0, 255, 119, 0.6); }
-         100% { transform: scale(1); box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.4), 0 0 8px rgba(0, 255, 119, 0.3); }
-     }
-
-
-    button:hover {
-      background-color: #00cc55;
-      transform: translate(3px, 3px) scale(1);
-      box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.4);
-       animation: none;
-    }
-
-     button:active {
-         transform: translate(1px, 1px) scale(0.98);
-         box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.4);
-     }
-
-
-    .status {
-      font-size: 2rem;
-      color: #ffffff;
-      margin-top: 30px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 20px;
-      background: rgba(0, 0, 0, 0.5);
-      padding: 20px 30px;
-      border-radius: 15px;
-      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
-      border: 2px solid #00fff7;
-      flex-wrap: wrap;
-      animation: glowBorder 3s infinite alternate;
-    }
-
-     @keyframes glowBorder {
-         0% { border-color: #00fff7; box-shadow: 0 5px 10px rgba(0, 255, 247, 0.4), 0 0 20px rgba(0, 255, 247, 0.2); }
-         100% { border-color: #ffe600; box-shadow: 0 5px 10px rgba(255, 230, 0, 0.4), 0 0 20px rgba(255, 230, 0, 0.2); }
-     }
-
-
-    .countdown-wrapper {
-      position: relative;
-      width: 120px;
-      height: 120px;
-    }
-
-    .countdown-timer {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 2.5rem;
-      color: #ffe600;
-      font-weight: bold;
-      text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.3);
-      z-index: 2;
-    }
-
-    svg circle {
-      fill: none;
-      stroke-width: 8;
-      transform: rotate(-90deg);
-      transform-origin: 50% 50%;
-      filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.3));
-      z-index: 1;
-    }
-
-    .bg-ring {
-      stroke: #333;
-    }
-
-    .progress-ring {
-      stroke: #00ff77;
-      stroke-dasharray: calc(2 * 3.14159 * 40);
-      stroke-dashoffset: calc(2 * 3.14159 * 40);
-      transition: stroke-dashoffset 1s linear;
-       animation: pulseStroke 1.5s infinite alternate;
-    }
-
-     @keyframes pulseStroke {
-         0% { stroke: #00ff77; filter: drop-shadow(0 0 5px rgba(0, 255, 119, 0.5)); }
-         100% { stroke: #00cc55; filter: drop-shadow(0 0 10px rgba(0, 204, 85, 0.7)); }
-     }
-
-    .info, .players, .resources {
-      margin: 30px auto;
-      max-width: 900px;
-      width: 95%;
-      background: rgba(0, 0, 0, 0.6);
-      padding: 25px;
-      border-radius: 15px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-      text-align: left;
-      border: 2px solid #ff0077;
-      margin-bottom: 20px;
-      opacity: 1;
-      transform: scale(1);
-      animation: none;
-      position: relative;
-      overflow: hidden;
-       transition: opacity 0.3s ease-in-out;
-    }
-
-     .section-hidden {
-        opacity: 0;
-        transform: scale(0.98);
-     }
-      .section-visible {
-         opacity: 1;
-         transform: scale(1);
-         animation: fadeInScale 0.5s ease-out forwards;
-      }
-
-
-     .loading-content .info,
-     .loading-content .players,
-     .loading-content .resources {
-         opacity: 0.5;
-         pointer-events: none;
-         animation: none !important;
-     }
-
-
-    h2 {
-      font-size: 3rem;
-      color: #00fff7;
-      text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.2);
-      margin-bottom: 20px;
-      padding-bottom: 8px;
-      border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
-       position: relative;
-       overflow: hidden;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 15px;
-      font-size: 22px;
-    }
-
-    th, td {
-      text-align: left;
-      padding: 14px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      color: #e0e0e0;
-    }
-
-    th {
-        color: #ffffff;
-        font-weight: bold;
-        background-color: rgba(255, 255, 255, 0.1);
-    }
-
-    tr {
-        transition: background-color 0.2s ease;
-    }
-
-    tr:nth-child(even) {
-        background-color: rgba(255, 255, 255, 0.05);
-    }
-
-     tr:hover {
-         background-color: rgba(0, 255, 119, 0.2);
-     }
-
-
-    ul {
-      columns: 3;
-      padding-left: 25px;
-      font-size: 22px;
-      list-style: disc;
-      color: #e0e0e0;
-      column-gap: 30px;
-    }
-
-    li {
-      margin-bottom: 8px;
-      line-height: 1.3;
-       transition: color 0.2s ease, transform 0.1s ease;
-       /* Added CSS to prevent overlap in columns */
-       break-inside: avoid-column; /* Prevent list item from breaking across columns */
-       word-break: break-word; /* Break long words if necessary */
-    }
-
-     li:hover {
-         color: #00ff77;
-         transform: translateX(5px);
-     }
-
-     .copyable {
-         cursor: pointer;
-         position: relative;
-     }
-
-      .copyable:hover {
-      }
-
-
-    img.banner {
-      max-width: 100%;
-      height: auto;
-      margin-top: 20px;
-      border-radius: 12px;
-      border: 3px solid #ff0077;
-      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
-    }
-
-    a {
-      color: #00ff77;
-      text-decoration: none;
-      font-weight: bold;
-      transition: color 0.2s ease-in-out, text-decoration 0.2s ease-in-out;
-    }
-
-    a:hover {
-      text-decoration: underline;
-      color: #00cc55;
-    }
-
-    .resource-search,
-    .player-search {
-      margin-top: 15px;
-      width: 90%;
-      max-width: 400px;
-      font-size: 2rem;
-      padding: 14px 25px;
-      background: #2a2a2a;
-      color: #fff;
-      border-radius: 10px;
-      border: 2px solid #ffe600;
-      box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.4);
-      outline: none;
-      margin-bottom: 15px;
-    }
-
-     .resource-search:focus,
-     .player-search:focus {
-        border-color: #00fff7;
-        box-shadow: 3px 3px 0px rgba(0,0,0,0.4), 0 0 10px #00fff7;
-     }
-
-     .resources p {
-         font-size: 20px;
-         color: #aaa;
-         margin-top: 10px;
-     }
-
-     /* Pagination Controls Style */
-     .pagination-controls {
-         margin-top: 20px;
-         display: flex;
-         justify-content: center;
-         align-items: center;
-         gap: 10px;
-         flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
-     }
-
-     .pagination-controls button {
-         font-size: 1.5rem; /* Slightly smaller font for pagination */
-         padding: 8px 15px;
-         margin: 2px;
-         background-color: rgba(0, 0, 0, 0.4); /* Darker background */
-         color: #00ff77; /* Green text */
-         border: 1px solid #00cc55; /* Green border */
-         border-radius: 5px;
-         cursor: pointer;
-         transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-         box-shadow: none; /* Remove default button shadow */
-         animation: none; /* Remove default button animation */
-     }
-
-     .pagination-controls button:hover:not(:disabled) {
-         background-color: rgba(0, 255, 119, 0.2); /* Lighter green hover */
-         color: #00ff77;
-         border-color: #00ff77;
-         transform: none; /* Remove hover transform */
-         box-shadow: none;
-     }
-
-     .pagination-controls button:active:not(:disabled) {
-         background-color: rgba(0, 255, 119, 0.4);
-         transform: none;
-         box-shadow: none;
-     }
-
-     .pagination-controls button:disabled {
-         opacity: 0.5;
-         cursor: not-allowed;
-         background-color: rgba(0, 0, 0, 0.2);
-         border-color: rgba(255, 255, 255, 0.1);
-         color: rgba(255, 255, 255, 0.5);
-     }
-
-     .pagination-controls button.active-page {
-         background-color: #00ff77;
-         color: #1a1a1a;
-         border-color: #00ff77;
-         font-weight: bold;
-     }
-
-
-     #copy-message {
-         position: fixed;
-         bottom: 20px;
-         left: 50%;
-         transform: translateX(-50%);
-         background-color: rgba(0, 0, 0, 0.7);
-         color: #00ff77;
-         padding: 10px 20px;
-         border-radius: 8px;
-         font-size: 1.5rem;
-         z-index: 1000;
-         opacity: 0;
-         pointer-events: none;
-         animation: fadeSlideIn 3s ease-in-out forwards;
-     }
-
-     #fast-travel {
-         position: fixed;
-         bottom: 20px;
-         right: 20px;
-         display: flex;
-         flex-direction: column;
-         gap: 10px;
-         z-index: 999;
-         opacity: 0;
-         visibility: hidden;
-         transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
-         background-color: rgba(0, 0, 0, 0.6);
-         padding: 10px;
-         border-radius: 8px;
-         border: 1px solid #00fff7;
-     }
-
-     #fast-travel.visible {
-         opacity: 1;
-         visibility: visible;
-     }
-
-     #fast-travel a {
-         color: #00ff77;
-         text-decoration: none;
-         font-weight: bold;
-         font-size: 1.2rem;
-         padding: 5px 10px;
-         border-radius: 5px;
-         transition: background-color 0.2s ease, color 0.2s ease;
-         text-shadow: none;
-     }
-
-     #fast-travel a:hover {
-         background-color: rgba(0, 255, 119, 0.2);
-         color: #00cc55;
-         text-decoration: none;
-     }
-
-
-    @media (max-width: 992px) {
-        h1 {
-            font-size: 4rem;
-             text-shadow: 3px 3px 0px #ff0077, 5px 5px 0px rgba(0,0,0,0.2);
-             letter-spacing: 1px;
-        }
-        .center-box {
-            padding: 25px;
-            max-width: 500px;
-            border-radius: 15px;
-        }
-        input, button {
-            font-size: 1.8rem;
-            padding: 12px 20px;
-            margin: 8px;
-            border-radius: 10px;
-        }
-        input {
-            max-width: 350px;
-        }
-        button {
-             padding: 12px 25px;
-        }
-        .status {
-            font-size: 1.8rem;
-            gap: 15px;
-            padding: 15px 20px;
-            border-radius: 15px;
-        }
-        .countdown-wrapper {
-            width: 100px;
-            height: 100px;
-        }
-        .countdown-timer {
-            font-size: 2.2rem;
-        }
-        svg circle {
-             stroke-width: 7;
-        }
-        .progress-ring {
-            stroke-dasharray: calc(2 * 3.14159 * 35);
-            stroke-dashoffset: calc(2 * 3.14159 * 35);
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FiveM Server Inspector</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+        /* --- General Styling --- */
+        :root {
+            --background-color: #121212;
+            --surface-color: #1e1e1e;
+            --primary-color: #007bff;
+            --primary-hover-color: #0056b3;
+            --text-color: #e0e0e0;
+            --text-muted-color: #888;
+            --border-color: #333;
+            --error-color: #dc3545;
+            --success-color: #28a745;
+            --update-glow-color: rgba(0, 123, 255, 0.4);
         }
 
-        .info, .players, .resources {
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #2c2c2c; }
+        ::-webkit-scrollbar-thumb { background: #555; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #666; }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        /* --- Main Container --- */
+        .container {
+            width: 100%;
             max-width: 800px;
-            padding: 20px;
-            margin: 25px auto;
-            border-radius: 15px;
+            background-color: var(--surface-color);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color);
         }
-        h2 {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
-        }
-        table {
-            font-size: 20px;
-        }
-        th, td {
-            padding: 12px;
-        }
-        ul {
-            columns: 2;
-            font-size: 20px;
-            column-gap: 20px;
-        }
-        li {
-            margin-bottom: 6px;
-        }
-        img.banner {
-            margin-top: 15px;
-            border-radius: 10px;
-            border-width: 2px;
-        }
-         .resource-search,
-         .player-search {
-             font-size: 1.8rem;
-             padding: 12px 20px;
-             max-width: 350px;
-             margin-top: 10px;
-             margin-bottom: 10px;
-             border-radius: 10px;
-         }
-         .resources p {
-             font-size: 18px;
-         }
-         .pagination-controls button {
-             font-size: 1.3rem;
-             padding: 6px 12px;
-         }
-         #copy-message {
-             font-size: 1.2rem;
-             padding: 8px 15px;
-         }
-          #fast-travel {
-              bottom: 15px;
-              right: 15px;
-              gap: 8px;
-              padding: 8px;
-          }
-           #fast-travel a {
-               font-size: 1rem;
-               padding: 4px 8px;
-           }
-    }
-
-    @media (max-width: 576px) {
+        
         h1 {
-            font-size: 3rem;
-            text-shadow: 3px 3px 0px #ff0077, 4px 4px 0px rgba(0,0,0,0.2);
-            margin-top: 20px;
-            margin-bottom: 20px;
-            letter-spacing: 0px;
-        }
-         body {
-             padding: 10px;
-         }
-        .center-box {
-            padding: 20px;
-            width: 100%;
-            max-width: none;
-            border-radius: 10px;
-        }
-        input, button {
-            font-size: 1.6rem;
-            padding: 10px 15px;
-            margin: 6px;
-            border-radius: 8px;
-        }
-        input {
-            width: 100%;
-            max-width: none;
-        }
-         button {
-             width: 100%;
-             max-width: none;
-             padding: 10px 15px;
-         }
-        .status {
-            font-size: 1.6rem;
-            gap: 10px;
-            padding: 10px 15px;
-            flex-direction: column;
-            border-radius: 10px;
-        }
-        .countdown-wrapper {
-            width: 90px;
-            height: 90px;
-             margin-bottom: 5px;
-        }
-        .countdown-timer {
-            font-size: 2rem;
-        }
-        svg circle {
-             stroke-width: 6;
-        }
-         .progress-ring {
-            stroke-dasharray: calc(2 * 3.14159 * 30);
-            stroke-dashoffset: calc(2 * 3.14159 * 30);
+            text-align: center;
+            margin-bottom: 25px;
+            font-weight: 700;
+            color: white;
         }
 
-        .info, .players, .resources {
-            width: 100%;
-            max-width: none;
-            padding: 15px;
-            margin: 20px auto;
-            border-radius: 10px;
+        /* --- Search Form --- */
+        .search-form { display: flex; gap: 10px; margin-bottom: 25px; }
+        .search-input {
+            flex-grow: 1; padding: 12px 15px; font-size: 16px;
+            border: 1px solid var(--border-color); border-radius: 8px;
+            background-color: #2a2a2a; color: var(--text-color); outline: none;
+            transition: border-color 0.3s, box-shadow 0.3s;
         }
-        h2 {
-            font-size: 2rem;
-            margin-bottom: 10px;
+        .search-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
         }
-        table {
-            font-size: 18px;
+        .search-button {
+            padding: 12px 20px; font-size: 16px; font-weight: 500; border: none;
+            border-radius: 8px; background-color: var(--primary-color); color: white;
+            cursor: pointer; transition: background-color 0.3s, transform 0.1s;
         }
-        th, td {
-            padding: 10px;
+        .search-button:hover { background-color: var(--primary-hover-color); }
+        .search-button:active { transform: scale(0.98); }
+
+        /* --- Results Area --- */
+        #results { margin-top: 20px; }
+        .loader {
+            display: none; margin: 40px auto; border: 5px solid #f3f3f330;
+            border-top: 5px solid var(--primary-color); border-radius: 50%;
+            width: 50px; height: 50px; animation: spin 1s linear infinite;
         }
-        ul {
-            columns: 1;
-            padding-left: 20px;
-            font-size: 18px;
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .error-message {
+            display: none; text-align: center; padding: 15px;
+            background-color: rgba(220, 53, 69, 0.1); color: var(--error-color);
+            border: 1px solid var(--error-color); border-radius: 8px;
         }
-        li {
-            margin-bottom: 5px;
+
+        /* --- Server Card Styling --- */
+        .server-card {
+            background-color: #2a2a2a; border: 1px solid var(--border-color);
+            border-radius: 10px; animation: fadeIn 0.5s ease-in-out; overflow: hidden;
         }
-        img.banner {
-            margin-top: 10px;
-            border-radius: 8px;
-            border-width: 1px;
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .card-section { padding: 20px; border-bottom: 1px solid var(--border-color); }
+        .card-section:last-child { border-bottom: none; }
+        .card-header { display: flex; align-items: center; gap: 15px; }
+        .owner-avatar { width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--primary-color); }
+        .server-title h2 { margin: 0; font-size: 1.5rem; color: white; }
+        .server-title p, .server-title a {
+            margin: 0; color: var(--text-muted-color); font-size: 0.9rem; text-decoration: none;
         }
-         .resource-search,
-         .player-search {
-             font-size: 1.6rem;
-             padding: 10px 15px;
-             width: 100%;
-             max-width: none;
-             margin-top: 8px;
-             margin-bottom: 8px;
-             border-radius: 8px;
-         }
-         .resources p {
-             font-size: 16px;
-         }
-         .pagination-controls button {
-             font-size: 1.2rem;
-             padding: 5px 10px;
-         }
-         #copy-message {
-             font-size: 1rem;
-             padding: 6px 12px;
-         }
-          #fast-travel {
-              bottom: 10px;
-              right: 10px;
-              gap: 6px;
-              padding: 6px;
-          }
-           #fast-travel a {
-               font-size: 0.9rem;
-               padding: 3px 6px;
-           }
-    }
-  </style>
+        .server-title a:hover { text-decoration: underline; }
+        
+        .section-title {
+            font-size: 1.1rem; font-weight: 700; color: white;
+            margin-bottom: 15px; padding-bottom: 5px; border-bottom: 1px solid var(--border-color);
+        }
+        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 10px 20px; }
+        .info-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; }
+        .info-item span:first-child { color: var(--text-muted-color); font-weight: 500; margin-right: 10px; }
+        .info-item span:last-child { font-weight: 500; text-align: right; word-break: break-all; }
+        
+        .status-true { color: var(--success-color); }
+        .status-false { color: var(--error-color); }
+        .status-true i, .status-false i { margin-right: 5px; }
+        .player-count { display: flex; align-items: center; gap: 10px; }
+        .player-bar { width: 100px; height: 10px; background-color: #444; border-radius: 5px; overflow: hidden; }
+        .player-bar-fill { height: 100%; background-color: var(--success-color); border-radius: 5px; transition: width 0.5s ease-in-out; }
+
+        .connect-button {
+            display: block; width: 100%; padding: 15px; text-align: center;
+            text-decoration: none; font-size: 1.1rem; font-weight: bold;
+            color: white; background-color: var(--success-color);
+            transition: background-color 0.3s;
+        }
+        .connect-button:hover { background-color: #218838; }
+
+        /* Collapsible Section */
+        details { border-top: 1px solid var(--border-color); }
+        details summary {
+            padding: 20px; cursor: pointer; font-size: 1.1rem; font-weight: 700;
+            color: var(--primary-color); outline: none; list-style-type: none; position: relative;
+        }
+        details summary::-webkit-details-marker { display: none; }
+        details summary::after {
+            content: '\f078'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
+            float: right; transition: transform 0.2s;
+        }
+        details[open] summary::after { transform: rotate(180deg); }
+        .details-content { padding: 0 20px 20px 20px; background-color: #1c1c1c; }
+
+        .tag-list { display: flex; flex-wrap: wrap; gap: 5px; justify-content: flex-end; }
+        .tag { background-color: #333; color: var(--text-muted-color); font-size: 0.8rem; padding: 3px 8px; border-radius: 5px; }
+        
+        /* Resource List Styling */
+        .resource-search {
+            width: 100%; padding: 8px 12px; margin-bottom: 10px;
+            background-color: #111; border: 1px solid var(--border-color);
+            color: var(--text-color); border-radius: 6px; font-size: 0.9rem;
+        }
+        .resource-search:focus { outline: none; border-color: var(--primary-color); }
+        .resource-list-container {
+            list-style: none; padding: 10px; background-color: #111;
+            border-radius: 6px; max-height: 400px; overflow-y: auto;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px;
+        }
+        .resource-item {
+            background-color: #2c2c2c; padding: 5px 10px; border-radius: 4px;
+            font-size: 0.85rem; color: var(--text-muted-color); white-space: nowrap;
+            overflow: hidden; text-overflow: ellipsis;
+        }
+        
+        /* Update Animation */
+        @keyframes flash-update {
+            0% { background-color: var(--update-glow-color); box-shadow: 0 0 10px var(--update-glow-color); }
+            100% { background-color: transparent; box-shadow: none; }
+        }
+        .updated {
+            animation: flash-update 1s ease-out;
+            border-radius: 4px; /* Makes the glow look nicer */
+        }
+    </style>
 </head>
 <body>
-  <h1 id="top">FiveM Server Info Viewer</h1>
 
-  <div class="center-box">
-    <input type="text" id="serverCode" placeholder="(e.g. cfx.re/join/pmdkd8)" />
-    <button onclick="startLiveFetch()">Start Monitor</button>
-  </div>
+    <div class="container">
+        <h1><i class="fas fa-server"></i> FiveM Server Inspector</h1>
+        
+        <form class="search-form" id="server-form">
+            <input 
+                type="text" 
+                id="server-input" 
+                class="search-input" 
+                placeholder="Enter Server ID or Join Link (cfx.re/join/...)" 
+                required
+            >
+            <button type="submit" class="search-button">
+                <i class="fas fa-search"></i>
+            </button>
+        </form>
 
-  <div class="status">
-    <div class="countdown-wrapper">
-      <svg width="100%" height="100%" viewBox="0 0 100 100">
-        <circle class="bg-ring" cx="50" cy="50" r="40"/>
-        <circle class="progress-ring" cx="50" cy="50" r="40"/>
-      </svg>
-      <div class="countdown-timer" id="countdown">30</div>
+        <div id="results">
+            <div class="loader" id="loader"></div>
+            <div class="error-message" id="error-message"></div>
+            <div id="server-info"></div>
+        </div>
     </div>
-    <span id="statusText">Waiting to start...</span>
-  </div>
 
-  <div id="result">
-    </div>
+    <script>
+        const form = document.getElementById('server-form');
+        const input = document.getElementById('server-input');
+        const loader = document.getElementById('loader');
+        const errorMessage = document.getElementById('error-message');
+        const serverInfoContainer = document.getElementById('server-info');
+        
+        let currentServerId = null;
+        let refreshInterval = null;
 
-  <div id="copy-message"></div>
-
-  <div id="fast-travel">
-    <a href="#top">Top</a>
-    <a href="#resources">Resources</a>
-  </div>
-
-
-  <script>
-    const svgBaseRadius = 40;
-    const localStorageKey = 'fivemServerCode';
-    const playerThreshold = 30;
-    const updateInterval = 30000; // Set update interval to 30 seconds (in milliseconds)
-    const countdownDuration = updateInterval / 1000; // Countdown duration matches interval in seconds
-    const playersPerPage = 25; // Changed: Number of players per page (from 10 to 25)
-    const resourcesPerPage = 60; // Changed: Number of resources per page (from 10 to 100)
-
-
-    const progressCircle = document.querySelector('.progress-ring');
-    const countdownDisplay = document.getElementById('countdown');
-    const statusText = document.getElementById('statusText');
-    const centerBox = document.querySelector('.center-box');
-    const copyMessageElement = document.getElementById('copy-message');
-    const fastTravelElement = document.getElementById('fast-travel');
-    const resultDiv = document.getElementById("result");
-    const serverCodeInput = document.getElementById("serverCode");
-
-    let fetchInterval, countdownInterval;
-    let timeLeft = countdownDuration;
-    let messageTimeout;
-
-    // Variable to store the previously fetched data for comparison
-    let previousData = null;
-    let currentPage = 1; // Current page for player pagination
-    let currentResourcePage = 1; // Current page for resource pagination
-
-
-    // Initial state: Hide sections until data is loaded (handled by JS now)
-    document.querySelectorAll('.info, .players, .resources').forEach(section => {
-        section.classList.add('section-hidden');
-        section.classList.remove('section-visible'); // Ensure it doesn't have visible class initially
-    });
-
-    // Function to update the countdown timer and circle animation
-    function updateCountdown() {
-        const countdownElement = document.getElementById('countdown');
-        const progressRing = document.querySelector('.progress-ring');
-        if (!countdownElement || !progressRing) return;
-
-         let currentRadius = svgBaseRadius;
-         const svgElement = progressRing.closest('svg');
-         if (svgElement) {
-             const viewBox = svgElement.getAttribute('viewBox');
-             if (viewBox) {
-                 const parts = viewBox.split(' ');
-                 const viewBoxWidth = parseFloat(parts[2]);
-                 const svgWidth = svgElement.clientWidth;
-                  if (svgWidth > 0 && viewBoxWidth > 0) {
-                      const ratio = svgWidth / viewBoxWidth;
-                      currentRadius = svgBaseRadius * ratio;
-                  }
-             } else {
-                  const svgWidth = svgElement.clientWidth || parseFloat(svgElement.getAttribute('width')) || 100;
-                  const strokeWidth = parseFloat(progressRing.style.strokeWidth) || parseFloat(progressRing.getAttribute('stroke-width')) || 8;
-                  currentRadius = (svgWidth / 2) - (strokeWidth / 2);
-             }
-         }
-
-        const circumference = 2 * Math.PI * currentRadius;
-
-        progressRing.style.strokeDasharray = circumference;
-
-        timeLeft--;
-        if (timeLeft < 0) {
-             countdownElement.textContent = '...';
-             progressRing.style.transition = 'stroke-dashoffset 0s';
-             progressRing.style.strokeDashoffset = circumference;
-             progressRing.style.animation = 'none';
-        } else {
-            countdownElement.textContent = timeLeft;
-            const offset = (timeLeft / countdownDuration) * circumference;
-            progressRing.style.transition = 'stroke-dashoffset 1s linear';
-            progressRing.style.strokeDashoffset = offset;
-            if (progressRing.style.animationName !== 'pulseStroke') {
-                 progressRing.style.animation = 'pulseStroke 1.5s infinite alternate';
+        // NEW CODE START: Function to update the URL
+        function updateUrlWithServerId(serverId) {
+            if (history.pushState) {
+                const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?id=' + serverId;
+                window.history.pushState({path: newUrl}, '', newUrl);
             }
         }
-    }
+        // NEW CODE END
 
-
-    async function copyToClipboard(text) {
-        if (!navigator.clipboard) {
-            alert('Clipboard access not available in your browser/environment.');
-            return;
-        }
-        try {
-            await navigator.clipboard.writeText(text);
-            console.log('Text copied to clipboard:', text);
-
-            if(copyMessageElement) {
-                clearTimeout(messageTimeout);
-                copyMessageElement.textContent = `Copied: ${text.substring(0, 50)}${text.length > 50 ? '...' : ''}`;
-
-                 copyMessageElement.style.opacity = '1';
-                 copyMessageElement.style.transform = 'translateX(-50%) translateY(0)';
-                 copyMessageElement.style.animation = 'none';
-                 void copyMessageElement.offsetWidth;
-                 copyMessageElement.style.animation = 'fadeSlideIn 3s ease-in-out forwards';
+        // NEW CODE START: Check URL on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const serverIdFromUrl = urlParams.get('id');
+            if (serverIdFromUrl) {
+                input.value = serverIdFromUrl;
+                fetchAndDisplayServer(serverIdFromUrl, true);
             }
+        });
+        // NEW CODE END
 
-        } catch (err) {
-            console.error('Failed to copy text: ', err);
-            alert('Failed to copy text.');
-        }
-    }
-
-    function startLiveFetch() {
-      let code = serverCodeInput ? serverCodeInput.value.trim() : '';
-
-      if (code.includes('cfx.re/join/')) {
-        code = code.split('cfx.re/join/')[1];
-      }
-
-      if (!code) {
-          alert("Please enter a valid server code.");
-          return;
-      }
-
-      try {
-         localStorage.setItem(localStorageKey, code);
-         console.log("Server code saved to localStorage:", code);
-      } catch (e) {
-          console.error("Failed to save server code to localStorage:", e);
-      }
-
-      clearInterval(fetchInterval);
-      clearInterval(countdownInterval);
-
-      if(centerBox) centerBox.classList.add('loading');
-      document.querySelectorAll('.info, .players, .resources').forEach(section => {
-         section.classList.add('loading-content');
-      });
-
-
-      fetchServer(code);
-      fetchInterval = setInterval(() => {
-          if(centerBox) centerBox.classList.add('loading');
-           document.querySelectorAll('.info, .players, .resources').forEach(section => {
-             section.classList.add('loading-content');
-          });
-          fetchServer(code);
-      }, updateInterval);
-
-      timeLeft = countdownDuration;
-      updateCountdown();
-      countdownInterval = setInterval(updateCountdown, 1000);
-    }
-
-    // Function to generate player table rows HTML for a given set of players
-    function generatePlayerRows(players) {
-        return players.map(p =>
-          `<tr><td class="copyable">${p.name || 'Unknown'}</td><td>${p.ping !== undefined ? p.ping + ' ms' : 'N/A'}</td></tr>`
-        ).join("");
-    }
-
-     // Helper function to generate resource list items HTML
-    function generateResourceItems(resources) {
-        return resources.map(r => `<li class="copyable">${r}</li>`).join('');
-    }
-
-     // Function to display players for a specific page and update pagination controls
-    function displayPlayers(pageNumber) {
-        const playersTableBody = document.getElementById('players-table-body');
-        const paginationControlsDiv = document.getElementById('pagination-controls');
-        const playerSearchInput = document.querySelector('.players .player-search');
-        const playersTable = document.querySelector('.players table');
-        const noPlayersMessage = document.getElementById('no-players-message');
-         const playersSectionTitle = document.getElementById('players-section-title');
-
-
-        if (!previousData || !previousData.players) {
-             // Hide players section elements if no data or players array is empty
-            if(playersTable) playersTable.style.display = 'none';
-            if(playerSearchInput) playerSearchInput.style.display = 'none';
-            if(noPlayersMessage) noPlayersMessage.style.display = ''; // Show no players message
-             if(playersSectionTitle) playersSectionTitle.textContent = 'Players (0)'; // Update title
-            if(paginationControlsDiv) paginationControlsDiv.innerHTML = ''; // Clear pagination
-             if(paginationControlsDiv) paginationControlsDiv.style.display = 'none';
-             return;
-        }
-
-        const players = previousData.players;
-        const totalPlayers = players.length;
-        const totalPages = Math.ceil(totalPlayers / playersPerPage);
-
-        // Ensure pageNumber is valid
-        if (pageNumber < 1) pageNumber = 1;
-        if (totalPages > 0 && pageNumber > totalPages) pageNumber = totalPages;
-        else if (totalPages === 0) pageNumber = 1;
-
-
-        currentPage = pageNumber; // Update current page state
-
-        const startIndex = (currentPage - 1) * playersPerPage;
-        const endIndex = startIndex + playersPerPage;
-        const playersForPage = players.slice(startIndex, endIndex);
-
-        // Generate HTML for the current page's players
-        if(playersTableBody) {
-            playersTableBody.innerHTML = generatePlayerRows(playersForPage);
-        }
-
-        // Generate and update pagination controls HTML
-        let paginationHtml = '';
-        if (totalPages > 1) {
-            paginationHtml += `<button onclick="prevPage()" ${currentPage === 1 ? 'disabled' : ''}>Previous</button>`;
-            for (let i = 1; i <= totalPages; i++) {
-                paginationHtml += `<button class="${i === currentPage ? 'active-page' : ''}" onclick="goToPage(${i})">${i}</button>`;
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const userInput = input.value.trim();
+            const serverId = extractServerId(userInput);
+            
+            if (serverId) {
+                fetchAndDisplayServer(serverId, true);
+            } else {
+                displayError("Invalid input. Please provide a valid server ID or join link.");
             }
-            paginationHtml += `<button onclick="nextPage()" ${currentPage === totalPages ? 'disabled' : ''}>Next</button>`;
-        }
-         if(paginationControlsDiv) {
-            paginationControlsDiv.innerHTML = paginationHtml;
-             paginationControlsDiv.style.display = totalPages > 1 ? '' : 'none'; // Show controls only if more than 1 page
-         }
+        });
 
+        async function fetchAndDisplayServer(serverId, showLoader = false) {
+            clearInterval(refreshInterval);
 
-        // Handle visibility of table, search input, and "no players" message
-         if (totalPlayers > 0) {
-             if(playersTable) playersTable.style.display = '';
-             const searchInput = document.querySelector('.players .player-search');
-             if(searchInput) searchInput.style.display = '';
-             if(noPlayersMessage) noPlayersMessage.style.display = 'none';
-              if(playersSectionTitle) playersSectionTitle.textContent = `Players (${totalPlayers})`; // Update title with total count
-         } else {
-              if(playersTable) playersTable.style.display = 'none';
-              const searchInput = document.querySelector('.players .player-search');
-              if(searchInput) searchInput.style.display = 'none';
-              if(noPlayersMessage) noPlayersMessage.style.display = '';
-               if(playersSectionTitle) playersSectionTitle.textContent = 'Players (0)';
-         }
-
-
-        // Re-apply copy listeners to the newly displayed rows
-        addCopyListeners();
-
-        console.log(`Displayed players for page ${currentPage} of ${totalPages}`);
-    }
-
-     // Function to display resources for a specific page and update pagination controls
-    function displayResources(pageNumber) {
-        const resourceListItems = document.getElementById('resourceListItems');
-        const paginationControlsDiv = document.getElementById('resource-pagination-controls');
-        const resourceSearchInput = document.querySelector('.resources .resource-search');
-        const resourceListContainer = document.getElementById('resource-list-container');
-         const noResourcesMessage = document.getElementById('no-resources-message');
-         const resourcesSectionTitle = document.getElementById('resources-section-title');
-
-
-        if (!previousData || !previousData.resources || !resourceListItems || !paginationControlsDiv || !resourcesSectionTitle || !resourceListContainer || !noResourcesMessage) {
-            console.warn("Resource elements or data not found for displayResources.");
-             if(resourceListContainer) resourceListContainer.style.display = 'none';
-             if(resourceSearchInput) resourceSearchInput.style.display = 'none';
-             if(paginationControlsDiv) paginationControlsDiv.innerHTML = '';
-             if(paginationControlsDiv) paginationControlsDiv.style.display = 'none';
-             if(noResourcesMessage) {
-                  noResourcesMessage.textContent = 'No resource data available.';
-                  noResourcesMessage.style.display = '';
-             }
-             if(resourcesSectionTitle) resourcesSectionTitle.textContent = 'Resources (0)';
-            return;
-        }
-
-        const resources = previousData.resources;
-        const totalResources = resources.length;
-        const totalResourcePages = Math.ceil(totalResources / resourcesPerPage);
-
-        // Ensure pageNumber is valid
-        if (pageNumber < 1) pageNumber = 1;
-        if (totalResourcePages > 0 && pageNumber > totalResourcePages) pageNumber = totalResourcePages;
-        else if (totalResourcePages === 0) pageNumber = 1;
-
-
-        currentResourcePage = pageNumber; // Update current resource page state
-
-        const startIndex = (currentResourcePage - 1) * resourcesPerPage;
-        const endIndex = startIndex + resourcesPerPage;
-        const resourcesForPage = resources.slice(startIndex, endIndex);
-
-        // Generate HTML for the current page's resources
-        resourceListItems.innerHTML = generateResourceItems(resourcesForPage);
-
-
-        // Generate and update pagination controls HTML for Resources
-        let paginationHtml = '';
-        if (totalResourcePages > 1) {
-            paginationHtml += `<button onclick="prevResourcePage()" ${currentResourcePage === 1 ? 'disabled' : ''}>Previous</button>`;
-            for (let i = 1; i <= totalResourcePages; i++) {
-                paginationHtml += `<button class="${i === currentResourcePage ? 'active-page' : ''}" onclick="goToResourcePage(${i})">${i}</button>`;
+            if (showLoader) {
+                serverInfoContainer.innerHTML = '';
+                errorMessage.style.display = 'none';
+                loader.style.display = 'block';
             }
-            paginationHtml += `<button onclick="nextResourcePage()" ${currentResourcePage === totalResourcePages ? 'disabled' : ''}>Next</button>`;
-        }
-         if(paginationControlsDiv) {
-            paginationControlsDiv.innerHTML = paginationHtml;
-             paginationControlsDiv.style.display = totalResourcePages > 1 ? '' : 'none';
-         }
-
-        // Handle visibility of list container, search input, and "no resources" message
-         if (totalResources > 0) {
-             if(resourceListContainer) resourceListContainer.style.display = '';
-             const searchInput = document.querySelector('.resources .resource-search');
-             if(searchInput) searchInput.style.display = '';
-             if(noResourcesMessage) noResourcesMessage.style.display = 'none';
-              if(resourcesSectionTitle) resourcesSectionTitle.textContent = `Resources (${totalResources})`;
-         } else {
-              if(resourceListContainer) resourceListContainer.style.display = 'none';
-              const searchInput = document.querySelector('.resources .resource-search');
-              if(searchInput) searchInput.style.display = 'none';
-              if(noResourcesMessage) noResourcesMessage.style.display = '';
-               if(resourcesSectionTitle) resourcesSectionTitle.textContent = 'Resources (0)';
-         }
-
-
-        // Re-apply search filter if there's a query on the search input
-        if (resourceSearchInput && resourceSearchInput.value.trim()) {
-             filterResources({ target: resourceSearchInput });
-        }
-
-
-        // Re-attach copy listeners to the newly displayed items
-        addCopyListeners();
-
-        console.log(`Displayed resources for page ${currentResourcePage} of ${totalResourcePages}`);
-    }
-
-
-    // Pagination control functions for Players
-    function goToPage(pageNumber) {
-        if (previousData && previousData.players) {
-            displayPlayers(pageNumber);
-        }
-    }
-
-    function nextPage() {
-         const totalPlayers = previousData?.players?.length || 0;
-         const totalPages = Math.ceil(totalPlayers / playersPerPage);
-        if (currentPage < totalPages) {
-            displayPlayers(currentPage + 1);
-        }
-    }
-
-    function prevPage() {
-        if (currentPage > 1) {
-            displayPlayers(currentPage - 1);
-        }
-    }
-
-    // Pagination control functions for Resources
-    function goToResourcePage(pageNumber) {
-        if (previousData && previousData.resources) {
-            displayResources(pageNumber);
-        }
-    }
-
-    function nextResourcePage() {
-     const totalResources = previousData?.resources?.length || 0;
-     const totalResourcePages = Math.ceil(totalResources / resourcesPerPage);
-        if (currentResourcePage < totalResourcePages) {
-            displayResources(currentResourcePage + 1);
-        }
-    }
-
-    function prevResourcePage() {
-        if (currentResourcePage > 1) {
-            displayResources(currentResourcePage - 1);
-        }
-    }
-
-
-    // Function to generate initial HTML structure (includes pagination controls div)
-    function generateInitialHtml(d) {
-        const banner1 = (d.vars && typeof d.vars["banner_connecting"] === 'string') ? decodeImgProxyUrl(d.vars["banner_connecting"]) : null;
-        const banner2 = (d.vars && typeof d.vars["banner_detail"] === 'string') ? decodeImgProxyUrl(d.vars["banner_detail"]) : null;
-
-         return `
-            <div class="info">
-              <h2 id="hostname-display">${d.hostname || 'Server Name N/A'}</h2>
-              ${banner1 ? `<img src="${banner1}" class="banner" alt="Connecting Banner" id="banner-connecting">` : `<img src="" class="banner" style="display:none;" id="banner-connecting">`}
-              ${banner2 && banner1 !== banner2 ? `<img src="${banner2}" class="banner" alt="Detail Banner" id="banner-detail">` : `<img src="" class="banner" style="display:none;" id="banner-detail">`}
-              <p style="font-size: 1.8rem; font-weight: bold;">Game Type: <span id="gametype-display">${d.gametype || 'N/A'}</span></p>
-              <p style="font-size: 1.8rem; font-weight: bold;">Map: <span id="mapname-display">${d.mapname || 'N/A'}</span></p>
-              <p style="font-size: 1.8rem; font-weight: bold;">Players: <span id="players-count">${d.clients !== undefined ? d.clients : 0}</span> / <span id="maxclients-count">${d.sv_maxclients !== undefined ? d.sv_maxclients : '?'}</span></p>
-              <p style="font-size: 1.8rem; font-weight: bold;">IP: <code class="copyable" id="ip-address">${d.connectEndPoints?.[0] || "N/A"}</code></p>
-              <p style="font-size: 1.8rem; font-weight: bold;">Discord: <span id="discord-link">${d.vars?.discord && typeof d.vars.discord === 'string' && d.vars.discord.startsWith('http') ? `<a href="${d.vars.discord}" target="_blank">${d.vars.discord}</a>` : 'N/A'}</span></p>
-              <p style="font-size: 1.8rem; font-weight: bold;">Owner: <span id="owner-info">${d.ownerProfile && d.ownerName && typeof d.ownerProfile === 'string' && d.ownerProfile.startsWith('http') ? `<a href="${d.ownerProfile}" target="_blank">${d.ownerName}</a>` : d.ownerName || 'N/A'}</span></p>
-            </div>
-
-            <div class="players">
-              <h2 id="players-section-title">Players (${d.clients !== undefined ? d.clients : 0})</h2>
-               <input class="player-search" type="text" placeholder="Search Players..." oninput="filterPlayers(event)" />
-               <table>
-                <thead><tr><th>Name</th><th>Ping</th></tr></thead>
-                <tbody id="players-table-body">
-                  </tbody>
-              </table>
-              <p style="font-size: 1.8rem; display:none;" id="no-players-message">No player data available or server is empty.</p>
-              <div class="pagination-controls" id="pagination-controls">
-                   </div>
-            </div>
-
-            <div class="resources" id="resources">
-              <h2 id="resources-section-title">Resources (${(d.resources || []).length !== undefined ? (d.resources || []).length : 0})</h2>
-              <input class="resource-search" type="text" placeholder="Search Resources..." oninput="filterResources(event)" />
-              <div class="resource-list" id="resource-list-container">
-                <ul id="resourceListItems">
-                     </ul>
-              </div>
-               <p style="font-size: 1.8rem; display:none;" id="no-resources-message">No resource data available.</p>
-              <div class="pagination-controls" id="resource-pagination-controls">
-                   </div>
-            </div>
-         `;
-    }
-
-
-    // Function to fetch and display server data with granular updates
-    async function fetchServer(code) {
-      statusText.textContent = "🔄 Fetching data...";
-
-       const scrollYBeforeUpdate = window.scrollY;
-
-       if(fastTravelElement) fastTravelElement.classList.remove('visible');
-
-
-      try {
-        const res = await fetch(`https://servers-frontend.fivem.net/api/servers/single/${code}`);
-        if (!res.ok) {
-             if (res.status === 404) throw new Error("Server not found (404). Check the code.");
-             throw new Error(`HTTP error ${res.status}: ${res.statusText}`);
-        }
-        const { Data: d } = await res.json();
-
-        let uiUpdated = false;
-
-        console.log("Resources received from API:", d.resources ? d.resources.length : 0);
-
-
-        if (previousData === null) {
-            console.log("First fetch: Generating initial UI.");
-            if (resultDiv) resultDiv.innerHTML = generateInitialHtml(d);
-            uiUpdated = true;
-
-            document.querySelectorAll('.info, .players, .resources').forEach((section, index) => {
-                section.classList.remove('section-hidden');
-                section.classList.add('section-visible');
-                 section.style.animationDelay = `${index * 0.2}s`;
-            });
-
-            previousData = d;
-            displayPlayers(1);
-            displayResources(1);
-
-            const playerSearchInput = document.querySelector('.players .player-search');
-             if (playerSearchInput && playerSearchInput.value.trim()) {
-                  filterPlayers({ target: playerSearchInput });
-             }
-             const resourceSearchInput = document.querySelector('.resources .resource-search');
-              if (resourceSearchInput && resourceSearchInput.value.trim()) {
-                   filterResources({ target: resourceSearchInput });
-              }
-
-
-        } else {
-            // Subsequent fetches: Update only changed elements
-
-            const hostnameElement = document.getElementById('hostname-display');
-            if (hostnameElement && hostnameElement.textContent !== (d.hostname || 'Server Name N/A')) { hostnameElement.textContent = d.hostname || 'Server Name N/A'; uiUpdated = true;}
-             const gametypeElement = document.getElementById('gametype-display');
-             if(gametypeElement && gametypeElement.textContent !== (d.gametype || 'N/A')) { gametypeElement.textContent = d.gametype || 'N/A'; uiUpdated = true;}
-              const mapnameElement = document.getElementById('mapname-display');
-              if(mapnameElement && mapnameElement.textContent !== (d.mapname || 'N/A')) { mapnameElement.textContent = d.mapname || 'N/A'; uiUpdated = true;}
-             const playersCountElement = document.getElementById('players-count');
-             const maxClientsElement = document.getElementById('maxclients-count');
-             if (playersCountElement && maxClientsElement) {
-                 const newPlayersText = d.clients !== undefined ? d.clients.toString() : '0';
-                 const newMaxClientsText = d.sv_maxclients !== undefined ? d.sv_maxclients.toString() : '?';
-                 if (playersCountElement.textContent !== newPlayersText) {
-                     playersCountElement.textContent = newPlayersText;
-                      const playersSectionTitle = document.getElementById('players-section-title');
-                     if(playersSectionTitle && !document.querySelector('.players .player-search').value.trim()) {
-                          playersSectionTitle.textContent = `Players (${newPlayersText})`;
-                     }
-                     uiUpdated = true;
-                 }
-                 if (maxClientsElement.textContent !== newMaxClientsText) {
-                      maxClientsElement.textContent = newMaxClientsText;
-                      uiUpdated = true;
-                 }
-             }
-
-             const ipAddressElement = document.getElementById('ip-address');
-             const newIpText = d.connectEndPoints?.[0] || "N/A";
-             if(ipAddressElement && ipAddressElement.textContent !== newIpText) { ipAddressElement.textContent = newIpText; uiUpdated = true;}
-
-             const discordLinkElementContainer = document.getElementById('discord-link');
-             const newDiscordHtml = d.vars?.discord && typeof d.vars.discord === 'string' && d.vars.discord.startsWith('http') ? `<a href="${d.vars.discord}" target="_blank">${d.vars.discord}</a>` : 'N/A';
-             if (discordLinkElementContainer && discordLinkElementContainer.innerHTML.trim() !== newDiscordHtml.trim()) {
-                 discordLinkElementContainer.innerHTML = newDiscordHtml;
-                 uiUpdated = true;
-             }
-
-             const ownerInfoElementContainer = document.getElementById('owner-info');
-             const newOwnerHtml = d.ownerProfile && d.ownerName && typeof d.ownerProfile === 'string' && d.ownerProfile.startsWith('http') ? `<a href="${d.ownerProfile}" target="_blank">${d.ownerName}</a>` : d.ownerName || 'N/A';
-             if (ownerInfoElementContainer && ownerInfoElementContainer.innerHTML.trim() !== newOwnerHtml.trim()) {
-                 ownerInfoElementContainer.innerHTML = newOwnerHtml;
-                 uiUpdated = true;
-             }
-
-             const bannerConnectingImg = document.getElementById('banner-connecting');
-             const bannerDetailImg = document.getElementById('banner-detail');
-             const newBanner1Src = (d.vars && typeof d.vars["banner_connecting"] === 'string') ? decodeImgProxyUrl(d.vars["banner_connecting"]) : null;
-             const newBanner2Src = (d.vars && typeof d.vars["banner_detail"] === 'string') ? decodeImgProxyUrl(d.vars["banner_detail"]) : null;
-
-             if (bannerConnectingImg) {
-                 const banner1SrcChanged = bannerConnectingImg.src !== (newBanner1Src || '');
-                 const banner1DisplayChanged = (bannerConnectingImg.style.display === 'none' && newBanner1Src) || (bannerConnectingImg.style.display !== 'none' && !newBanner1Src);
-
-                 if (banner1SrcChanged || banner1DisplayChanged) {
-                     bannerConnectingImg.src = newBanner1Src || '';
-                     bannerConnectingImg.style.display = newBanner1Src ? '' : 'none';
-                     uiUpdated = true;
-                 }
-             }
-              if (bannerDetailImg) {
-                 const shouldDisplayBanner2 = newBanner2Src && newBanner1Src !== newBanner2Src;
-                 const banner2SrcChanged = bannerDetailImg.src !== (newBanner2Src || '');
-                 const banner2DisplayChanged = (bannerDetailImg.style.display === 'none' && shouldDisplayBanner2) || (bannerDetailImg.style.display !== 'none' && !shouldDisplayBanner2);
-
-                 if (banner2SrcChanged || banner2DisplayChanged) {
-                     bannerDetailImg.src = newBanner2Src || '';
-                     bannerDetailImg.style.display = shouldDisplayBanner2 ? '' : 'none';
-                     uiUpdated = true;
-                 }
-             }
-
-
-            // Players Update
-            const currentPlayersJson = JSON.stringify(previousData.players || []);
-            const newPlayersJson = JSON.stringify(d.players || []);
-
-            if (currentPlayersJson !== newPlayersJson) {
-                console.log("Players list content changed.");
-                previousData.players = d.players || [];
-
-                const newTotalPages = Math.ceil((d.players || []).length / playersPerPage);
-
-                if (currentPage > newTotalPages) {
-                    currentPage = newTotalPages > 0 ? newTotalPages : 1;
-                } else if (currentPage === 0 && newTotalPages > 0) {
-                    currentPage = 1;
+            
+            try {
+                const response = await fetch(`https://servers-frontend.fivem.net/api/servers/single/${serverId}`);
+                if (!response.ok) {
+                    throw new Error('Server not found or API is unavailable.');
                 }
-                 if ((previousData.players?.length || 0) === 0 && (d.players?.length || 0) > 0) {
-                      currentPage = 1;
-                 }
+                const data = await response.json();
+                
+                if (showLoader) {
+                    displayServerInfo(data.Data);
+                } else {
+                    updateServerInfo(data.Data);
+                }
+                
+                currentServerId = serverId;
+                
+                // NEW CODE START: Update the URL after a successful fetch
+                updateUrlWithServerId(serverId);
+                // NEW CODE END
+                
+                refreshInterval = setInterval(() => fetchAndDisplayServer(currentServerId, false), 30000);
 
-                displayPlayers(currentPage);
-                uiUpdated = true;
-            } else {
-                 console.log("Players list content unchanged.");
-                 const playerSearchInput = document.querySelector('.players .player-search');
-                 if (playerSearchInput && playerSearchInput.value.trim()) {
-                     filterPlayers({ target: playerSearchInput });
-                      uiUpdated = true;
-                 } else {
-                     const totalPlayers = previousData?.players?.length || 0;
-                     const newTotalPages = Math.ceil(totalPlayers / playersPerPage);
-                     const paginationControlsDiv = document.getElementById('pagination-controls');
+            } catch (error) {
+                if(showLoader) displayError(error.message);
+                currentServerId = null; 
+            } finally {
+                if (showLoader) loader.style.display = 'none';
+            }
+        }
+        
+        function updateServerInfo(server) {
+            const updateField = (elementId, newValue, isHtml = false) => {
+                const element = document.getElementById(elementId);
+                if (!element) return;
+                
+                const currentValue = isHtml ? element.innerHTML : element.textContent;
+                if (currentValue != newValue) {
+                    if (isHtml) {
+                        element.innerHTML = newValue;
+                    } else {
+                        element.textContent = newValue;
+                    }
+                    element.classList.add('updated');
+                    element.addEventListener('animationend', () => {
+                        element.classList.remove('updated');
+                    }, { once: true });
+                }
+            };
 
-                     if (paginationControlsDiv) {
-                          let paginationHtml = '';
-                          if (newTotalPages > 1) {
-                              paginationHtml += `<button onclick="prevPage()" ${currentPage === 1 ? 'disabled' : ''}>Previous</button>`;
-                              for (let i = 1; i <= newTotalPages; i++) {
-                                  paginationHtml += `<button class="${i === currentPage ? 'active-page' : ''}" onclick="goToPage(${i})">${i}</button>`;
-                              }
-                              paginationHtml += `<button onclick="nextPage()" ${currentPage === newTotalPages ? 'disabled' : ''}>Next</button>`;
-                          }
-                           if (paginationControlsDiv.innerHTML.trim() !== paginationHtml.trim() || paginationControlsDiv.style.display === 'none') {
-                               paginationControlsDiv.innerHTML = paginationHtml;
-                                paginationControlsDiv.style.display = newTotalPages > 1 ? '' : 'none';
-                                uiUpdated = true;
-                           }
-                     }
-                 }
+            const playerText = `${server.clients} / ${server.sv_maxclients}`;
+            updateField('player-count-text', playerText);
+            const playerBar = document.getElementById('player-bar-fill');
+            if (playerBar) {
+                const newWidth = (server.clients / server.sv_maxclients) * 100;
+                playerBar.style.width = `${newWidth}%`;
             }
 
+            const resourceCount = server.resources?.length || 0;
+            updateField('resource-count', resourceCount);
+            
+            const cleanHostname = server.hostname.replace(/\^[0-9]/g, '').trim();
+            updateField('server-hostname', cleanHostname);
+        }
 
-            // Resources Update
-            const currentResourcesJson = JSON.stringify(previousData.resources || []);
-            const newResourcesJson = JSON.stringify(d.resources || []);
+        function displayServerInfo(server) {
+            const cleanHostname = server.hostname.replace(/\^[0-9]/g, '').trim();
+            const playerPercentage = (server.clients / server.sv_maxclients) * 100;
+            const tagsHTML = server.vars?.tags?.split(',').map(tag => `<span class="tag">${tag.trim()}</span>`).join(' ') || 'None';
+            const resourcesListHTML = server.resources?.length > 0 
+                ? server.resources.map(res => `<li class="resource-item" title="${res}">${res}</li>`).join('') 
+                : '<li>No resources listed.</li>';
 
-            if (currentResourcesJson !== newResourcesJson) {
-                 console.log("Resources list structure or content changed.");
-                 previousData.resources = d.resources || [];
+            const serverCardHTML = `
+                <div class="server-card">
+                    <div class="card-section card-header">
+                        <img src="${server.ownerAvatar}" alt="Owner Avatar" class="owner-avatar">
+                        <div class="server-title">
+                            <h2 id="server-hostname">${cleanHostname || 'Unnamed Server'}</h2>
+                            <p>Owned by <a href="${server.ownerProfile}" target="_blank">${server.ownerName}</a> (ID: ${server.ownerID})</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card-section">
+                        <a href="fivem://connect/${server.EndPoint}" class="connect-button">
+                            <i class="fas fa-play"></i> Connect to Server
+                        </a>
+                    </div>
+                    
+                    <div class="card-section">
+                        <h3 class="section-title">Server Details</h3>
+                        <div class="info-grid">
+                            <div class="info-item"><span><i class="fas fa-gamepad"></i> Gametype</span> <span>${server.gametype || 'N/A'}</span></div>
+                            <div class="info-item"><span><i class="fas fa-map-marker-alt"></i> Map</span> <span>${server.mapname || 'N/A'}</span></div>
+                            <div class="info-item"><span><i class="fas fa-globe"></i> Locale</span> <span>${server.vars?.locale || 'N/A'}</span></div>
+                            <div class="info-item"><span><i class="fas fa-check-square"></i> Support Status</span> <span>${server.support_status || 'N/A'}</span></div>
+                            <div class="info-item"><span><i class="fas fa-lock"></i> Private</span> ${formatBoolean(server.private)}</div>
+                            <div class="info-item"><span><i class="fas fa-sync"></i> OneSync Enabled</span> ${formatBoolean(server.vars?.onesync_enabled)}</div>
+                            <div class="info-item"><span><i class="fab fa-steam"></i> Steam Tickets</span> ${formatBoolean(server.requestSteamTicket === 'on')}</div>
+                            <div class="info-item"><span><i class="fas fa-server"></i> Enhanced Host</span> ${formatBoolean(server.enhancedHostSupport)}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="card-section">
+                        <h3 class="section-title">Player Info</h3>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span><i class="fas fa-users"></i> Players</span>
+                                <div class="player-count">
+                                    <span id="player-count-text">${server.clients} / ${server.sv_maxclients}</span>
+                                    <div class="player-bar"><div id="player-bar-fill" class="player-bar-fill" style="width: ${playerPercentage}%;"></div></div>
+                                </div>
+                            </div>
+                            <div class="info-item"><span><i class="fas fa-rocket"></i> Upvote Power</span> <span>${server.upvotePower}</span></div>
+                            <div class="info-item"><span><i class="fas fa-fire"></i> Burst Power</span> <span>${server.burstPower}</span></div>
+                            <div class="info-item"><span><i class="fas fa-tags"></i> Tags</span> <span class="tag-list">${tagsHTML}</span></div>
+                        </div>
+                    </div>
 
-                const newTotalResourcePages = Math.ceil((d.resources || []).length / resourcesPerPage);
+                    <details>
+                        <summary>Show Advanced Details</summary>
+                        <div class="details-content">
+                             <div class="card-section">
+                                <h3 class="section-title">Resources (<span id="resource-count">${server.resources?.length || 0}</span>)</h3>
+                                <input type="text" id="resource-search-input" class="resource-search" placeholder="&#xf002; Search resources..." style="font-family: 'Roboto', 'Font Awesome 6 Free';">
+                                <ul class="resource-list-container" id="resource-list">
+                                    ${resourcesListHTML}
+                                </ul>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+            `;
+            serverInfoContainer.innerHTML = serverCardHTML;
+            
+            const resourceSearchInput = document.getElementById('resource-search-input');
+            const resourceList = document.getElementById('resource-list');
 
-                 if (currentResourcePage > newTotalResourcePages) {
-                     currentResourcePage = newTotalResourcePages > 0 ? newTotalResourcePages : 1;
-                 } else if (currentResourcePage === 0 && newTotalResourcePages > 0) {
-                     currentResourcePage = 1;
-                 }
-                  if ((previousData.resources?.length || 0) === 0 && (d.resources?.length || 0) > 0) {
-                     currentResourcePage = 1;
-                 }
-
-
-                displayResources(currentResourcePage);
-                uiUpdated = true;
-            } else {
-                console.log("Resources list content unchanged.");
-                 const resourceSearchInput = document.querySelector('.resources .resource-search');
-                 if (resourceSearchInput && resourceSearchInput.value.trim()) {
-                      filterResources({ target: resourceSearchInput });
-                       uiUpdated = true;
-                 } else {
-                      const totalResources = previousData?.resources?.length || 0;
-                      const newTotalResourcePages = Math.ceil(totalResources / resourcesPerPage);
-                      const paginationControlsDiv = document.getElementById('resource-pagination-controls');
-
-                      if (paginationControlsDiv) {
-                           let paginationHtml = '';
-                           if (newTotalResourcePages > 1) {
-                               paginationHtml += `<button onclick="prevResourcePage()" ${currentResourcePage === 1 ? 'disabled' : ''}>Previous</button>`;
-                               for (let i = 1; i <= newTotalResourcePages; i++) {
-                                   paginationHtml += `<button class="${i === currentResourcePage ? 'active-page' : ''}" onclick="goToResourcePage(${i})">${i}</button>`;
-                               }
-                               paginationHtml += `<button onclick="nextResourcePage()" ${currentResourcePage === newTotalResourcePages ? 'disabled' : ''}>Next</button>`;
-                           }
-                            if (paginationControlsDiv.innerHTML.trim() !== paginationHtml.trim() || paginationControlsDiv.style.display === 'none') {
-                                paginationControlsDiv.innerHTML = paginationHtml;
-                                 paginationControlsDiv.style.display = newTotalResourcePages > 1 ? '' : 'none';
-                                 uiUpdated = true;
-                            }
-                      }
-                 }
+            if (resourceSearchInput && resourceList) {
+                const resourceItems = resourceList.getElementsByTagName('li');
+                resourceSearchInput.addEventListener('input', (e) => {
+                    const searchTerm = e.target.value.toLowerCase();
+                    for (const item of resourceItems) {
+                        if (item.textContent.toLowerCase().includes(searchTerm)) {
+                            item.style.display = '';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    }
+                });
             }
-
-
         }
-        // -----------------------------------
-
-
-        statusText.textContent = `✅ Updated: ${new Date().toLocaleTimeString()}${uiUpdated ? ' (UI Updated)' : ' (No UI Change)'}`;
-
-        window.scrollTo(0, scrollYBeforeUpdate);
-
-        previousData = d;
-
-        if (d.clients !== undefined && d.clients > playerThreshold) {
-             if(fastTravelElement) fastTravelElement.classList.add('visible');
-        } else {
-             if(fastTravelElement) fastTravelElement.classList.remove('visible');
+        
+        function extractServerId(input) {
+            try {
+                if (input.includes('cfx.re/join/')) {
+                    const url = new URL(input.startsWith('http') ? input : `https://${input}`);
+                    return url.pathname.split('/').pop();
+                }
+            } catch (error) {
+                const parts = input.split('cfx.re/join/');
+                if (parts.length > 1) return parts[1].split('/')[0];
+            }
+            return input;
         }
 
-
-        timeLeft = countdownDuration;
-        updateCountdown();
-        clearInterval(countdownInterval);
-        countdownInterval = setInterval(updateCountdown, 1000);
-
-      } catch (err) {
-        console.error("Fetch error:", err);
-        if (resultDiv) {
-             if (previousData !== null) {
-                  resultDiv.innerHTML = '';
-             }
-             resultDiv.innerHTML += `<p style="color:#ff6666; font-size: 1.8rem;">❌ Error: ${err.message}</p>`;
-              document.querySelectorAll('.info, .players, .resources').forEach(section => {
-                 section.classList.remove('section-visible');
-                 section.classList.add('section-hidden');
-                 section.style.animationDelay = '0s';
-              });
-        }
-        statusText.textContent = "Error";
-
-         if(fastTravelElement) fastTravelElement.classList.remove('visible');
-
-        previousData = null;
-
-        clearInterval(countdownInterval);
-        const countdownElement = document.getElementById('countdown');
-        if(countdownElement) countdownElement.textContent = '--';
-
-        const progressRing = document.querySelector('.progress-ring');
-         if(progressRing) {
-             let currentRadius = svgBaseRadius;
-             const svgElement = progressRing.closest('svg');
-             if (svgElement) {
-                 const viewBox = svgElement.getAttribute('viewBox');
-                 if (viewBox) {
-                      const parts = viewBox.split(' ');
-                      const viewBoxWidth = parseFloat(parts[2]);
-                      const svgWidth = svgElement.clientWidth;
-                       if (svgWidth > 0 && viewBoxWidth > 0) {
-                           const ratio = svgWidth / viewBoxWidth;
-                           currentRadius = svgBaseRadius * ratio;
-                       }
-                 } else {
-                      const svgWidth = svgElement.clientWidth || parseFloat(svgElement.getAttribute('width')) || 100;
-                      const strokeWidth = parseFloat(progressRing.style.strokeWidth) || parseFloat(progressRing.getAttribute('stroke-width')) || 8;
-                      currentRadius = (svgWidth / 2) - (strokeWidth / 2);
-                 }
-             }
-
-            const circumference = 2 * Math.PI * currentRadius;
-
-            progressRing.style.transition = 'stroke-dashoffset 0s';
-            progressRing.style.strokeDashoffset = circumference;
-             progressRing.style.animation = 'none';
-         }
-
-      } finally {
-         if(centerBox) centerBox.classList.remove('loading');
-          document.querySelectorAll('.info, .players, .resources').forEach(section => {
-             section.classList.remove('loading-content');
-          });
-
-         addCopyListeners();
-      }
-    }
-
-    function addCopyListeners() {
-        document.querySelectorAll('#players-table-body tr td:first-child').forEach(td => {
-            td.classList.add('copyable');
-            td.onclick = null;
-            td.onclick = () => copyToClipboard(td.textContent);
-        });
-
-        document.querySelectorAll('#resourceListItems li').forEach(li => {
-             li.classList.add('copyable');
-             li.onclick = null;
-             li.onclick = () => copyToClipboard(li.textContent);
-        });
-         const ipCodeElement = document.getElementById('ip-address');
-         if (ipCodeElement) {
-             ipCodeElement.classList.add('copyable');
-             ipCodeElement.onclick = null;
-             ipCodeElement.onclick = () => copyToClipboard(ipCodeElement.textContent);
-         }
-         const discordLinkElement = document.querySelector('#discord-link a');
-         if (discordLinkElement) {
-             discordLinkElement.classList.add('copyable');
-             discordLinkElement.onclick = null;
-             discordLinkElement.onclick = (e) => {
-                 e.stopPropagation();
-                 copyToClipboard(discordLinkElement.href);
-             };
-         }
-         const ownerLinkElement = document.querySelector('#owner-info a');
-         if (ownerLinkElement) {
-             ownerLinkElement.classList.add('copyable');
-             ownerLinkElement.onclick = null;
-             ownerLinkElement.onclick = (e) => {
-                 e.stopPropagation();
-                 copyToClipboard(ownerLinkElement.href);
-             };
-         }
-    }
-
-    function decodeImgProxyUrl(proxyUrl) {
-      try {
-        if (!proxyUrl || typeof proxyUrl !== 'string') return null;
-        const match = proxyUrl.match(/https:\/\/servers-frontend\.fivem\.net\/image\/.*?\/aHR0.+$/);
-        if (!match) return null;
-
-        const base64Part = match[0].split('/aHR0')[1].split("?")[0];
-        let base64 = base64Part;
-        while (base64.length % 4 !== 0) {
-          base64 += '=';
+        function displayError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            loader.style.display = 'none';
         }
 
-        const decoded = atob(base64);
-
-        if (decoded.startsWith('http://') || decoded.startsWith('https://') || decoded.startsWith('data:image/')) {
-             return decoded;
-        }
-        console.warn("Decoded URL does not look like a valid image source:", decoded);
-        return null;
-      } catch(e) {
-         console.error("Failed to decode image proxy URL:", e);
-         return null;
-      }
-    }
-
-    // Modified filterResources function to work with pagination
-    function filterResources(event) {
-        const query = event.target.value.toLowerCase().trim();
-        const resourceListItems = document.getElementById('resourceListItems');
-         const noResourcesMessage = document.getElementById('no-resources-message');
-         const resourcesSectionTitle = document.getElementById('resources-section-title');
-         const resourceListContainer = document.getElementById('resource-list-container');
-         const paginationControlsDiv = document.getElementById('resource-pagination-controls');
-
-
-        if (!resourceListItems || !noResourcesMessage || !resourcesSectionTitle || !resourceListContainer || !paginationControlsDiv || !previousData || !previousData.resources) {
-             console.warn("Resource elements or data not found for filtering.");
-             return;
+        function formatBoolean(value) {
+            return (value === true || value === 'true' || value === 'on')
+                ? '<span class="status-true"><i class="fas fa-check-circle"></i> Yes</span>'
+                : '<span class="status-false"><i class="fas fa-times-circle"></i> No</span>';
         }
 
-        const allResources = previousData.resources;
-        let filteredResources = [];
-
-        if (query === "") {
-             console.log("Resource search query cleared, restoring pagination.");
-             displayResources(currentResourcePage);
-            return;
-        }
-
-     console.log(`Filtering resources with query: "${query}"`);
-     filteredResources = allResources.filter(resource =>
-         resource.toLowerCase().includes(query)
-     );
-
-    resourceListItems.innerHTML = generateResourceItems(filteredResources);
-
-     paginationControlsDiv.innerHTML = '';
-     paginationControlsDiv.style.display = 'none';
-
-    resourcesSectionTitle.textContent = `Resources (${filteredResources.length} found)`;
-
-    if (filteredResources.length > 0) {
-        noResourcesMessage.style.display = 'none';
-        resourceListContainer.style.display = '';
-    } else {
-        noResourcesMessage.textContent = `No resources found matching "${query}"`;
-        noResourcesMessage.style.display = '';
-        resourceListContainer.style.display = 'none';
-    }
-
-    addCopyListeners();
-}
-
-function filterPlayers(event) {
-    const query = event.target.value.toLowerCase().trim();
-    const playerTableBody = document.getElementById('players-table-body');
-    const paginationControlsDiv = document.getElementById('pagination-controls');
-    const playersSectionTitle = document.getElementById('players-section-title');
-    const noPlayersMessage = document.getElementById('no-players-message');
-    const playersTable = document.querySelector('.players table');
-
-
-    const allPlayers = previousData?.players || [];
-
-    if (!playerTableBody || !paginationControlsDiv || !playersSectionTitle || !noPlayersMessage || !playersTable) {
-        console.warn("Player elements not found for filtering.");
-        return;
-    }
-
-    if (query === "") {
-        console.log("Search query cleared, restoring pagination.");
-        displayPlayers(currentPage);
-        return;
-    }
-
-    console.log(`Filtering players with query: "${query}"`);
-    const filteredPlayers = allPlayers.filter(player =>
-        player.name && player.name.toLowerCase().includes(query)
-    );
-
-    const filteredPlayersHtml = generatePlayerRows(filteredPlayers);
-
-    playerTableBody.innerHTML = filteredPlayersHtml;
-
-    paginationControlsDiv.innerHTML = '';
-    paginationControlsDiv.style.display = 'none';
-
-     playersSectionTitle.textContent = `Players (${filteredPlayers.length} found)`;
-
-     if (filteredPlayers.length > 0) {
-         playersTable.style.display = '';
-         noPlayersMessage.style.display = 'none';
-     } else {
-         playersTable.style.display = 'none';
-         noPlayersMessage.textContent = `No players found matching "${query}"`;
-         noPlayersMessage.style.display = '';
-     }
-
-    addCopyListeners();
-}
-
-     function loadSavedServerCodeAndFetch() {
-         const savedCode = localStorage.getItem(localStorageKey);
-         if (savedCode && serverCodeInput) {
-             serverCodeInput.value = savedCode;
-             console.log("Loaded server code from localStorage:", savedCode);
-             startLiveFetch();
-         } else {
-             console.log("No saved server code found in localStorage.");
-         }
-
-         const progressRingInit = document.querySelector('.progress-ring');
-         if(progressRingInit) {
-            updateCircleDashoffset();
-         }
-         window.addEventListener('resize', updateCircleDashoffset);
-
-         document.addEventListener('keydown', handleKeyPress);
-     }
-
-     function handleKeyPress(event) {
-        const playerSearchInput = document.querySelector('.players .player-search');
-        const resourceSearchInput = document.querySelector('.resources .resource-search');
-
-        if ((playerSearchInput && playerSearchInput.value.trim() !== '') || (resourceSearchInput && resourceSearchInput.value.trim() !== '')) {
-             return;
-        }
-         if (event.target.tagName === 'INPUT') {
-             return;
-         }
-
-        const playersSection = document.querySelector('.players');
-        const resourcesSection = document.querySelector('.resources');
-
-        const totalPlayers = previousData?.players?.length || 0;
-        const totalPlayerPages = Math.ceil(totalPlayers / playersPerPage);
-
-        const totalResources = previousData?.resources?.length || 0;
-        const totalResourcePages = Math.ceil(totalResources / resourcesPerPage);
-
-
-        // Player pagination with ArrowLeft/ArrowRight if Player section is visible and has more than one page
-        if (playersSection && !playersSection.classList.contains('section-hidden') && totalPlayers > playersPerPage) {
-             if (event.key === 'ArrowLeft') {
-                 prevPage();
-                 event.preventDefault();
-                 return;
-             } else if (event.key === 'ArrowRight') {
-                 nextPage();
-                 event.preventDefault();
-                 return;
-             }
-        }
-
-         // Resource pagination with ArrowUp/ArrowDown if Resources section is visible and has more than one page
-        if (resourcesSection && !resourcesSection.classList.contains('section-hidden') && totalResources > resourcesPerPage) {
-             if (event.key === 'ArrowUp') {
-                 prevResourcePage();
-                 event.preventDefault();
-                 return;
-             } else if (event.key === 'ArrowDown') {
-                 nextResourcePage();
-                 event.preventDefault();
-                 return;
-             }
-         }
-
-     }
-
-
-     window.addEventListener('DOMContentLoaded', loadSavedServerCodeAndFetch);
-
-  </script>
+    </script>
 </body>
 </html>
