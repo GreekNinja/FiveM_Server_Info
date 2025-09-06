@@ -92,7 +92,6 @@
         }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* NEW STYLES */
         .card-banner { width: 100%; height: auto; display: block; }
         .card-footer {
             padding: 10px 20px; background-color: #1c1c1c; text-align: center;
@@ -114,7 +113,6 @@
         .player-list-table td { color: var(--text-muted-color); font-size: 0.9rem; }
         .player-list-table td:nth-child(1) { width: 60px; text-align: center; }
         .player-list-table td:nth-child(3) { width: 80px; text-align: right; }
-        /* END NEW STYLES */
 
         .card-section { padding: 20px; border-bottom: 1px solid var(--border-color); }
         .card-section:last-child { border-bottom: none; }
@@ -125,7 +123,6 @@
             margin: 0; color: var(--text-muted-color); font-size: 0.9rem; text-decoration: none;
         }
         .server-title a:hover { text-decoration: underline; }
-        /* NEW: Project Description */
         .project-description { font-size: 0.9rem; color: #b0b0b0; margin-top: 4px; }
         
         .section-title {
@@ -163,7 +160,7 @@
             float: right; transition: transform 0.2s;
         }
         details[open] summary::after { transform: rotate(180deg); }
-        .details-content { padding: 0 20px 20px 20px; background-color: #1c1c1c; }
+        .details-content { padding: 20px; background-color: #1c1c1c; }
 
         .tag-list { display: flex; flex-wrap: wrap; gap: 5px; justify-content: flex-end; }
         .tag { background-color: #333; color: var(--text-muted-color); font-size: 0.8rem; padding: 3px 8px; border-radius: 5px; }
@@ -265,7 +262,7 @@
             
             try {
                 const response = await fetch(`https://servers-frontend.fivem.net/api/servers/single/${serverId}`);
-                if (!response.ok) throw new Error('Server not found or API is unavailable.');
+                if (!response.ok) throw new Error('Server not found or invalid ID.');
                 
                 const data = await response.json();
                 
@@ -286,7 +283,6 @@
             }
         }
         
-        // NEW function to update just the player list
         function updatePlayerList(players = []) {
             const tableBody = document.getElementById('player-list-tbody');
             const summary = document.getElementById('player-list-summary');
@@ -324,7 +320,6 @@
                 playerBar.style.width = `${(server.clients / server.sv_maxclients) * 100}%`;
             }
             
-            // Update player list
             updatePlayerList(server.players);
             
             const resourceCount = server.resources?.length || 0;
@@ -338,7 +333,6 @@
         }
 
         function displayServerInfo(server) {
-            // --- NEW: Extract all the new data with fallbacks ---
             const banner = server.vars?.banner_detail;
             const projectName = server.vars?.sv_projectName || server.hostname.replace(/\^[0-9]/g, '').trim() || 'Unnamed Server';
             const projectDesc = server.vars?.sv_projectDesc;
@@ -349,7 +343,6 @@
             const [serverIp, serverPort] = connectEndpoint.split(':');
             
             const lastSeen = new Date(server.lastSeen).toLocaleString();
-
             const playerPercentage = (server.clients / server.sv_maxclients) * 100;
             const tagsHTML = server.vars?.tags?.split(',').map(tag => `<span class="tag">${tag.trim()}</span>`).join(' ') || 'None';
             
@@ -418,6 +411,7 @@
                     <details>
                         <summary id="player-list-summary">Show Players (${players.length})</summary>
                         <div class="details-content">
+                            <input type="text" id="player-search-input" class="resource-search" placeholder="&#xf002; Search players..." style="font-family: 'Roboto', 'Font Awesome 6 Free';">
                             <table class="player-list-table">
                                 <thead>
                                     <tr><th>ID</th><th>Name</th><th>Ping</th></tr>
@@ -442,6 +436,7 @@
             `;
             serverInfoContainer.innerHTML = serverCardHTML;
             
+            // --- Attach event listener for Resource search ---
             const resourceSearchInput = document.getElementById('resource-search-input');
             if (resourceSearchInput) {
                 resourceSearchInput.addEventListener('input', (e) => {
@@ -449,6 +444,24 @@
                     const resourceItems = document.getElementById('resource-list').getElementsByTagName('li');
                     for (const item of resourceItems) {
                         item.style.display = item.textContent.toLowerCase().includes(searchTerm) ? '' : 'none';
+                    }
+                });
+            }
+
+            // --- NEW: Attach event listener for Player search ---
+            const playerSearchInput = document.getElementById('player-search-input');
+            const playerTableBody = document.getElementById('player-list-tbody');
+            if (playerSearchInput && playerTableBody) {
+                const playerRows = playerTableBody.getElementsByTagName('tr');
+                playerSearchInput.addEventListener('input', (e) => {
+                    const searchTerm = e.target.value.toLowerCase();
+                    for (const row of playerRows) {
+                        const playerName = row.cells[1]?.textContent.toLowerCase();
+                        if (playerName && playerName.includes(searchTerm)) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
                     }
                 });
             }
