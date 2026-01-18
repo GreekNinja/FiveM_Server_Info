@@ -31,28 +31,13 @@
         body {
             font-family: var(--font-head);
             background-color: var(--bg-color);
-            background-image: 
-                linear-gradient(var(--border) 1px, transparent 1px),
-                linear-gradient(90deg, var(--border) 1px, transparent 1px);
-            background-size: var(--grid-size) var(--grid-size);
-            background-position: center top;
+            /* Clean background - removed grid pixels */
             color: var(--text-main);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             padding: 2rem 1rem;
             overflow-y: scroll;
-        }
-
-        /* Scanline Overlay */
-        body::after {
-            content: "";
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            background-size: 100% 2px, 3px 100%;
-            pointer-events: none;
-            z-index: 999;
         }
 
         .container {
@@ -146,7 +131,7 @@
 
         .specs-panel {
             display: flex; flex-direction: column;
-            background: rgba(255,255,255,0.01);
+            background: #111; /* Solid background for better visibility */
         }
 
         .stat-block {
@@ -221,9 +206,9 @@
         .module-body.open { max-height: 500px; overflow-y: auto; }
 
         /* Cyber Table */
-        .cyber-table { width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: 0.9rem; }
+        .cyber-table { width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: 0.9rem; table-layout: fixed; }
         .cyber-table th { text-align: left; padding: 8px 12px; color: var(--text-muted); border-bottom: 1px solid var(--border); font-weight: 400; }
-        .cyber-table td { padding: 8px 12px; border-bottom: 1px solid #1a1a1a; }
+        .cyber-table td { padding: 8px 12px; border-bottom: 1px solid #1a1a1a; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .cyber-table tr:hover td { background: rgba(255,255,255,0.05); color: var(--primary); }
 
         /* Loader & Utils */
@@ -315,6 +300,22 @@
                 <div class="stat-block">
                     <label>Game Build</label>
                     <div class="value val-cyan" id="stat-build">Unknown</div>
+                </div>
+                <div class="stat-block">
+                    <label>Pure Level</label>
+                    <div class="value" id="stat-pure">N/A</div>
+                </div>
+                <div class="stat-block">
+                    <label>ScriptHook</label>
+                    <div class="value" id="stat-scripthook">N/A</div>
+                </div>
+                <div class="stat-block">
+                    <label>Premium</label>
+                    <div class="value val-pink" id="stat-premium">N/A</div>
+                </div>
+                <div class="stat-block">
+                    <label>TxAdmin</label>
+                    <div class="value" id="stat-txadmin">N/A</div>
                 </div>
                 <div class="stat-block">
                     <label>FXServer</label>
@@ -424,12 +425,33 @@
                 </div>
             </div>
 
+            <div class="panel">
+                <div class="module-header" onclick="toggleModule('vars-module')">
+                    <h3><i class="fas fa-cogs" style="color: var(--primary);"></i> SERVER CONFIGURATION</h3>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div id="vars-module" class="module-body">
+                    <div style="padding: 10px; border-bottom: 1px solid var(--border);">
+                        <input type="text" id="vars-search" class="search-input" style="font-size: 0.9rem; padding: 0.5rem;" placeholder="FILTER VARIABLES...">
+                    </div>
+                    <table class="cyber-table">
+                        <thead>
+                            <tr>
+                                <th>VARIABLE</th>
+                                <th class="text-right">VALUE</th>
+                            </tr>
+                        </thead>
+                        <tbody id="vars-list-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
 
 <script>
-    const state = { currentId: null, interval: null, data: null, players: [], resources: [] };
+    const state = { currentId: null, interval: null, data: null, players: [], resources: [], vars: [] };
 
     const el = {
         form: document.getElementById('search-form'),
@@ -452,6 +474,10 @@
         locale: document.getElementById('stat-locale'),
         private: document.getElementById('stat-private'),
         onesync: document.getElementById('stat-onesync'),
+        pure: document.getElementById('stat-pure'),
+        scripthook: document.getElementById('stat-scripthook'),
+        premium: document.getElementById('stat-premium'),
+        txadmin: document.getElementById('stat-txadmin'),
         // Telemetry
         upvote: document.getElementById('stat-upvote'),
         burst: document.getElementById('stat-burst'),
@@ -464,8 +490,10 @@
         rCount: document.getElementById('res-count'),
         pList: document.getElementById('player-list-body'),
         rList: document.getElementById('resource-list'),
+        vList: document.getElementById('vars-list-body'),
         pSearch: document.getElementById('player-search'),
-        rSearch: document.getElementById('res-search')
+        rSearch: document.getElementById('res-search'),
+        vSearch: document.getElementById('vars-search')
     };
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -483,6 +511,7 @@
 
     el.pSearch.addEventListener('input', (e) => renderPlayers(e.target.value));
     el.rSearch.addEventListener('input', (e) => renderResources(e.target.value));
+    el.vSearch.addEventListener('input', (e) => renderVars(e.target.value));
 
     function parseId(input) {
         const match = input.match(/cfx\.re\/join\/([a-z0-9]+)/i);
@@ -572,6 +601,12 @@
         el.build.textContent = vars.sv_enforceGameBuild || 'LEGACY';
         el.fxserver.textContent = d.server || 'Unknown';
         el.locale.textContent = (vars.locale || 'N/A').toUpperCase();
+        el.pure.textContent = vars.sv_pureLevel || 'N/A';
+        el.scripthook.innerHTML = vars.sv_scriptHookAllowed === 'true' 
+            ? '<span class="val-pink">ALLOWED</span>' 
+            : '<span class="val-success">DENIED</span>';
+        el.premium.textContent = (vars.premium || 'None').toUpperCase();
+        el.txadmin.textContent = vars['txAdmin-version'] || 'N/A';
         
         el.private.innerHTML = d.private 
             ? '<span class="val-pink">YES</span>' 
@@ -600,6 +635,10 @@
         state.resources = d.resources || [];
         el.rCount.textContent = `[${state.resources.length}]`;
         renderResources();
+
+        // Vars List
+        state.vars = Object.entries(vars).map(([key, val]) => ({ key, val }));
+        renderVars();
     }
 
     function renderDynamic(d) {
@@ -643,6 +682,21 @@
             chip.textContent = r;
             chip.style.cssText = `font-family: var(--font-mono); font-size: 0.8rem; background: #111; border: 1px solid #333; color: #888; padding: 2px 8px;`;
             el.rList.appendChild(chip);
+        });
+    }
+
+    function renderVars(filter = '') {
+        const term = filter.toLowerCase();
+        const list = state.vars.filter(v => v.key.toLowerCase().includes(term) || v.val.toLowerCase().includes(term));
+
+        el.vList.innerHTML = '';
+        list.forEach(v => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td style="color: var(--text-muted); font-size: 0.8rem;">${escapeHtml(v.key)}</td>
+                <td class="text-right" style="color: var(--primary); font-size: 0.8rem;">${escapeHtml(v.val)}</td>
+            `;
+            el.vList.appendChild(tr);
         });
     }
 
