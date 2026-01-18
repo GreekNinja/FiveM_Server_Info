@@ -168,6 +168,15 @@
 
         /* Right Column */
         .main-content { display: flex; flex-direction: column; gap: 1.5rem; }
+        
+        .server-banner {
+            width: 100%; height: 180px; object-fit: cover;
+            border-bottom: 1px solid var(--border);
+            filter: grayscale(30%) contrast(110%);
+            transition: filter 0.3s;
+        }
+        .server-banner:hover { filter: grayscale(0%) contrast(100%); }
+
         .server-header-info { border-bottom: 1px dashed #333; padding-bottom: 1rem; }
         .server-title { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; text-transform: uppercase; line-height: 1; }
 
@@ -329,27 +338,30 @@
         <!-- Right: Main Content -->
         <div class="main-content">
             
-            <div class="panel" style="padding: 1.5rem;">
-                <div class="server-header-info">
-                    <h2 id="server-name" class="server-title">TARGET SERVER</h2>
-                    <div id="server-desc" style="color: var(--text-muted); font-family: var(--font-mono); font-size: 0.9rem; margin-bottom: 0.5rem;">
-                        Waiting for data packet...
+            <div class="panel">
+                <img id="server-banner" class="server-banner hidden" src="" onerror="this.classList.add('hidden')">
+                <div style="padding: 1.5rem;">
+                    <div class="server-header-info">
+                        <h2 id="server-name" class="server-title">TARGET SERVER</h2>
+                        <div id="server-desc" style="color: var(--text-muted); font-family: var(--font-mono); font-size: 0.9rem; margin-bottom: 0.5rem;">
+                            Waiting for data packet...
+                        </div>
+                        <div style="font-size: 0.8rem; color: #444;">
+                            OWNER: <a id="owner-link" href="#" target="_blank" style="color: var(--primary); text-decoration: none;">UNKNOWN</a>
+                        </div>
                     </div>
-                    <div style="font-size: 0.8rem; color: #444;">
-                        OWNER: <a id="owner-link" href="#" target="_blank" style="color: var(--primary); text-decoration: none;">UNKNOWN</a>
-                    </div>
-                </div>
 
-                <div class="action-row">
-                    <button class="action-btn btn-copy" onclick="copyIP()">
-                        <i class="fas fa-copy"></i> COPY IP
-                    </button>
-                    <a id="discord-btn" href="#" target="_blank" class="action-btn btn-discord hidden">
-                        <i class="fab fa-discord"></i> COMMS
-                    </a>
-                    <a id="connect-btn" href="#" class="action-btn btn-connect">
-                        <i class="fas fa-bolt"></i> JACK IN
-                    </a>
+                    <div class="action-row">
+                        <button class="action-btn btn-copy" onclick="copyIP()">
+                            <i class="fas fa-copy"></i> COPY IP
+                        </button>
+                        <a id="discord-btn" href="#" target="_blank" class="action-btn btn-discord hidden">
+                            <i class="fab fa-discord"></i> COMMS
+                        </a>
+                        <a id="connect-btn" href="#" class="action-btn btn-connect">
+                            <i class="fas fa-bolt"></i> JACK IN
+                        </a>
+                    </div>
                 </div>
             </div>
 
@@ -427,6 +439,7 @@
         error: document.getElementById('error-message'),
         history: document.getElementById('history-container'),
         name: document.getElementById('server-name'),
+        banner: document.getElementById('server-banner'),
         desc: document.getElementById('server-desc'),
         icon: document.getElementById('server-icon'),
         owner: document.getElementById('owner-link'),
@@ -527,6 +540,16 @@
         
         // Header
         el.name.textContent = vars.sv_projectName ? cleanText(vars.sv_projectName) : cleanText(d.hostname);
+        
+        // Banner
+        const bannerUrl = vars.banner_detail || vars.banner_connecting;
+        if(bannerUrl) {
+            el.banner.src = bannerUrl;
+            el.banner.classList.remove('hidden');
+        } else {
+            el.banner.classList.add('hidden');
+        }
+
         el.desc.textContent = vars.sv_projectDesc ? cleanText(vars.sv_projectDesc) : '';
         el.icon.src = d.ownerAvatar || 'https://placehold.co/400x400/000/FFF?text=NO+IMG';
         el.owner.textContent = d.ownerName;
