@@ -3,495 +3,686 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FiveM Server Inspector</title>
+    <title>YAMA | FiveM Intel</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     <style>
         :root {
-            --background-color: #121212;
-            --surface-color: #1e1e1e;
-            --primary-color: #007bff;
-            --primary-hover-color: #0056b3;
-            --text-color: #e0e0e0;
-            --text-muted-color: #888;
-            --border-color: #333;
-            --error-color: #dc3545;
-            --success-color: #28a745;
-            --update-glow-color: rgba(0, 123, 255, 0.4);
-            --discord-color: #5865F2;
+            --bg-color: #050505;
+            --panel-bg: #0a0a0a;
+            --border: #333;
+            --primary: #00f3ff;
+            --primary-dim: rgba(0, 243, 255, 0.1);
+            --accent: #ff0055;
+            --success: #00ff9d;
+            --warning: #ffb800;
+            --text-main: #e0e0e0;
+            --text-muted: #666;
+            --font-head: 'Rajdhani', sans-serif;
+            --font-mono: 'Share Tech Mono', monospace;
+            --grid-size: 30px;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #2c2c2c; }
-        ::-webkit-scrollbar-thumb { background: #555; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #666; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-color);
+            font-family: var(--font-head);
+            background-color: var(--bg-color);
+            background-image: 
+                linear-gradient(var(--border) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: var(--grid-size) var(--grid-size);
+            background-position: center top;
+            color: var(--text-main);
+            min-height: 100vh;
             display: flex;
             justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
-            padding: 40px 20px;
+            padding: 2rem 1rem;
+            overflow-y: scroll;
+        }
+
+        /* Scanline Overlay */
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+            z-index: 999;
         }
 
         .container {
             width: 100%;
-            max-width: 800px;
-            background-color: var(--surface-color);
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            border: 1px solid var(--border-color);
+            max-width: 1100px;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* --- UI COMPONENTS --- */
+        .panel {
+            background: var(--panel-bg);
+            border: 1px solid var(--border);
+            position: relative;
         }
         
-        h1 { text-align: center; margin-bottom: 25px; font-weight: 700; color: white; }
-        .search-form { display: flex; gap: 10px; margin-bottom: 25px; }
+        .panel::before {
+            content: ''; position: absolute; top: -1px; left: -1px; width: 10px; height: 10px;
+            border-top: 2px solid var(--primary); border-left: 2px solid var(--primary); z-index: 2;
+        }
+        .panel::after {
+            content: ''; position: absolute; bottom: -1px; right: -1px; width: 10px; height: 10px;
+            border-bottom: 2px solid var(--primary); border-right: 2px solid var(--primary); z-index: 2;
+        }
+
+        /* Header */
+        .cyber-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+
+        .brand h1 {
+            font-size: 3rem;
+            line-height: 0.8;
+            color: var(--text-main);
+            text-shadow: 2px 2px 0px var(--primary-dim);
+        }
+        
+        .brand span {
+            font-family: var(--font-mono);
+            color: var(--primary);
+            font-size: 1rem;
+            letter-spacing: 4px;
+        }
+
+        /* Search Bar */
+        .search-module { display: flex; gap: 0; }
         .search-input {
-            flex-grow: 1; padding: 12px 15px; font-size: 16px;
-            border: 1px solid var(--border-color); border-radius: 8px;
-            background-color: #2a2a2a; color: var(--text-color); outline: none;
-            transition: border-color 0.3s, box-shadow 0.3s;
+            flex: 1; background: rgba(0,0,0,0.8); border: 1px solid var(--border); border-right: none;
+            color: var(--primary); font-family: var(--font-mono); font-size: 1.2rem; padding: 1rem 1.5rem;
+            outline: none; transition: background 0.2s;
         }
-        .search-input:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
-        }
-        .search-button {
-            padding: 12px 20px; font-size: 16px; font-weight: 500; border: none;
-            border-radius: 8px; background-color: var(--primary-color); color: white;
-            cursor: pointer; transition: background-color 0.3s, transform 0.1s;
-        }
-        .search-button:hover { background-color: var(--primary-hover-color); }
-        .search-button:active { transform: scale(0.98); }
+        .search-input:focus { background: rgba(0, 243, 255, 0.05); }
+        .search-input::placeholder { color: #444; }
 
-        #results { margin-top: 20px; }
-        .loader {
-            display: none; margin: 40px auto; border: 5px solid #f3f3f330;
-            border-top: 5px solid var(--primary-color); border-radius: 50%;
-            width: 50px; height: 50px; animation: spin 1s linear infinite;
+        .btn-cyber {
+            background: var(--primary); color: #000; border: none; padding: 0 2rem;
+            font-family: var(--font-head); font-weight: 700; font-size: 1.2rem; cursor: pointer; text-transform: uppercase;
+            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+            transition: transform 0.1s, background 0.2s;
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        .error-message {
-            display: none; text-align: center; padding: 15px;
-            background-color: rgba(220, 53, 69, 0.1); color: var(--error-color);
-            border: 1px solid var(--error-color); border-radius: 8px;
+        .btn-cyber:hover { background: #fff; }
+        .btn-cyber:active { transform: scale(0.98); }
+
+        /* History */
+        .history-strip { display: flex; gap: 10px; overflow-x: auto; padding: 5px 0; scrollbar-width: none; }
+        .history-chip {
+            font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted); border: 1px solid #333;
+            padding: 4px 12px; cursor: pointer; transition: 0.2s;
+        }
+        .history-chip:hover { color: var(--primary); border-color: var(--primary); background: var(--primary-dim); }
+
+        /* --- MAIN DISPLAY --- */
+        .dashboard-grid { display: grid; grid-template-columns: 320px 1fr; gap: 1.5rem; }
+
+        /* Sidebar */
+        .sidebar { display: flex; flex-direction: column; gap: 1.5rem; }
+        .server-image {
+            width: 100%; aspect-ratio: 16/9; object-fit: cover; border: 1px solid var(--border);
+            filter: grayscale(80%) contrast(120%); transition: filter 0.3s;
+        }
+        .server-image:hover { filter: grayscale(0%) contrast(100%); }
+
+        .specs-panel {
+            display: flex; flex-direction: column;
+            background: rgba(255,255,255,0.01);
         }
 
-        .server-card {
-            background-color: #2a2a2a; border: 1px solid var(--border-color);
-            border-radius: 10px; animation: fadeIn 0.5s ease-in-out; overflow: hidden;
+        .stat-block {
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid #1a1a1a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .stat-block:last-child { border-bottom: none; }
         
-        .card-banner { width: 100%; height: auto; display: block; }
-        .card-footer {
-            padding: 10px 20px; background-color: #1c1c1c; text-align: center;
-            font-size: 0.8rem; color: var(--text-muted-color); border-top: 1px solid var(--border-color);
+        .stat-block label {
+            font-family: var(--font-mono); color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase;
         }
-        .discord-link {
-            margin-left: auto; background-color: var(--discord-color); color: white;
-            padding: 8px 12px; border-radius: 6px; text-decoration: none;
-            font-size: 0.9rem; font-weight: 500; transition: background-color 0.2s;
-        }
-        .discord-link:hover { background-color: #4752C4; }
-        .player-list-table {
-            width: 100%; border-collapse: collapse; margin-top: 10px;
-        }
-        .player-list-table th, .player-list-table td {
-            padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--border-color);
-        }
-        .player-list-table th { font-weight: 700; color: var(--text-color); font-size: 0.9rem; }
-        .player-list-table td { color: var(--text-muted-color); font-size: 0.9rem; }
-        .player-list-table td:nth-child(1) { width: 60px; text-align: center; }
-        .player-list-table td:nth-child(3) { width: 80px; text-align: right; }
+        .stat-block .value { font-size: 0.95rem; font-weight: 600; text-align: right; color: var(--text-main); }
+        .val-cyan { color: var(--primary) !important; }
+        .val-pink { color: var(--accent) !important; }
+        .val-success { color: var(--success) !important; }
 
-        .card-section { padding: 20px; border-bottom: 1px solid var(--border-color); }
-        .card-section:last-child { border-bottom: none; }
-        .card-header { display: flex; align-items: center; gap: 15px; }
-        .owner-avatar { width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--primary-color); }
-        .server-title h2 { margin: 0; font-size: 1.5rem; color: white; }
-        .server-title p, .server-title a {
-            margin: 0; color: var(--text-muted-color); font-size: 0.9rem; text-decoration: none;
-        }
-        .server-title a:hover { text-decoration: underline; }
-        .project-description { font-size: 0.9rem; color: #b0b0b0; margin-top: 4px; }
-        
-        .section-title {
-            font-size: 1.1rem; font-weight: 700; color: white;
-            margin-bottom: 15px; padding-bottom: 5px; border-bottom: 1px solid var(--border-color);
-        }
-        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 10px 20px; }
-        .info-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; }
-        .info-item span:first-child { color: var(--text-muted-color); font-weight: 500; margin-right: 10px; }
-        .info-item span:last-child { font-weight: 500; text-align: right; word-break: break-all; }
-        
-        .status-true { color: var(--success-color); }
-        .status-false { color: var(--error-color); }
-        .status-true i, .status-false i { margin-right: 5px; }
-        .player-count { display: flex; align-items: center; gap: 10px; }
-        .player-bar { width: 100px; height: 10px; background-color: #444; border-radius: 5px; overflow: hidden; }
-        .player-bar-fill { height: 100%; background-color: var(--success-color); border-radius: 5px; transition: width 0.5s ease-in-out; }
+        /* Right Column */
+        .main-content { display: flex; flex-direction: column; gap: 1.5rem; }
+        .server-header-info { border-bottom: 1px dashed #333; padding-bottom: 1rem; }
+        .server-title { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; text-transform: uppercase; line-height: 1; }
 
-        .connect-button {
-            display: block; width: 100%; padding: 15px; text-align: center;
-            text-decoration: none; font-size: 1.1rem; font-weight: bold;
-            color: white; background-color: var(--success-color);
-            transition: background-color 0.3s;
+        .action-row { display: flex; gap: 1rem; margin-top: 1rem; }
+        .action-btn {
+            flex: 1; padding: 12px; text-align: center; text-decoration: none; font-weight: 700;
+            text-transform: uppercase; font-family: var(--font-mono); border: 1px solid var(--border);
+            transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;
         }
-        .connect-button:hover { background-color: #218838; }
+        .btn-connect { background: rgba(0, 255, 157, 0.1); color: var(--success); border-color: var(--success); }
+        .btn-connect:hover { background: var(--success); color: #000; }
+        .btn-discord { background: rgba(88, 101, 242, 0.1); color: var(--discord); border-color: var(--discord); }
+        .btn-discord:hover { background: var(--discord); color: #fff; }
+        .btn-copy { background: transparent; color: var(--text-muted); cursor: pointer;}
+        .btn-copy:hover { color: var(--primary); border-color: var(--primary); }
 
-        details { border-top: 1px solid var(--border-color); }
-        details summary {
-            padding: 20px; cursor: pointer; font-size: 1.1rem; font-weight: 700;
-            color: var(--primary-color); outline: none; list-style-type: none; position: relative;
+        /* Telemetry Panel */
+        .telemetry-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1rem; }
+        .tele-box {
+            background: #0f0f0f; border: 1px solid #222; padding: 1rem; text-align: center;
         }
-        details summary::-webkit-details-marker { display: none; }
-        details summary::after {
-            content: '\f078'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
-            float: right; transition: transform 0.2s;
-        }
-        details[open] summary::after { transform: rotate(180deg); }
-        .details-content { padding: 20px; background-color: #1c1c1c; }
+        .tele-box label { display: block; font-family: var(--font-mono); color: var(--text-muted); font-size: 0.7rem; margin-bottom: 5px; }
+        .tele-box .num { font-size: 1.5rem; font-weight: 700; }
 
-        .tag-list { display: flex; flex-wrap: wrap; gap: 5px; justify-content: flex-end; }
-        .tag { background-color: #333; color: var(--text-muted-color); font-size: 0.8rem; padding: 3px 8px; border-radius: 5px; }
-        
-        .resource-search {
-            width: 100%; padding: 8px 12px; margin-bottom: 10px;
-            background-color: #111; border: 1px solid var(--border-color);
-            color: var(--text-color); border-radius: 6px; font-size: 0.9rem;
+        .tags-container { display: flex; flex-wrap: wrap; gap: 6px; }
+        .tag-chip {
+            background: rgba(255,255,255,0.05); border: 1px solid #333; color: #888;
+            font-family: var(--font-mono); font-size: 0.75rem; padding: 2px 8px;
         }
-        .resource-search:focus { outline: none; border-color: var(--primary-color); }
-        .resource-list-container {
-            list-style: none; padding: 10px; background-color: #111;
-            border-radius: 6px; max-height: 400px; overflow-y: auto;
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px;
+
+        /* Modules */
+        .module-header {
+            background: #111; padding: 10px 15px; border: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none;
         }
-        .resource-item {
-            background-color: #2c2c2c; padding: 5px 10px; border-radius: 4px;
-            font-size: 0.85rem; color: var(--text-muted-color); white-space: nowrap;
-            overflow: hidden; text-overflow: ellipsis;
+        .module-header:hover { border-color: var(--text-muted); }
+        .module-header h3 { font-size: 1.1rem; }
+        .module-body {
+            border: 1px solid var(--border); border-top: none; background: rgba(0,0,0,0.5);
+            max-height: 0; overflow: hidden; transition: max-height 0.3s cubic-bezier(0, 1, 0, 1);
         }
-        
-        @keyframes flash-update {
-            0% { background-color: var(--update-glow-color); box-shadow: 0 0 10px var(--update-glow-color); }
-            100% { background-color: transparent; box-shadow: none; }
+        .module-body.open { max-height: 500px; overflow-y: auto; }
+
+        /* Cyber Table */
+        .cyber-table { width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: 0.9rem; }
+        .cyber-table th { text-align: left; padding: 8px 12px; color: var(--text-muted); border-bottom: 1px solid var(--border); font-weight: 400; }
+        .cyber-table td { padding: 8px 12px; border-bottom: 1px solid #1a1a1a; }
+        .cyber-table tr:hover td { background: rgba(255,255,255,0.05); color: var(--primary); }
+
+        /* Loader & Utils */
+        .loader-box { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 200px; gap: 1rem; }
+        .loading-bar { width: 200px; height: 4px; background: #222; position: relative; overflow: hidden; }
+        .loading-bar::after {
+            content: ''; position: absolute; top: 0; left: 0; height: 100%; width: 50%;
+            background: var(--primary); animation: cyber-load 1s infinite ease-in-out;
         }
-        .updated { animation: flash-update 1s ease-out; border-radius: 4px; }
+        @keyframes cyber-load { 0% { left: -50%; } 100% { left: 100%; } }
+        .hidden { display: none !important; }
+        .text-right { text-align: right; }
+        .glitch-text { animation: glitch 3s infinite; }
+        @keyframes glitch {
+            0% { text-shadow: 2px 2px 0px var(--primary-dim); }
+            95% { text-shadow: 2px 2px 0px var(--primary-dim); }
+            96% { text-shadow: -2px 0px 0px var(--accent); transform: translate(1px, 0); }
+            97% { text-shadow: 2px 0px 0px var(--success); transform: translate(-1px, 0); }
+            98% { text-shadow: none; transform: translate(0, 0); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .sidebar { flex-direction: row; flex-wrap: wrap; }
+            .server-image { width: 100px; height: 100px; }
+            .specs-panel { flex: 1; min-width: 250px; }
+            .cyber-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .brand h1 { font-size: 2.5rem; }
+            .action-row { flex-direction: column; }
+            .telemetry-grid { grid-template-columns: 1fr 1fr; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1><i class="fas fa-server"></i> FiveM Server Inspector</h1>
-        
-        <form class="search-form" id="server-form">
-            <input 
-                type="text" 
-                id="server-input" 
-                class="search-input" 
-                placeholder="Enter Server ID or Join Link (cfx.re/join/...)" 
-                required
-            >
-            <button type="submit" class="search-button">
-                <i class="fas fa-search"></i>
-            </button>
-        </form>
-
-        <div id="results">
-            <div class="loader" id="loader"></div>
-            <div class="error-message" id="error-message"></div>
-            <div id="server-info"></div>
+<div class="container">
+    <header class="cyber-header">
+        <div class="brand">
+            <h1 class="glitch-text">YAMA</h1>
+            <span>FiveM Server Info</span>
         </div>
+        <div id="status-indicator" style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--success);">
+            ● SYSTEM ONLINE
+        </div>
+    </header>
+
+    <div class="panel" style="padding: 1rem;">
+        <form id="search-form" class="search-module">
+            <input type="text" id="server-input" class="search-input" placeholder="INPUT SERVER ID // JOIN URL..." required>
+            <button type="submit" class="btn-cyber">SCAN</button>
+        </form>
+        <div id="history-container" class="history-strip" style="margin-top: 10px;"></div>
     </div>
 
-    <script>
-        const form = document.getElementById('server-form');
-        const input = document.getElementById('server-input');
-        const loader = document.getElementById('loader');
-        const errorMessage = document.getElementById('error-message');
-        const serverInfoContainer = document.getElementById('server-info');
+    <div id="error-message" class="panel hidden" style="border-color: var(--accent); padding: 1rem; color: var(--accent);">
+        <i class="fas fa-bug"></i> <span id="error-text">CRITICAL ERROR</span>
+    </div>
+
+    <div id="loader" class="loader-box hidden">
+        <div style="font-family: var(--font-mono); letter-spacing: 2px;">ESTABLISHING CONNECTION...</div>
+        <div class="loading-bar"></div>
+    </div>
+
+    <!-- Results -->
+    <div id="results-area" class="dashboard-grid hidden">
         
-        let currentServerId = null;
-        let refreshInterval = null;
-
-        function updateUrlWithServerId(serverId) {
-            if (history.pushState) {
-                const newUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}?id=${serverId}`;
-                window.history.pushState({path: newUrl}, '', newUrl);
-            }
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const serverIdFromUrl = urlParams.get('id');
-            if (serverIdFromUrl) {
-                input.value = serverIdFromUrl;
-                fetchAndDisplayServer(serverIdFromUrl, true);
-            }
-        });
-
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const userInput = input.value.trim();
-            const serverId = extractServerId(userInput);
+        <!-- Left: Stats Column -->
+        <div class="sidebar">
+            <img id="server-icon" src="" class="server-image" onerror="this.src='https://placehold.co/400x400/000/FFF?text=NO+IMG'">
             
-            if (serverId) {
-                fetchAndDisplayServer(serverId, true);
-            } else {
-                displayError("Invalid input. Please provide a valid server ID or join link.");
-            }
-        });
+            <div class="panel specs-panel">
+                <div class="stat-block" style="background: rgba(0, 243, 255, 0.05); border-bottom: 2px solid var(--primary);">
+                    <label style="color: var(--primary);">SYSTEM SPECS</label>
+                    <i class="fas fa-microchip" style="color: var(--primary);"></i>
+                </div>
+                <div class="stat-block">
+                    <label>IP Address</label>
+                    <div class="value" id="stat-ip">0.0.0.0</div>
+                </div>
+                <div class="stat-block">
+                    <label>Port</label>
+                    <div class="value" id="stat-port">30120</div>
+                </div>
+                <div class="stat-block">
+                    <label>Gametype</label>
+                    <div class="value" id="stat-gametype">N/A</div>
+                </div>
+                <div class="stat-block">
+                    <label>Game Build</label>
+                    <div class="value val-cyan" id="stat-build">Unknown</div>
+                </div>
+                <div class="stat-block">
+                    <label>FXServer</label>
+                    <div class="value" id="stat-fxserver" style="font-size: 0.7rem; max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Unknown</div>
+                </div>
+                <div class="stat-block">
+                    <label>Locale</label>
+                    <div class="value" id="stat-locale">Global</div>
+                </div>
+                <div class="stat-block">
+                    <label>Private</label>
+                    <div class="value" id="stat-private">No</div>
+                </div>
+                <div class="stat-block">
+                    <label>OneSync</label>
+                    <div class="value" id="stat-onesync">Checking...</div>
+                </div>
+            </div>
+        </div>
 
-        async function fetchAndDisplayServer(serverId, showLoader = false) {
-            clearInterval(refreshInterval);
-            if (showLoader) {
-                serverInfoContainer.innerHTML = '';
-                errorMessage.style.display = 'none';
-                loader.style.display = 'block';
-            }
+        <!-- Right: Main Content -->
+        <div class="main-content">
             
-            try {
-                const response = await fetch(`https://servers-frontend.fivem.net/api/servers/single/${serverId}`);
-                if (!response.ok) throw new Error('Server not found or invalid ID.');
-                
-                const data = await response.json();
-                
-                if (showLoader) {
-                    displayServerInfo(data.Data);
-                } else {
-                    updateServerInfo(data.Data);
-                }
-                
-                currentServerId = serverId;
-                updateUrlWithServerId(serverId);
-                refreshInterval = setInterval(() => fetchAndDisplayServer(currentServerId, false), 30000);
-            } catch (error) {
-                if(showLoader) displayError(error.message);
-                currentServerId = null; 
-            } finally {
-                if (showLoader) loader.style.display = 'none';
-            }
-        }
-        
-        function updatePlayerList(players = []) {
-            const tableBody = document.getElementById('player-list-tbody');
-            const summary = document.getElementById('player-list-summary');
-            if (!tableBody || !summary) return;
-
-            const playerRowsHTML = players.map(p => `
-                <tr>
-                    <td>${p.id}</td>
-                    <td>${p.name}</td>
-                    <td>${p.ping}ms</td>
-                </tr>
-            `).join('');
-
-            tableBody.innerHTML = playerRowsHTML;
-            summary.textContent = `Show Players (${players.length})`;
-        }
-
-        function updateServerInfo(server) {
-            const updateField = (elementId, newValue, isHtml = false) => {
-                const element = document.getElementById(elementId);
-                if (!element) return;
-                const currentValue = isHtml ? element.innerHTML : element.textContent;
-                if (currentValue != newValue) {
-                    if (isHtml) element.innerHTML = newValue;
-                    else element.textContent = newValue;
-                    element.classList.add('updated');
-                    element.addEventListener('animationend', () => element.classList.remove('updated'), { once: true });
-                }
-            };
-
-            const playerText = `${server.clients} / ${server.sv_maxclients}`;
-            updateField('player-count-text', playerText);
-            const playerBar = document.getElementById('player-bar-fill');
-            if (playerBar) {
-                playerBar.style.width = `${(server.clients / server.sv_maxclients) * 100}%`;
-            }
-            
-            updatePlayerList(server.players);
-            
-            const resourceCount = server.resources?.length || 0;
-            updateField('resource-count', resourceCount);
-            
-            const projectName = server.vars?.sv_projectName || server.hostname.replace(/\^[0-9]/g, '').trim();
-            updateField('server-project-name', projectName);
-
-            const lastSeen = new Date(server.lastSeen).toLocaleString();
-            updateField('last-seen-time', lastSeen);
-        }
-
-        function displayServerInfo(server) {
-            const banner = server.vars?.banner_detail;
-            const projectName = server.vars?.sv_projectName || server.hostname.replace(/\^[0-9]/g, '').trim() || 'Unnamed Server';
-            const projectDesc = server.vars?.sv_projectDesc;
-            const discordLink = server.vars?.Discord?.match(/https:\/\/discord\.gg\/[a-zA-Z0-9]+/)?.[0];
-            const players = server.players || [];
-            
-            const connectEndpoint = server.connectEndPoints?.[0] || 'N/A:0';
-            const [serverIp, serverPort] = connectEndpoint.split(':');
-            
-            const lastSeen = new Date(server.lastSeen).toLocaleString();
-            const playerPercentage = (server.clients / server.sv_maxclients) * 100;
-            const tagsHTML = server.vars?.tags?.split(',').map(tag => `<span class="tag">${tag.trim()}</span>`).join(' ') || 'None';
-            
-            const resourcesListHTML = server.resources?.length > 0 
-                ? server.resources.sort().map(res => `<li class="resource-item" title="${res}">${res}</li>`).join('') 
-                : '<li>No resources listed.</li>';
-            
-            const playerRowsHTML = players.map(p => `
-                <tr>
-                    <td>${p.id}</td>
-                    <td>${p.name}</td>
-                    <td>${p.ping}ms</td>
-                </tr>
-            `).join('');
-
-            const serverCardHTML = `
-                <div class="server-card">
-                    ${banner ? `<img src="${banner}" alt="Server Banner" class="card-banner">` : ''}
-
-                    <div class="card-section card-header">
-                        <img src="${server.ownerAvatar}" alt="Owner Avatar" class="owner-avatar">
-                        <div class="server-title">
-                            <h2 id="server-project-name">${projectName}</h2>
-                            ${projectDesc ? `<p class="project-description">${projectDesc}</p>` : ''}
-                            <p>Owned by <a href="${server.ownerProfile}" target="_blank">${server.ownerName}</a></p>
-                        </div>
-                        ${discordLink ? `<a href="${discordLink}" target="_blank" class="discord-link"><i class="fab fa-discord"></i> Join Discord</a>` : ''}
+            <div class="panel" style="padding: 1.5rem;">
+                <div class="server-header-info">
+                    <h2 id="server-name" class="server-title">TARGET SERVER</h2>
+                    <div id="server-desc" style="color: var(--text-muted); font-family: var(--font-mono); font-size: 0.9rem; margin-bottom: 0.5rem;">
+                        Waiting for data packet...
                     </div>
-                    
-                    <div class="card-section">
-                        <a href="fivem://connect/${connectEndpoint}" class="connect-button">
-                            <i class="fas fa-play"></i> Connect to Server
-                        </a>
-                    </div>
-                    
-                    <div class="card-section">
-                        <h3 class="section-title">Server Details</h3>
-                        <div class="info-grid">
-                            <div class="info-item"><span><i class="fas fa-network-wired"></i> Server IP</span> <span>${serverIp}</span></div>
-                            <div class="info-item"><span><i class="fas fa-hashtag"></i> Port</span> <span>${serverPort}</span></div>
-                            <div class="info-item"><span><i class="fas fa-gamepad"></i> Gametype</span> <span>${server.gametype || 'N/A'}</span></div>
-                            <div class="info-item"><span><i class="fas fa-cogs"></i> Game Build</span> <span>${server.vars?.sv_enforceGameBuild || 'N/A'}</span></div>
-                            <div class="info-item"><span><i class="fas fa-info-circle"></i> FXServer</span> <span style="font-size: 0.8rem;">${server.server || 'N/A'}</span></div>
-                            <div class="info-item"><span><i class="fas fa-globe"></i> Locale</span> <span>${server.vars?.locale || 'N/A'}</span></div>
-                            <div class="info-item"><span><i class="fas fa-lock"></i> Private</span> ${formatBoolean(server.private)}</div>
-                            <div class="info-item"><span><i class="fas fa-sync"></i> OneSync</span> ${formatBoolean(server.vars?.onesync_enabled)}</div>
-                        </div>
-                    </div>
-                    
-                    <div class="card-section">
-                        <h3 class="section-title">Player Info</h3>
-                        <div class="info-grid">
-                            <div class="info-item">
-                                <span><i class="fas fa-users"></i> Players</span>
-                                <div class="player-count">
-                                    <span id="player-count-text">${server.clients} / ${server.sv_maxclients}</span>
-                                    <div class="player-bar"><div id="player-bar-fill" class="player-bar-fill" style="width: ${playerPercentage}%;"></div></div>
-                                </div>
-                            </div>
-                            <div class="info-item"><span><i class="fas fa-rocket"></i> Upvote Power</span> <span>${server.upvotePower}</span></div>
-                            <div class="info-item"><span><i class="fas fa-fire"></i> Burst Power</span> <span>${server.burstPower}</span></div>
-                            <div class="info-item"><span><i class="fas fa-tags"></i> Tags</span> <span class="tag-list">${tagsHTML}</span></div>
-                        </div>
-                    </div>
-
-                    <details>
-                        <summary id="player-list-summary">Show Players (${players.length})</summary>
-                        <div class="details-content">
-                            <input type="text" id="player-search-input" class="resource-search" placeholder="&#xf002; Search players..." style="font-family: 'Roboto', 'Font Awesome 6 Free';">
-                            <table class="player-list-table">
-                                <thead>
-                                    <tr><th>ID</th><th>Name</th><th>Ping</th></tr>
-                                </thead>
-                                <tbody id="player-list-tbody">${playerRowsHTML}</tbody>
-                            </table>
-                        </div>
-                    </details>
-
-                    <details>
-                        <summary>Show Resources (<span id="resource-count">${server.resources?.length || 0}</span>)</summary>
-                        <div class="details-content">
-                             <input type="text" id="resource-search-input" class="resource-search" placeholder="&#xf002; Search resources..." style="font-family: 'Roboto', 'Font Awesome 6 Free';">
-                             <ul class="resource-list-container" id="resource-list">${resourcesListHTML}</ul>
-                        </div>
-                    </details>
-                    
-                    <div class="card-footer">
-                        Last seen by FiveM: <span id="last-seen-time">${lastSeen}</span>
+                    <div style="font-size: 0.8rem; color: #444;">
+                        OWNER: <a id="owner-link" href="#" target="_blank" style="color: var(--primary); text-decoration: none;">UNKNOWN</a>
                     </div>
                 </div>
-            `;
-            serverInfoContainer.innerHTML = serverCardHTML;
+
+                <div class="action-row">
+                    <button class="action-btn btn-copy" onclick="copyIP()">
+                        <i class="fas fa-copy"></i> COPY IP
+                    </button>
+                    <a id="discord-btn" href="#" target="_blank" class="action-btn btn-discord hidden">
+                        <i class="fab fa-discord"></i> COMMS
+                    </a>
+                    <a id="connect-btn" href="#" class="action-btn btn-connect">
+                        <i class="fas fa-bolt"></i> JACK IN
+                    </a>
+                </div>
+            </div>
+
+            <!-- Telemetry & Tags -->
+            <div class="panel" style="padding: 1.5rem;">
+                <div style="margin-bottom: 0.5rem; font-family: var(--font-mono); color: var(--accent); font-size: 0.8rem; letter-spacing: 2px;">TELEMETRY DATA</div>
+                
+                <div class="telemetry-grid">
+                    <div class="tele-box">
+                        <label>UPVOTE POWER</label>
+                        <div class="num val-pink" id="stat-upvote">0</div>
+                    </div>
+                    <div class="tele-box">
+                        <label>BURST POWER</label>
+                        <div class="num val-pink" id="stat-burst">0</div>
+                    </div>
+                    <div class="tele-box">
+                        <label>ACTIVE PLAYERS</label>
+                        <div class="num val-cyan" id="stat-clients">0</div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 0.5rem; font-family: var(--font-mono); color: var(--text-muted); font-size: 0.8rem; letter-spacing: 2px;">SERVER TAGS</div>
+                <div id="tags-list" class="tags-container"></div>
+            </div>
+
+            <!-- Modules -->
+            <div class="panel">
+                <div class="module-header" onclick="toggleModule('players-module')">
+                    <h3><i class="fas fa-users" style="color: var(--success);"></i> PLAYER MANIFEST</h3>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div id="players-module" class="module-body">
+                    <div style="padding: 10px; border-bottom: 1px solid var(--border);">
+                        <input type="text" id="player-search" class="search-input" style="font-size: 0.9rem; padding: 0.5rem;" placeholder="FILTER ID / ALIAS...">
+                    </div>
+                    <table class="cyber-table">
+                        <thead>
+                            <tr>
+                                <th width="50">ID</th>
+                                <th>ALIAS</th>
+                                <th class="text-right">LATENCY</th>
+                            </tr>
+                        </thead>
+                        <tbody id="player-list-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="module-header" onclick="toggleModule('resources-module')">
+                    <h3><i class="fas fa-box" style="color: var(--warning);"></i> RESOURCE PACKAGES <span id="res-count" style="font-family: var(--font-mono); margin-left: 10px; color: var(--text-muted); font-size: 0.9rem;">[0]</span></h3>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div id="resources-module" class="module-body">
+                    <div style="padding: 10px; border-bottom: 1px solid var(--border);">
+                        <input type="text" id="res-search" class="search-input" style="font-size: 0.9rem; padding: 0.5rem;" placeholder="SEARCH PACKAGE...">
+                    </div>
+                    <div id="resource-list" style="padding: 10px; display: flex; flex-wrap: wrap; gap: 5px;"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    const state = { currentId: null, interval: null, data: null, players: [], resources: [] };
+
+    const el = {
+        form: document.getElementById('search-form'),
+        input: document.getElementById('server-input'),
+        results: document.getElementById('results-area'),
+        loader: document.getElementById('loader'),
+        error: document.getElementById('error-message'),
+        history: document.getElementById('history-container'),
+        name: document.getElementById('server-name'),
+        desc: document.getElementById('server-desc'),
+        icon: document.getElementById('server-icon'),
+        owner: document.getElementById('owner-link'),
+        // Detailed Stats
+        ip: document.getElementById('stat-ip'),
+        port: document.getElementById('stat-port'),
+        gametype: document.getElementById('stat-gametype'),
+        build: document.getElementById('stat-build'),
+        fxserver: document.getElementById('stat-fxserver'),
+        locale: document.getElementById('stat-locale'),
+        private: document.getElementById('stat-private'),
+        onesync: document.getElementById('stat-onesync'),
+        // Telemetry
+        upvote: document.getElementById('stat-upvote'),
+        burst: document.getElementById('stat-burst'),
+        clients: document.getElementById('stat-clients'),
+        tags: document.getElementById('tags-list'),
+        // Actions
+        btnConnect: document.getElementById('connect-btn'),
+        btnDiscord: document.getElementById('discord-btn'),
+        // Modules
+        rCount: document.getElementById('res-count'),
+        pList: document.getElementById('player-list-body'),
+        rList: document.getElementById('resource-list'),
+        pSearch: document.getElementById('player-search'),
+        rSearch: document.getElementById('res-search')
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+        renderHistory();
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = urlParams.get('id');
+        if(id) { el.input.value = id; startScan(id); }
+    });
+
+    el.form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const id = parseId(el.input.value.trim());
+        if(id) startScan(id); else showError('INVALID TARGET SYNTAX');
+    });
+
+    el.pSearch.addEventListener('input', (e) => renderPlayers(e.target.value));
+    el.rSearch.addEventListener('input', (e) => renderResources(e.target.value));
+
+    function parseId(input) {
+        const match = input.match(/cfx\.re\/join\/([a-z0-9]+)/i);
+        if (match) return match[1];
+        if (/^[a-z0-9]+$/i.test(input)) return input;
+        return null;
+    }
+
+    async function startScan(id) {
+        try {
+            const url = new URL(window.location);
+            url.searchParams.set('id', id);
+            window.history.pushState({}, '', url);
+        } catch(e) {}
+
+        clearInterval(state.interval);
+        state.currentId = id;
+        saveHistory(id);
+
+        el.loader.classList.remove('hidden');
+        el.results.classList.add('hidden');
+        el.error.classList.add('hidden');
+
+        await fetchData(id, true);
+        state.interval = setInterval(() => fetchData(id, false), 15000);
+    }
+
+    async function fetchData(id, firstLoad) {
+        try {
+            const res = await fetch(`https://servers-frontend.fivem.net/api/servers/single/${id}`);
+            if(!res.ok) throw new Error('TARGET OFFLINE OR UNREACHABLE');
             
-            // --- Attach event listener for Resource search ---
-            const resourceSearchInput = document.getElementById('resource-search-input');
-            if (resourceSearchInput) {
-                resourceSearchInput.addEventListener('input', (e) => {
-                    const searchTerm = e.target.value.toLowerCase();
-                    const resourceItems = document.getElementById('resource-list').getElementsByTagName('li');
-                    for (const item of resourceItems) {
-                        item.style.display = item.textContent.toLowerCase().includes(searchTerm) ? '' : 'none';
-                    }
-                });
+            const json = await res.json();
+            state.data = json.Data;
+            
+            if(firstLoad) {
+                el.loader.classList.add('hidden');
+                el.results.classList.remove('hidden');
+                renderStatic(json.Data);
             }
+            renderDynamic(json.Data);
 
-            // --- NEW: Attach event listener for Player search ---
-            const playerSearchInput = document.getElementById('player-search-input');
-            const playerTableBody = document.getElementById('player-list-tbody');
-            if (playerSearchInput && playerTableBody) {
-                const playerRows = playerTableBody.getElementsByTagName('tr');
-                playerSearchInput.addEventListener('input', (e) => {
-                    const searchTerm = e.target.value.toLowerCase();
-                    for (const row of playerRows) {
-                        const playerName = row.cells[1]?.textContent.toLowerCase();
-                        if (playerName && playerName.includes(searchTerm)) {
-                            row.style.display = '';
-                        } else {
-                            row.style.display = 'none';
-                        }
-                    }
-                });
+        } catch(err) {
+            if(firstLoad) {
+                el.loader.classList.add('hidden');
+                showError(err.message);
             }
         }
+    }
+
+    function cleanText(str) { return str ? str.replace(/\^[0-9]/g, '') : ''; }
+
+    function renderStatic(d) {
+        const vars = d.vars || {};
         
-        function extractServerId(input) {
-            try {
-                if (input.includes('cfx.re/join/')) {
-                    const url = new URL(input.startsWith('http') ? input : `https://${input}`);
-                    return url.pathname.split('/').pop();
+        // Header
+        el.name.textContent = vars.sv_projectName ? cleanText(vars.sv_projectName) : cleanText(d.hostname);
+        el.desc.textContent = vars.sv_projectDesc ? cleanText(vars.sv_projectDesc) : '';
+        el.icon.src = d.ownerAvatar || 'https://placehold.co/400x400/000/FFF?text=NO+IMG';
+        el.owner.textContent = d.ownerName;
+        el.owner.href = d.ownerProfile;
+        
+        // Connection Info
+        const endPoint = d.connectEndPoints[0];
+        const [ip, port] = endPoint.split(':');
+        el.ip.textContent = ip;
+        el.port.textContent = port || '30120';
+        el.btnConnect.href = `fivem://connect/${endPoint}`;
+        
+        const disc = vars.Discord || vars.discord;
+        if(disc && disc.includes('discord')) {
+            el.btnDiscord.href = disc; el.btnDiscord.classList.remove('hidden');
+        } else { el.btnDiscord.classList.add('hidden'); }
+
+        // Specs Sidebar
+        el.gametype.textContent = d.gametype || 'N/A';
+        el.build.textContent = vars.sv_enforceGameBuild || 'LEGACY';
+        el.fxserver.textContent = d.server || 'Unknown';
+        el.locale.textContent = (vars.locale || 'N/A').toUpperCase();
+        
+        el.private.innerHTML = d.private 
+            ? '<span class="val-pink">YES</span>' 
+            : '<span class="val-success">NO</span>';
+
+        el.onesync.innerHTML = (vars.onesync_enabled === 'true') 
+            ? '<span class="val-success">ACTIVE</span>' 
+            : '<span style="color: var(--text-muted)">INACTIVE</span>';
+
+        // Telemetry (Static parts)
+        el.upvote.textContent = d.upvotePower || 0;
+        el.burst.textContent = d.burstPower || 0;
+
+        // Tags
+        const tagString = vars.tags || '';
+        const tags = tagString.split(',').map(t => t.trim()).filter(t => t.length > 0);
+        el.tags.innerHTML = '';
+        tags.forEach(t => {
+            const chip = document.createElement('span');
+            chip.className = 'tag-chip';
+            chip.textContent = t;
+            el.tags.appendChild(chip);
+        });
+
+        // Resources Count
+        state.resources = d.resources || [];
+        el.rCount.textContent = `[${state.resources.length}]`;
+        renderResources();
+    }
+
+    function renderDynamic(d) {
+        state.players = d.players || [];
+        el.clients.textContent = `${d.clients} / ${d.sv_maxclients}`;
+        renderPlayers();
+    }
+
+    function renderPlayers(filter = '') {
+        const term = filter.toLowerCase();
+        const list = state.players.filter(p => p.name.toLowerCase().includes(term) || p.id.toString() === term);
+
+        el.pList.innerHTML = '';
+        if(list.length === 0) {
+            el.pList.innerHTML = `<tr><td colspan="3" style="text-align:center; padding: 20px; color: #444;">NO SIGNALS DETECTED</td></tr>`;
+            return;
+        }
+
+        list.forEach(p => {
+            const tr = document.createElement('tr');
+            let pingColor = 'var(--success)';
+            if(p.ping > 100) pingColor = 'var(--warning)';
+            if(p.ping > 200) pingColor = 'var(--accent)';
+
+            tr.innerHTML = `
+                <td style="color: var(--primary);">${p.id}</td>
+                <td style="color: #fff;">${escapeHtml(p.name)}</td>
+                <td class="text-right" style="color: ${pingColor};">${p.ping}ms</td>
+            `;
+            el.pList.appendChild(tr);
+        });
+    }
+
+    function renderResources(filter = '') {
+        const term = filter.toLowerCase();
+        const list = state.resources.filter(r => r.toLowerCase().includes(term));
+        
+        el.rList.innerHTML = '';
+        list.sort().forEach(r => {
+            const chip = document.createElement('span');
+            chip.textContent = r;
+            chip.style.cssText = `font-family: var(--font-mono); font-size: 0.8rem; background: #111; border: 1px solid #333; color: #888; padding: 2px 8px;`;
+            el.rList.appendChild(chip);
+        });
+    }
+
+    function toggleModule(id) {
+        const mod = document.getElementById(id);
+        mod.classList.toggle('open');
+        const icon = mod.parentElement.querySelector('.fa-chevron-down');
+        icon.style.transform = mod.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0deg)';
+        icon.style.transition = '0.3s';
+    }
+
+    function copyIP() {
+        const text = el.ip.textContent + ':' + el.port.textContent;
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.position = "fixed"; textArea.style.opacity = "0";
+        document.body.appendChild(textArea);
+        textArea.focus(); textArea.select();
+        
+        try {
+            document.execCommand('copy');
+            const btn = document.querySelector('.btn-copy');
+            if (!btn.getAttribute('data-original')) { btn.setAttribute('data-original', btn.innerHTML); }
+            btn.innerHTML = `<i class="fas fa-check"></i> COPIED`;
+            setTimeout(() => {
+                if (btn.getAttribute('data-original')) {
+                    btn.innerHTML = btn.getAttribute('data-original');
+                    btn.removeAttribute('data-original');
                 }
-            } catch (error) {
-                const parts = input.split('cfx.re/join/');
-                if (parts.length > 1) return parts[1].split('/')[0];
-            }
-            return input;
-        }
+            }, 2000);
+        } catch (err) { console.error('Copy failed', err); }
+        document.body.removeChild(textArea);
+    }
 
-        function displayError(message) {
-            errorMessage.textContent = message;
-            errorMessage.style.display = 'block';
-            loader.style.display = 'none';
-        }
+    function escapeHtml(text) {
+        if(!text) return '';
+        return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
 
-        function formatBoolean(value) {
-            return (value === true || value === 'true' || value === 'on')
-                ? '<span class="status-true"><i class="fas fa-check-circle"></i> Yes</span>'
-                : '<span class="status-false"><i class="fas fa-times-circle"></i> No</span>';
-        }
+    function showError(msg) {
+        document.getElementById('error-text').textContent = msg;
+        el.error.classList.remove('hidden');
+    }
 
-    </script>
+    function saveHistory(id) {
+        let h = JSON.parse(localStorage.getItem('YAMA_hist') || '[]');
+        h = h.filter(x => x !== id);
+        h.unshift(id); if(h.length > 6) h.pop();
+        localStorage.setItem('YAMA_hist', JSON.stringify(h));
+        renderHistory();
+    }
+
+    function renderHistory() {
+        const h = JSON.parse(localStorage.getItem('YAMA_hist') || '[]');
+        el.history.innerHTML = '';
+        h.forEach(id => {
+            const chip = document.createElement('div');
+            chip.className = 'history-chip';
+            chip.textContent = id;
+            chip.onclick = () => { el.input.value = id; startScan(id); };
+            el.history.appendChild(chip);
+        });
+    }
+</script>
 </body>
 </html>
