@@ -266,6 +266,7 @@
             font-size: 0.82rem;
             text-align: left;
             padding-left: 4px;
+            min-height: 20px;
         }
 
         .input-hint code {
@@ -298,15 +299,17 @@
             80% { transform: translateX(5px); }
         }
 
-        .server-content {
+        /* Views */
+        .view-content {
             display: none;
             animation: fadeInUp 0.6s ease-out;
         }
 
-        .server-content.visible {
+        .view-content.visible {
             display: block;
         }
 
+        /* Existing Styles */
         .hero-banner {
             position: relative;
             border-radius: 24px;
@@ -549,17 +552,18 @@
 
         .info-grid {
             display: grid;
-            gap: 16px;
+            gap: 12px;
         }
 
         .info-row {
-            display: flex;
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr); /* Auto για την ετικέτα, το υπόλοιπο για την τιμή */
             align-items: center;
-            justify-content: space-between;
-            padding: 14px 18px;
+            padding: 12px 16px;
             background: rgba(255,255,255,0.02);
             border-radius: 12px;
             transition: all 0.3s ease;
+            gap: 16px;
         }
 
         .info-row:hover {
@@ -573,22 +577,45 @@
             gap: 10px;
             color: var(--text-secondary);
             font-size: 0.9rem;
+            white-space: nowrap; /* Η ετικέτα δεν πρέπει να σπάει */
         }
 
         .info-row .info-label i {
             width: 20px;
             text-align: center;
             color: var(--accent-secondary);
+            flex-shrink: 0;
         }
 
         .info-row .info-value {
             font-weight: 600;
             font-size: 0.9rem;
-            text-align: right;
-            max-width: 60%;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+            overflow: hidden; /* Κρύβει ότι περισσεύει */
+        }
+
+        .info-row .info-value span {
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+            text-align: right;
+            max-width: 100%;
+        }
+
+        .copy-icon {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.2s;
+            flex-shrink: 0; /* Το εικονίδιο δεν πρέπει να μικραίνει */
+        }
+        
+        .copy-icon:hover {
+            color: var(--accent-primary);
         }
 
         .owner-section {
@@ -1039,6 +1066,85 @@
             word-break: break-all;
         }
 
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-overlay.visible {
+            display: flex;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-card);
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close-modal:hover {
+            color: var(--accent-red);
+        }
+
+        .modal-body {
+            padding: 24px;
+            overflow-y: auto;
+        }
+
+        .json-viewer {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
         @media (max-width: 1024px) {
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -1122,27 +1228,42 @@
         <i class="fas fa-check-circle"></i> Copied to clipboard!
     </div>
 
+    <!-- Raw Data Modal -->
+    <div class="modal-overlay" id="rawModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title"><i class="fas fa-code"></i> Server Raw Data</div>
+                <button class="close-modal" onclick="closeModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <pre class="json-viewer" id="jsonContent"></pre>
+            </div>
+        </div>
+    </div>
+
     <div class="main-container">
         <div class="search-section">
             <div class="logo">
                 <i class="fas fa-gamepad"></i> FiveM Explorer
             </div>
             <p class="subtitle">Discover and explore FiveM servers in real-time</p>
+            
             <div class="search-box">
                 <i class="fas fa-search search-icon"></i>
-                <input type="text" id="serverIdInput" placeholder="Enter Server ID or cfx.re link..." autocomplete="off">
+                <input type="text" id="searchInput" placeholder="Enter Server ID or cfx.re link..." autocomplete="off">
                 <button id="searchBtn" onclick="fetchServer()">
                     <span class="btn-text"><i class="fas fa-rocket"></i> Explore</span>
                     <div class="spinner"></div>
                 </button>
             </div>
-            <div class="input-hint">
+            <div class="input-hint" id="inputHint">
                 Accepts: Server ID like <code>bokeep</code> or full link like <code>cfx.re/join/bokeep</code>
             </div>
             <div class="error-message" id="errorMsg"></div>
         </div>
 
-        <div class="server-content" id="serverContent">
+        <!-- Single Server View -->
+        <div id="serverContent" class="view-content">
             <div class="hero-banner" id="heroBanner">
                 <img class="banner-image" id="bannerImage" src="" alt="Server Banner">
                 <div class="banner-overlay"></div>
@@ -1208,6 +1329,9 @@
                                 </div>
                                 <h3>Server Details</h3>
                             </div>
+                            <button class="mode-btn" onclick="showRawData()" style="padding: 6px 14px; font-size: 0.8rem; display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-secondary); border-radius: 8px; cursor: pointer; transition: all 0.2s;">
+                                <i class="fas fa-code"></i> Raw
+                            </button>
                         </div>
                         <div class="card-body">
                             <div class="info-grid" id="serverInfoGrid"></div>
@@ -1354,34 +1478,15 @@
         let serverData = null;
         let currentServerId = '';
 
-        // ── Tab Switching (event delegation, no event.target issue) ──
-        document.getElementById('tabsContainer').addEventListener('click', function(e) {
-            const btn = e.target.closest('.tab-btn');
-            if (!btn) return;
-            const tabName = btn.getAttribute('data-tab');
-            if (!tabName) return;
-
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-
-            btn.classList.add('active');
-            const tabEl = document.getElementById('tab-' + tabName);
-            if (tabEl) tabEl.classList.add('active');
-        });
-
         // ── Enter key ──
-        document.getElementById('serverIdInput').addEventListener('keypress', (e) => {
+        document.getElementById('searchInput').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') fetchServer();
         });
 
         // ── Extract server ID from input ──
         function extractServerId(input) {
             let val = input.trim();
-
-            // Remove protocol
             val = val.replace(/^https?:\/\//, '');
-
-            // Match cfx.re/join/XXXX patterns
             const cfxPatterns = [
                 /^cfx\.re\/join\/([^\s\/\?#]+)/i,
                 /^www\.cfx\.re\/join\/([^\s\/\?#]+)/i,
@@ -1390,25 +1495,18 @@
                 const match = val.match(pattern);
                 if (match) return match[1];
             }
-
-            // If it contains slashes or looks like a URL, try to get last meaningful segment
             if (val.includes('/')) {
-                // Try generic: anything/join/ID
                 const joinMatch = val.match(/\/join\/([^\s\/\?#]+)/i);
                 if (joinMatch) return joinMatch[1];
-
-                // Otherwise take the last path segment
                 const parts = val.split('/').filter(p => p.length > 0);
                 if (parts.length > 0) return parts[parts.length - 1];
             }
-
-            // Plain server ID
             return val;
         }
 
         // ── Fetch Server ──
-        async function fetchServer() {
-            const rawInput = document.getElementById('serverIdInput').value;
+        async function fetchServer(idOverride) {
+            const rawInput = idOverride || document.getElementById('searchInput').value;
             const serverId = extractServerId(rawInput);
 
             if (!serverId) {
@@ -1424,24 +1522,16 @@
 
             try {
                 const response = await fetch(`https://servers-frontend.fivem.net/api/servers/single/${encodeURIComponent(serverId)}`);
-
                 if (!response.ok) {
-                    if (response.status === 404) {
-                        throw new Error('Server not found. Check the ID and try again.');
-                    }
+                    if (response.status === 404) throw new Error('Server not found. Check the ID and try again.');
                     throw new Error(`API Error: ${response.status}`);
                 }
-
                 const data = await response.json();
-
-                if (!data || !data.Data) {
-                    throw new Error('Invalid server data received');
-                }
+                if (!data || !data.Data) throw new Error('Invalid server data received');
 
                 serverData = data;
                 renderServer(data);
                 document.getElementById('serverContent').classList.add('visible');
-
             } catch (error) {
                 showError(error.message);
             } finally {
@@ -1459,7 +1549,7 @@
             document.getElementById('errorMsg').style.display = 'none';
         }
 
-        // ── Render ──
+        // ── Render Server ──
         function renderServer(data) {
             const d = data.Data;
             const vars = d.vars || {};
@@ -1550,26 +1640,49 @@
             // Check for license key variations
             const licenseKey = vars.sv_licenseKey || vars.sv_licensekey || 'Hidden by Cfx.re';
 
+            // Safe value helper to fix 0/false display bug
+            const safeVal = (v) => (v !== null && v !== undefined && v !== '') ? v : 'N/A';
+            
+            // Get IP/Endpoint
+            const ip = d.connectEndPoints && d.connectEndPoints.length > 0 ? d.connectEndPoints[0] : 'N/A';
+
             const infos = [
-                { icon: 'fa-gamepad', label: 'Game Type', value: d.gametype || 'N/A' },
-                { icon: 'fa-map', label: 'Map', value: d.mapname || 'N/A' },
-                { icon: 'fa-globe', label: 'Locale', value: vars.locale || 'N/A' },
+                { icon: 'fa-network-wired', label: 'Connect Endpoint', value: ip, copy: true },
+                { icon: 'fa-gamepad', label: 'Game Type', value: safeVal(d.gametype) },
+                { icon: 'fa-map', label: 'Map', value: safeVal(d.mapname) },
+                { icon: 'fa-globe', label: 'Locale', value: safeVal(vars.locale) },
                 { icon: 'fa-code-branch', label: 'Server Version', value: d.server ? d.server.split(' ').slice(0, 2).join(' ') : 'N/A' },
-                { icon: 'fa-building', label: 'Game Build', value: vars.sv_enforceGameBuild || 'N/A' },
-                { icon: 'fa-sync-alt', label: 'OneSync', value: vars.onesync_enabled === 'true' ? '✅ Enabled' : '❌ Disabled' },
-                { icon: 'fa-shield-alt', label: 'Pure Level', value: vars.sv_pureLevel || '0' },
-                { icon: 'fa-tools', label: 'txAdmin', value: vars['txAdmin-version'] || 'N/A' },
+                { icon: 'fa-building', label: 'Game Build', value: safeVal(vars.sv_enforceGameBuild) },
+                { icon: 'fa-sync-alt', label: 'OneSync', value: vars.onesync_enabled === 'true' ? '✅ Enabled' : (vars.onesync_enabled === 'false' ? '❌ Disabled' : safeVal(vars.onesync_enabled)) },
+                { icon: 'fa-shield-alt', label: 'Pure Level', value: safeVal(vars.sv_pureLevel) },
+                { icon: 'fa-tools', label: 'txAdmin', value: safeVal(vars['txAdmin-version']) },
                 { icon: 'fa-crown', label: 'Keymaster Tier', value: premiumVal },
+                { icon: 'fa-bolt', label: 'Upvote Power', value: safeVal(d.upvotePower) },
+                { icon: 'fa-life-ring', label: 'Support Status', value: safeVal(d.support_status) },
                 { icon: 'fa-clock', label: 'Last Seen', value: d.lastSeen ? new Date(d.lastSeen).toLocaleString() : 'N/A' },
                 { icon: 'fa-key', label: 'License Key', value: licenseKey },
-                { icon: 'fa-fingerprint', label: 'License Token', value: vars.sv_licenseKeyToken || 'N/A' },
+                { icon: 'fa-fingerprint', label: 'License Token', value: safeVal(vars.sv_licenseKeyToken) },
             ];
+            
             grid.innerHTML = infos.map(info => `
                 <div class="info-row">
                     <div class="info-label"><i class="fas ${info.icon}"></i>${info.label}</div>
-                    <div class="info-value">${escapeHtml(info.value)}</div>
+                    <div class="info-value">
+                        <span title="${escapeHtml(info.value)}">${escapeHtml(info.value)}</span>
+                        ${info.copy && info.value !== 'N/A' ? `<i class="fas fa-copy copy-icon" onclick="copyToClipboard('${escapeHtml(info.value)}')"></i>` : ''}
+                    </div>
                 </div>
             `).join('');
+        }
+
+        function showRawData() {
+            if(!serverData) return;
+            document.getElementById('jsonContent').textContent = JSON.stringify(serverData, null, 2);
+            document.getElementById('rawModal').classList.add('visible');
+        }
+
+        function closeModal() {
+            document.getElementById('rawModal').classList.remove('visible');
         }
 
         function renderOwner(d) {
@@ -1702,21 +1815,45 @@
         }
 
         function escapeHtml(str) {
+            if(str === null || str === undefined) return '';
             const div = document.createElement('div');
-            div.textContent = str;
+            div.textContent = String(str);
             return div.innerHTML;
+        }
+
+        // ── Tab Switching (event delegation, no event.target issue) ──
+        document.getElementById('tabsContainer').addEventListener('click', function(e) {
+            const btn = e.target.closest('.tab-btn');
+            if (!btn) return;
+            const tabName = btn.getAttribute('data-tab');
+            if (!tabName) return;
+
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+            btn.classList.add('active');
+            const tabEl = document.getElementById('tab-' + tabName);
+            if (tabEl) tabEl.classList.add('active');
+        });
+
+        // Close modal on outside click
+        window.onclick = function(event) {
+            const modal = document.getElementById('rawModal');
+            if (event.target == modal) {
+                closeModal();
+            }
         }
 
         // Auto-load from hash
         window.addEventListener('load', () => {
             const hash = window.location.hash.substring(1);
             if (hash) {
-                document.getElementById('serverIdInput').value = hash;
+                document.getElementById('searchInput').value = hash;
                 fetchServer();
             }
         });
 
-        document.getElementById('serverIdInput').focus();
+        document.getElementById('searchInput').focus();
     </script>
 </body>
 </html>
