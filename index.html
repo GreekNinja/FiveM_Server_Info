@@ -653,24 +653,24 @@
             transform: translateY(-2px);
         }
 
-        .players-section {
+        .players-section, .resources-section {
             margin-bottom: 30px;
         }
 
-        .players-header {
+        .players-header, .resources-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
             margin-bottom: 20px;
         }
 
-        .players-header .header-left {
+        .players-header .header-left, .resources-header .header-left {
             display: flex;
             align-items: center;
             gap: 12px;
         }
 
-        .players-header h3 {
+        .players-header h3, .resources-header h3 {
             font-size: 1.3rem;
             font-weight: 700;
         }
@@ -790,17 +790,6 @@
         .ping-good { background: rgba(0, 230, 118, 0.1); color: var(--accent-green); }
         .ping-medium { background: rgba(255, 145, 0, 0.1); color: var(--accent-orange); }
         .ping-bad { background: rgba(255, 82, 82, 0.1); color: var(--accent-red); }
-
-        .resources-section {
-            margin-bottom: 30px;
-        }
-
-        .resources-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
 
         .resources-grid {
             display: flex;
@@ -1093,10 +1082,13 @@
             .stat-card .stat-value {
                 font-size: 1.6rem;
             }
-            .players-header {
+            .players-header, .resources-header {
                 flex-direction: column;
                 gap: 12px;
                 align-items: flex-start;
+            }
+            .players-search {
+                width: 100%;
             }
             .players-search input {
                 width: 100%;
@@ -1266,8 +1258,14 @@
             <div class="tab-content" id="tab-resources">
                 <div class="resources-section">
                     <div class="resources-header">
-                        <h3><i class="fas fa-puzzle-piece" style="color: var(--accent-cyan);"></i> Server Resources</h3>
-                        <span class="badge" id="resourceCount" style="background: rgba(0, 229, 255, 0.1); color: var(--accent-cyan); padding: 5px 14px; border-radius: 50px; font-size: 0.8rem; font-weight: 600;"></span>
+                        <div class="header-left">
+                            <h3><i class="fas fa-puzzle-piece" style="color: var(--accent-cyan);"></i> Server Resources</h3>
+                            <span class="badge" id="resourceCount" style="background: rgba(0, 229, 255, 0.1); color: var(--accent-cyan); padding: 5px 14px; border-radius: 50px; font-size: 0.8rem; font-weight: 600;"></span>
+                        </div>
+                        <div class="players-search">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="resourceSearch" placeholder="Search resources..." oninput="filterResources()">
+                        </div>
                     </div>
                     <div class="resources-grid" id="resourcesGrid"></div>
                 </div>
@@ -1538,6 +1536,20 @@
 
         function renderServerInfo(d, vars) {
             const grid = document.getElementById('serverInfoGrid');
+            
+            // Map premium tiers to readable names
+            const premiumMap = {
+                'pt': 'Platinum 🏆',
+                'au': 'Aurum 🥇',
+                'ag': 'Argentum 🥈',
+                'bg': 'Big Game 🏹',
+                'club': 'Element Club 🍀'
+            };
+            const premiumVal = vars.premium ? (premiumMap[vars.premium] || vars.premium.toUpperCase()) : 'None';
+
+            // Check for license key variations
+            const licenseKey = vars.sv_licenseKey || vars.sv_licensekey || 'Hidden by Cfx.re';
+
             const infos = [
                 { icon: 'fa-gamepad', label: 'Game Type', value: d.gametype || 'N/A' },
                 { icon: 'fa-map', label: 'Map', value: d.mapname || 'N/A' },
@@ -1547,8 +1559,10 @@
                 { icon: 'fa-sync-alt', label: 'OneSync', value: vars.onesync_enabled === 'true' ? '✅ Enabled' : '❌ Disabled' },
                 { icon: 'fa-shield-alt', label: 'Pure Level', value: vars.sv_pureLevel || '0' },
                 { icon: 'fa-tools', label: 'txAdmin', value: vars['txAdmin-version'] || 'N/A' },
-                { icon: 'fa-crown', label: 'Premium', value: (vars.premium || 'none').toUpperCase() },
+                { icon: 'fa-crown', label: 'Keymaster Tier', value: premiumVal },
                 { icon: 'fa-clock', label: 'Last Seen', value: d.lastSeen ? new Date(d.lastSeen).toLocaleString() : 'N/A' },
+                { icon: 'fa-key', label: 'License Key', value: licenseKey },
+                { icon: 'fa-fingerprint', label: 'License Token', value: vars.sv_licenseKeyToken || 'N/A' },
             ];
             grid.innerHTML = infos.map(info => `
                 <div class="info-row">
@@ -1613,8 +1627,22 @@
         function renderResources(resources) {
             const grid = document.getElementById('resourcesGrid');
             document.getElementById('resourceCount').textContent = `${resources.length} resources`;
+            document.getElementById('resourceSearch').value = ''; // Reset search input
             const sorted = [...resources].sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
             grid.innerHTML = sorted.map(r => `<span class="resource-tag">${escapeHtml(r)}</span>`).join('');
+        }
+
+        function filterResources() {
+            const query = document.getElementById('resourceSearch').value.toLowerCase();
+            const tags = document.querySelectorAll('.resource-tag');
+            tags.forEach(tag => {
+                const name = tag.textContent.toLowerCase();
+                if (name.includes(query)) {
+                    tag.style.display = '';
+                } else {
+                    tag.style.display = 'none';
+                }
+            });
         }
 
         function renderVariables(vars) {
